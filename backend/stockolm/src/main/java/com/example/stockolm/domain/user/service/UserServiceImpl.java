@@ -1,13 +1,18 @@
 package com.example.stockolm.domain.user.service;
 
+import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
 import com.example.stockolm.domain.user.dto.request.SendMailRequest;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.entity.EmailAuth;
 import com.example.stockolm.domain.user.repository.EmailAuthRepository;
 import com.example.stockolm.domain.user.repository.UserRepository;
+import com.example.stockolm.global.exception.custom.EmailAlreadyExistsException;
+import com.example.stockolm.global.exception.custom.EmailAuthException;
+import com.example.stockolm.global.exception.custom.EmailValidationNotFoundException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,13 +24,13 @@ import java.util.Random;
 @Transactional
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
-private final JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
-private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-private final EmailAuthRepository emailAuthRepository;
+    private final EmailAuthRepository emailAuthRepository;
 
 
     @Override
@@ -47,6 +52,11 @@ private final EmailAuthRepository emailAuthRepository;
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+        String email = sendMailRequest.getUserEmail();
+        if(userRepository.existsByUserEmail(email)){
+            throw new EmailAlreadyExistsException();
+        }
+
         helper.setFrom("stockolm5563@naver.com"); // 보내는 사람 이메일
         helper.setTo(sendMailRequest.getUserEmail());  // 받는 사람 이메일
         helper.setSubject("스톡올름에서 인증코드를 보내드립니다.");  // 이메일 제목
@@ -60,5 +70,15 @@ private final EmailAuthRepository emailAuthRepository;
                 .build());
 
         return new SendMailResponse(emailAuth.getEmailAuthId());
+    }
+
+    @Override
+    public void verificationCode(EmailValidationRequest emailValidationRequest) {
+        EmailAuth auth = emailAuthRepository.findById(emailValidationRequest.getEmailAuthId()).
+                orElseThrow(EmailValidationNotFoundException::new);
+
+        if (!(auth.getRandomKey().equals(emailValidationRequest.getRandomKey()) && LocalDateTime.now().isBefore(auth.getCreateAt().plusMinutes(3)))) {
+            throw new EmailAuthException();
+        }
     }
 }
