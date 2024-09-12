@@ -4,3 +4,15 @@
 @tailwind components;
 /* Tailwind의 유틸리티 클래스 */
 @tailwind utilities;
+
+:root {
+  font-family: "GmarketSans", Inter, system-ui, Avenir, Helvetica, Arial,
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+
+  margin-left: auto;
+  margin-right: auto;
+}
