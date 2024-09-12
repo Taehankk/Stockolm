@@ -1,11 +1,15 @@
 package com.example.stockolm.domain.user.service;
 
+import com.example.stockolm.domain.user.dto.request.AuthCodeRequest;
 import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
 import com.example.stockolm.domain.user.dto.request.SendMailRequest;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
+import com.example.stockolm.domain.user.entity.AnalystCode;
 import com.example.stockolm.domain.user.entity.EmailAuth;
+import com.example.stockolm.domain.user.repository.AnalystCodeRepository;
 import com.example.stockolm.domain.user.repository.EmailAuthRepository;
 import com.example.stockolm.domain.user.repository.UserRepository;
+import com.example.stockolm.global.exception.custom.CodeNumberNotValidException;
 import com.example.stockolm.global.exception.custom.EmailAlreadyExistsException;
 import com.example.stockolm.global.exception.custom.EmailAuthException;
 import com.example.stockolm.global.exception.custom.EmailValidationNotFoundException;
@@ -31,6 +35,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final EmailAuthRepository emailAuthRepository;
+
+    private final AnalystCodeRepository analystCodeRepository;
 
 
     @Override
@@ -79,6 +85,15 @@ public class UserServiceImpl implements UserService {
 
         if (!(auth.getRandomKey().equals(emailValidationRequest.getRandomKey()) && LocalDateTime.now().isBefore(auth.getCreateAt().plusMinutes(3)))) {
             throw new EmailAuthException();
+        }
+    }
+
+    @Override
+    public void verificationAnalyst(AuthCodeRequest authCodeRequest) {
+        AnalystCode code = analystCodeRepository.findByCodeNumber(authCodeRequest.getCodeNumber());
+
+        if(code==null || code.getCodeUse()==1){
+            throw new CodeNumberNotValidException();
         }
     }
 }
