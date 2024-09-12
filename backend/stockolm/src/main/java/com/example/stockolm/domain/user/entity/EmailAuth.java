@@ -21,10 +21,13 @@ public class EmailAuth {
 
     private LocalDateTime createAt;
 
+    private String authEmail;
+
     @Builder
-    public EmailAuth(String randomKey, LocalDateTime createAt) {
+    public EmailAuth(String randomKey, LocalDateTime createAt, String authEmail) {
         this.randomKey = randomKey;
         this.createAt = createAt;
+        this.authEmail = authEmail;
     }
 
 
