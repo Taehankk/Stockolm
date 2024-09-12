@@ -2,17 +2,16 @@ package com.example.stockolm.domain.user.service;
 
 import com.example.stockolm.domain.user.dto.request.AuthCodeRequest;
 import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
+import com.example.stockolm.domain.user.dto.request.NicknameExistsRequest;
 import com.example.stockolm.domain.user.dto.request.SendMailRequest;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.entity.AnalystCode;
 import com.example.stockolm.domain.user.entity.EmailAuth;
+import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.AnalystCodeRepository;
 import com.example.stockolm.domain.user.repository.EmailAuthRepository;
 import com.example.stockolm.domain.user.repository.UserRepository;
-import com.example.stockolm.global.exception.custom.CodeNumberNotValidException;
-import com.example.stockolm.global.exception.custom.EmailAlreadyExistsException;
-import com.example.stockolm.global.exception.custom.EmailAuthException;
-import com.example.stockolm.global.exception.custom.EmailValidationNotFoundException;
+import com.example.stockolm.global.exception.custom.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Transactional
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         String email = sendMailRequest.getUserEmail();
-        if(userRepository.existsByUserEmail(email)){
+        if (userRepository.existsByUserEmail(email)) {
             throw new EmailAlreadyExistsException();
         }
 
@@ -92,8 +92,17 @@ public class UserServiceImpl implements UserService {
     public void verificationAnalyst(AuthCodeRequest authCodeRequest) {
         AnalystCode code = analystCodeRepository.findByCodeNumber(authCodeRequest.getCodeNumber());
 
-        if(code==null || code.getCodeUse()==1){
+        if (code == null || code.getCodeUse() == 1) {
             throw new CodeNumberNotValidException();
         }
+    }
+
+
+    @Override
+    public void checkNickname(NicknameExistsRequest nicknameExistsRequest) {
+        boolean nicknameExists = userRepository.existsByUserNickname(nicknameExistsRequest.getUserNickname());
+
+        if(nicknameExists)
+            throw new NicknameConflictException();
     }
 }

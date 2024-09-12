@@ -2,6 +2,7 @@ package com.example.stockolm.domain.user.controller;
 
 import com.example.stockolm.domain.user.dto.request.AuthCodeRequest;
 import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
+import com.example.stockolm.domain.user.dto.request.NicknameExistsRequest;
 import com.example.stockolm.domain.user.dto.request.SendMailRequest;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.service.UserService;
@@ -9,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +23,14 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping("/nickname")
+    @Operation(summary = "회원가입시 닉네임 중복 확인", description = "닉네임 중복확인 API")
+    public ResponseEntity<?> checkNickname(@RequestBody NicknameExistsRequest nicknameExistsRequest){
+        userService.checkNickname(nicknameExistsRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
 
     @PostMapping("/send-mail")
     @Operation(summary = "이메일 인증키 발송", description = "회원가입시 이메일 인증보내기 API")
