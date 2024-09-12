@@ -16,6 +16,12 @@ const textColor = {
   black: "black",
   white: "white",
 };
+const borderRadius = {
+  none: "0",
+  small: "0.125rem",
+  medium: "0.375rem",
+  large: "0.5rem",
+};
 
 const colors = {
   PrimaryRed: "#FF4F4F",
@@ -43,6 +49,7 @@ export default {
       textColor: textColor,
       colors: colors,
       border: border,
+      borderRadius: borderRadius,
     },
   },
   safelist: [
@@ -63,6 +70,10 @@ export default {
     {
       // border-클래스에 대해서 safelist 추가
       pattern: new RegExp(`^border-(${Object.keys(border).join("|")})$`),
+    },
+    {
+      // border-radius에 대해서 safelist 추가
+      pattern: new RegExp(`^rounded-(${Object.keys(borderRadius).join("|")})$`),
     },
   ],
   plugins: [],
