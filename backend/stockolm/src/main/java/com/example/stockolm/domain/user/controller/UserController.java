@@ -1,9 +1,6 @@
 package com.example.stockolm.domain.user.controller;
 
-import com.example.stockolm.domain.user.dto.request.AuthCodeRequest;
-import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
-import com.example.stockolm.domain.user.dto.request.NicknameExistsRequest;
-import com.example.stockolm.domain.user.dto.request.SendMailRequest;
+import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +20,13 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping("/sign-up")
+    @Operation(summary = "회원가입", description = "회원가입 API")
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest){
+//        userService.signUp(signUpRequest);
+        return ResponseEntity.status(OK).build();
+    }
 
     @PostMapping("/nickname")
     @Operation(summary = "회원가입시 닉네임 중복 확인", description = "닉네임 중복확인 API")

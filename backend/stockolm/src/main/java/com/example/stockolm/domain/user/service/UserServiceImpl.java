@@ -7,7 +7,6 @@ import com.example.stockolm.domain.user.dto.request.SendMailRequest;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.entity.AnalystCode;
 import com.example.stockolm.domain.user.entity.EmailAuth;
-import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.AnalystCodeRepository;
 import com.example.stockolm.domain.user.repository.EmailAuthRepository;
 import com.example.stockolm.domain.user.repository.UserRepository;
@@ -15,14 +14,12 @@ import com.example.stockolm.global.exception.custom.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 @Transactional
@@ -73,6 +70,7 @@ public class UserServiceImpl implements UserService {
         EmailAuth emailAuth = emailAuthRepository.save(EmailAuth.builder()
                 .randomKey(verificationCode)
                 .createAt(createAt)
+                .authEmail(email)
                 .build());
 
         return new SendMailResponse(emailAuth.getEmailAuthId());
