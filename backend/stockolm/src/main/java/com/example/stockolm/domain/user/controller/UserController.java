@@ -1,5 +1,6 @@
 package com.example.stockolm.domain.user.controller;
 
+import com.example.stockolm.domain.user.dto.request.AuthCodeRequest;
 import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
 import com.example.stockolm.domain.user.dto.request.SendMailRequest;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
@@ -38,6 +39,14 @@ public class UserController {
     public ResponseEntity<?> verificationEmail(@RequestBody EmailValidationRequest emailValidationRequest) {
 
         userService.verificationCode(emailValidationRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @PostMapping("/auth-code")
+    @Operation(summary = "애널리스트 인증 확인", description = "애널리스트 인증 코드 확인 API")
+    public ResponseEntity<?> verificationAnalyst(@RequestBody AuthCodeRequest authCodeRequest){
+        userService.verificationAnalyst(authCodeRequest);
 
         return ResponseEntity.status(NO_CONTENT).build();
     }
