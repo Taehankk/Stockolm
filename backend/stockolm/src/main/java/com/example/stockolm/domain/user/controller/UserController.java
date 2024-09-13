@@ -4,6 +4,7 @@ import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.service.UserService;
+import com.example.stockolm.global.util.jwt.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
@@ -28,6 +29,8 @@ public class UserController {
     private long refreshTokenExpireTime;
 
     private final UserService userService;
+
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "로그인 API")
@@ -92,6 +95,26 @@ public class UserController {
         userService.verificationAnalyst(authCodeRequest);
 
         return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @PostMapping("/refresh-token")
+    @Operation(summary = "AccessToken 재발급", description = "AccessToken 재발급 API")
+    public ResponseEntity<?> refreshAccessToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+
+        if (refreshToken == null || !jwtUtil.checkRefreshToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+
+        Long userId = jwtUtil.getUserIdByRefreshToken(refreshToken);
+        if (userId == null || !userService.isRefreshTokenValid(userId, refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+
+        String newAccessToken = jwtUtil.createAccessToken(userId);
+
+        return ResponseEntity.status(OK)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken)
+                .body(new LoginResponse(userId));
     }
 }
 
