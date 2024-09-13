@@ -152,6 +152,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isRefreshTokenValid(Long userId, String refreshToken) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null && refreshToken.equals(user.getRefreshToken());
+    }
+
+    @Override
     public Long authenticateUser(LoginRequest loginRequest) {
         User user = userRepository.findByUserEmail(loginRequest.getUserEmail());
         if (user == null)

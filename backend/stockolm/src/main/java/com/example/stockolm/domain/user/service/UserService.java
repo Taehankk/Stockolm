@@ -23,4 +23,6 @@ public interface UserService {
     Long authenticateUser(LoginRequest loginRequest);
 
     void saveRefreshToken(Long userId, String refreshToken);
+
+    boolean isRefreshTokenValid(Long userId, String refreshToken);
 }
