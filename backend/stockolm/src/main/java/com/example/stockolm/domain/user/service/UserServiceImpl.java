@@ -1,16 +1,15 @@
 package com.example.stockolm.domain.user.service;
 
-import com.example.stockolm.domain.user.dto.request.AuthCodeRequest;
-import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
-import com.example.stockolm.domain.user.dto.request.NicknameExistsRequest;
-import com.example.stockolm.domain.user.dto.request.SendMailRequest;
+import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.entity.AnalystCode;
 import com.example.stockolm.domain.user.entity.EmailAuth;
+import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.AnalystCodeRepository;
 import com.example.stockolm.domain.user.repository.EmailAuthRepository;
 import com.example.stockolm.domain.user.repository.UserRepository;
 import com.example.stockolm.global.exception.custom.*;
+import com.example.stockolm.global.util.encrypt.EncryptHelper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +33,8 @@ public class UserServiceImpl implements UserService {
     private final EmailAuthRepository emailAuthRepository;
 
     private final AnalystCodeRepository analystCodeRepository;
+
+    private final EncryptHelper encryptHelper;
 
 
     @Override
@@ -102,5 +103,24 @@ public class UserServiceImpl implements UserService {
 
         if(nicknameExists)
             throw new NicknameConflictException();
+    }
+
+    @Override
+    public void signUp(SignUpRequest signUpRequest) {
+        EmailAuth auth = emailAuthRepository.findById(signUpRequest.getEmailAuthId())
+                .orElseThrow(EmailAuthException::new);
+
+        if(!(auth.getAuthEmail().equals(signUpRequest.getUserEmail()))){
+            emailAuthRepository.delete(auth);
+            throw new EmailAuthException();
+        }
+        emailAuthRepository.delete(auth);
+
+        User user = signUpRequest.toEntity();
+
+        user.encryptPassword(encryptHelper);
+
+        userRepository.save(user);
+
     }
 }

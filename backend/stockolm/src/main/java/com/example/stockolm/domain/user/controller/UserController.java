@@ -24,7 +24,7 @@ public class UserController {
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입", description = "회원가입 API")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest){
-//        userService.signUp(signUpRequest);
+        userService.signUp(signUpRequest);
         return ResponseEntity.status(OK).build();
     }
 
