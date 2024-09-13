@@ -1,9 +1,6 @@
 package com.example.stockolm.domain.user.service;
 
-import com.example.stockolm.domain.user.dto.request.AuthCodeRequest;
-import com.example.stockolm.domain.user.dto.request.EmailValidationRequest;
-import com.example.stockolm.domain.user.dto.request.NicknameExistsRequest;
-import com.example.stockolm.domain.user.dto.request.SendMailRequest;
+import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import jakarta.mail.MessagingException;
 
@@ -17,4 +14,6 @@ public interface UserService {
     void verificationAnalyst(AuthCodeRequest authCodeRequest);
 
     void checkNickname(NicknameExistsRequest nicknameExistsRequest);
+
+    void signUp(SignUpRequest signUpRequest);
 }
