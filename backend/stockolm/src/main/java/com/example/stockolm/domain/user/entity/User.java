@@ -64,4 +64,8 @@ public class User {
     public void updatePassword(String newPassword) {
         this.userPassword = newPassword;
     }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
+    }
 }

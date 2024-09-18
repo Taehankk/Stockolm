@@ -172,6 +172,13 @@ public class UserServiceImpl implements UserService {
         user.updatePassword(newPassword);
     }
 
+    @Override
+    public void deleteRefreshToken(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        user.deleteRefreshToken();
+    }
+
 
     @Override
     public Long authenticateUser(LoginRequest loginRequest) {
