@@ -37,6 +37,11 @@ public class User {
 
     private LocalDateTime updateAt;
 
+    @PreUpdate
+    public void preUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
+
     @Builder
     public User(String userEmail, String userPassword, String userName, String userNickname, RoleType roleType, String account, LocalDateTime createAt){
         this.userEmail = userEmail;
@@ -54,5 +59,9 @@ public class User {
 
     public void changeRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.userPassword = newPassword;
     }
 }
