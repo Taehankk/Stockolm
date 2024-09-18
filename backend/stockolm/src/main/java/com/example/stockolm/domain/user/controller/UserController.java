@@ -116,5 +116,13 @@ public class UserController {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken)
                 .body(new LoginResponse(userId));
     }
+
+    @PostMapping("/password")
+    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
+    public ResponseEntity<?> updatePassword(@RequestBody FindPasswordRequest findPasswordRequest){
+        userService.updatePassword(findPasswordRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
 }
 
