@@ -17,10 +17,28 @@ const Header = () => {
         </li>
         <Input className="mr-20" placeholder="종목명입력"></Input>
         <li className="ml-20 mr-5 text-xl">
-          <Link to={"/auth"}>로그인</Link>
+          <Link
+            to={{
+              pathname: "/auth",
+            }}
+            state={{
+              imgLocation: 0,
+            }}
+          >
+            로그인
+          </Link>
         </li>
         <li className="flex-1 text-xl">
-          <Link to={"/auth"}>회원가입</Link>
+          <Link
+            to={{
+              pathname: "/auth",
+            }}
+            state={{
+              imgLocation: 1,
+            }}
+          >
+            회원가입
+          </Link>
         </li>
       </ul>
     </nav>
