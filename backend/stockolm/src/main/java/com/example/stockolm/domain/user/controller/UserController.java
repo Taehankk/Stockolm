@@ -54,6 +54,30 @@ public class UserController {
                 .body(loginResponse);
     }
 
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "로그아웃 API")
+    public ResponseEntity<?> logout(@CookieValue(value = "refreshToken",required = false) String refreshToken){
+        if(refreshToken == null || !jwtUtil.checkRefreshToken(refreshToken)){
+            return ResponseEntity.status(UNAUTHORIZED).body("리프레시 토큰을 확인할 수 없음");
+        }
+
+        Long userId = jwtUtil.getUserIdByRefreshToken(refreshToken);
+        if(userId != null){
+            userService.deleteRefreshToken(userId);
+        }
+
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0) // 쿠키 삭제
+                .build();
+
+        return ResponseEntity.status(OK)
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .build();
+    }
+
 
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입", description = "회원가입 API")

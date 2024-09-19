@@ -27,4 +27,6 @@ public interface UserService {
     boolean isRefreshTokenValid(Long userId, String refreshToken);
 
     void updatePassword(FindPasswordRequest findPasswordRequest);
+
+    void deleteRefreshToken(Long userId);
 }
