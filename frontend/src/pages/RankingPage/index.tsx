@@ -1,5 +1,11 @@
+import BasicLayout from "../../layouts/BasicLayout";
+
 const RankingPage = () => {
-  return <div></div>;
+  return (
+    <BasicLayout>
+      <h1>Ranking Page</h1>
+    </BasicLayout>
+  );
 };
 
 export default RankingPage;
