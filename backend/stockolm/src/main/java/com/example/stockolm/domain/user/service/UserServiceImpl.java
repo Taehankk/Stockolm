@@ -136,9 +136,9 @@ public class UserServiceImpl implements UserService {
 
         String refreshToken = jwtUtil.createRefreshToken(userId);
 
-        saveRefreshToken(userId,refreshToken);
+        saveRefreshToken(userId, refreshToken);
 
-        return new LoginResponse(userId,accessToken,refreshToken);
+        return new LoginResponse(userId, accessToken, refreshToken);
 
 
     }
@@ -150,6 +150,28 @@ public class UserServiceImpl implements UserService {
 
         user.changeRefreshToken(refreshToken);
     }
+
+    @Override
+    public boolean isRefreshTokenValid(Long userId, String refreshToken) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null && refreshToken.equals(user.getRefreshToken());
+    }
+
+    @Override
+    public void updatePassword(FindPasswordRequest findPasswordRequest) {
+        // 1. 사용자 이메일을 통해 사용자 조회
+        User user = userRepository.findByUserEmail(findPasswordRequest.getUserEmail());
+
+        // 2. 새로운 비밀번호와 기존 비밀번호 비교 (평문 비밀번호를 암호화된 비밀번호와 비교)
+        if (encryptHelper.isMatch(findPasswordRequest.getNewPassword(), user.getUserPassword())) {
+            throw new NewPasswordException();
+        }
+
+        // 3. 새로운 비밀번호 암호화 및 업데이트
+        String newPassword = encryptHelper.encrypt(findPasswordRequest.getNewPassword());
+        user.updatePassword(newPassword);
+    }
+
 
     @Override
     public Long authenticateUser(LoginRequest loginRequest) {
