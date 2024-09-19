@@ -1,6 +1,7 @@
 package com.example.stockolm.domain.user.service;
 
 import com.example.stockolm.domain.user.dto.request.*;
+import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.entity.AnalystCode;
 import com.example.stockolm.domain.user.entity.EmailAuth;
@@ -10,6 +11,7 @@ import com.example.stockolm.domain.user.repository.EmailAuthRepository;
 import com.example.stockolm.domain.user.repository.UserRepository;
 import com.example.stockolm.global.exception.custom.*;
 import com.example.stockolm.global.util.encrypt.EncryptHelper;
+import com.example.stockolm.global.util.jwt.JwtUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.auth.login.LoginException;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -35,6 +38,7 @@ public class UserServiceImpl implements UserService {
     private final AnalystCodeRepository analystCodeRepository;
 
     private final EncryptHelper encryptHelper;
+    private final JwtUtil jwtUtil;
 
 
     @Override
@@ -101,7 +105,7 @@ public class UserServiceImpl implements UserService {
     public void checkNickname(NicknameExistsRequest nicknameExistsRequest) {
         boolean nicknameExists = userRepository.existsByUserNickname(nicknameExistsRequest.getUserNickname());
 
-        if(nicknameExists)
+        if (nicknameExists)
             throw new NicknameConflictException();
     }
 
@@ -110,7 +114,7 @@ public class UserServiceImpl implements UserService {
         EmailAuth auth = emailAuthRepository.findById(signUpRequest.getEmailAuthId())
                 .orElseThrow(EmailAuthException::new);
 
-        if(!(auth.getAuthEmail().equals(signUpRequest.getUserEmail()))){
+        if (!(auth.getAuthEmail().equals(signUpRequest.getUserEmail()))) {
             emailAuthRepository.delete(auth);
             throw new EmailAuthException();
         }
@@ -122,5 +126,69 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        Long userId = authenticateUser(loginRequest);
+
+        String accessToken = jwtUtil.createAccessToken(userId);
+
+        String refreshToken = jwtUtil.createRefreshToken(userId);
+
+        saveRefreshToken(userId, refreshToken);
+
+        return new LoginResponse(userId, accessToken, refreshToken);
+
+
+    }
+
+    @Override
+    public void saveRefreshToken(Long userId, String refreshToken) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.changeRefreshToken(refreshToken);
+    }
+
+    @Override
+    public boolean isRefreshTokenValid(Long userId, String refreshToken) {
+        User user = userRepository.findById(userId).orElse(null);
+        return user != null && refreshToken.equals(user.getRefreshToken());
+    }
+
+    @Override
+    public void updatePassword(FindPasswordRequest findPasswordRequest) {
+        // 1. 사용자 이메일을 통해 사용자 조회
+        User user = userRepository.findByUserEmail(findPasswordRequest.getUserEmail());
+
+        // 2. 새로운 비밀번호와 기존 비밀번호 비교 (평문 비밀번호를 암호화된 비밀번호와 비교)
+        if (encryptHelper.isMatch(findPasswordRequest.getNewPassword(), user.getUserPassword())) {
+            throw new NewPasswordException();
+        }
+
+        // 3. 새로운 비밀번호 암호화 및 업데이트
+        String newPassword = encryptHelper.encrypt(findPasswordRequest.getNewPassword());
+        user.updatePassword(newPassword);
+    }
+
+    @Override
+    public void deleteRefreshToken(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+        user.deleteRefreshToken();
+    }
+
+
+    @Override
+    public Long authenticateUser(LoginRequest loginRequest) {
+        User user = userRepository.findByUserEmail(loginRequest.getUserEmail());
+        if (user == null)
+            throw new UserNotFoundException();
+
+        if (encryptHelper.isMatch(loginRequest.getUserPassword(), user.getUserPassword()))
+            return user.getUserId();
+
+        throw new AuthenticationFailedException();
     }
 }

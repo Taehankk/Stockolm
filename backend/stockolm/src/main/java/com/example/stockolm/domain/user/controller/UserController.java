@@ -1,12 +1,18 @@
 package com.example.stockolm.domain.user.controller;
 
 import com.example.stockolm.domain.user.dto.request.*;
+import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.service.UserService;
+import com.example.stockolm.global.util.jwt.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,18 +25,70 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 @Tag(name = "User", description = "사용자 관련 API")
 public class UserController {
 
+    @Value("${jwt.refresh-token.expiretime}")
+    private long refreshTokenExpireTime;
+
     private final UserService userService;
+
+    private final JwtUtil jwtUtil;
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "로그인 API")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+
+        // Service에 로그인 처리 로직을 위임
+        LoginResponse loginResponse = userService.login(loginRequest);
+
+        // Refresh Token Cookie 생성
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", loginResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpireTime)
+                .sameSite("None")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.getAccessToken())
+                .body(loginResponse);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "로그아웃 API")
+    public ResponseEntity<?> logout(@CookieValue(value = "refreshToken",required = false) String refreshToken){
+        if(refreshToken == null || !jwtUtil.checkRefreshToken(refreshToken)){
+            return ResponseEntity.status(UNAUTHORIZED).body("리프레시 토큰을 확인할 수 없음");
+        }
+
+        Long userId = jwtUtil.getUserIdByRefreshToken(refreshToken);
+        if(userId != null){
+            userService.deleteRefreshToken(userId);
+        }
+
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0) // 쿠키 삭제
+                .build();
+
+        return ResponseEntity.status(OK)
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .build();
+    }
+
 
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입", description = "회원가입 API")
-    public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest){
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest) {
         userService.signUp(signUpRequest);
         return ResponseEntity.status(CREATED).build();
     }
 
     @PostMapping("/nickname")
     @Operation(summary = "회원가입시 닉네임 중복 확인", description = "닉네임 중복확인 API")
-    public ResponseEntity<?> checkNickname(@RequestBody NicknameExistsRequest nicknameExistsRequest){
+    public ResponseEntity<?> checkNickname(@RequestBody NicknameExistsRequest nicknameExistsRequest) {
         userService.checkNickname(nicknameExistsRequest);
 
         return ResponseEntity.status(NO_CONTENT).build();
@@ -57,8 +115,36 @@ public class UserController {
 
     @PostMapping("/auth-code")
     @Operation(summary = "애널리스트 인증 확인", description = "애널리스트 인증 코드 확인 API")
-    public ResponseEntity<?> verificationAnalyst(@RequestBody AuthCodeRequest authCodeRequest){
+    public ResponseEntity<?> verificationAnalyst(@RequestBody AuthCodeRequest authCodeRequest) {
         userService.verificationAnalyst(authCodeRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @PostMapping("/refresh-token")
+    @Operation(summary = "AccessToken 재발급", description = "AccessToken 재발급 API")
+    public ResponseEntity<?> refreshAccessToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+
+        if (refreshToken == null || !jwtUtil.checkRefreshToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+
+        Long userId = jwtUtil.getUserIdByRefreshToken(refreshToken);
+        if (userId == null || !userService.isRefreshTokenValid(userId, refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+
+        String newAccessToken = jwtUtil.createAccessToken(userId);
+
+        return ResponseEntity.status(OK)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken)
+                .body(new LoginResponse(userId));
+    }
+
+    @PostMapping("/password")
+    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
+    public ResponseEntity<?> updatePassword(@RequestBody FindPasswordRequest findPasswordRequest){
+        userService.updatePassword(findPasswordRequest);
 
         return ResponseEntity.status(NO_CONTENT).build();
     }
