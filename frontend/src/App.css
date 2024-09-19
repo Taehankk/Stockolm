@@ -1,4 +1,6 @@
 html {
   font-size: 20px;
-  padding: 10%;
+  display: flex;
+  width: 100vw;
+  margin-left: 2rem;
 }
