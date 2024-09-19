@@ -1,11 +1,11 @@
 import BasicLayout from "../../layouts/BasicLayout";
 
-const LandingPage = () => {
+const ReportWritePage = () => {
   return (
     <BasicLayout>
-      <h1>Landing Page</h1>
+      <div>분석글작성폼입니다.</div>
     </BasicLayout>
   );
 };
 
-export default LandingPage;
+export default ReportWritePage;

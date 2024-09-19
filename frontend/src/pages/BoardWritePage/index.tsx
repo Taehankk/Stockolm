@@ -1,5 +1,11 @@
+import BasicLayout from "../../layouts/BasicLayout";
+
 const BoardWritePage = () => {
-  return <div></div>;
+  return (
+    <BasicLayout>
+      <div>자유게시판 작성폼 입니다.</div>;
+    </BasicLayout>
+  );
 };
 
 export default BoardWritePage;
