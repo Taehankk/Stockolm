@@ -23,3 +23,13 @@ export const validateEmail = (value: string): string | undefined => {
   }
   return undefined;
 };
+
+export const validateMatchPassword = (
+  value: string,
+  password: string
+): string | undefined => {
+  if (value !== password) {
+    return "비밀번호가 일치하지 않습니다.";
+  }
+  return undefined;
+};
