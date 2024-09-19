@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
+    private Long userId;
 
     private String userEmail;
 
@@ -38,6 +37,11 @@ public class User {
 
     private LocalDateTime updateAt;
 
+    @PreUpdate
+    public void preUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
+
     @Builder
     public User(String userEmail, String userPassword, String userName, String userNickname, RoleType roleType, String account, LocalDateTime createAt){
         this.userEmail = userEmail;
@@ -51,5 +55,17 @@ public class User {
 
     public void encryptPassword(EncryptHelper encryptHelper) {
         this.userPassword = encryptHelper.encrypt(this.userPassword);
+    }
+
+    public void changeRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.userPassword = newPassword;
+    }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
     }
 }
