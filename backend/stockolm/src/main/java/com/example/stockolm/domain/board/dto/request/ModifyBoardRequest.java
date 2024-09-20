@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CreateBoardRequest {
+public class ModifyBoardRequest {
     @NotNull
     private String title;
 
