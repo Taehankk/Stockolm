@@ -36,12 +36,27 @@ public class Board {
 
     private LocalDateTime updateAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.createAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
+
     @Builder
-    public Board(User user, String title, String content, Category category, LocalDateTime createAt) {
+    public Board(User user, String title, String content, Category category) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.category = category;
-        this.createAt = createAt;
+    }
+
+    public void update(String title, String content, Category category) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
     }
 }
