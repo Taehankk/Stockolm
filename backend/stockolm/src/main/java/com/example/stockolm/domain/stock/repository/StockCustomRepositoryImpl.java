@@ -22,7 +22,6 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
     @Override
     public List<FollowStockResponse> getFollowStockInfo(Long userId) {
         QFavoriteStock favoriteStock = QFavoriteStock.favoriteStock;
-        QStock stock = QStock.stock;
 
         return queryFactory
                 .select(Projections.constructor(FollowStockResponse.class,
@@ -30,15 +29,5 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
                 .from(favoriteStock)
                 .where(favoriteStock.user.userId.eq(userId))
                 .fetch();
-
-//        return queryFactory
-//                .select(Projections.constructor(FollowStockResponse.class,
-//                        favoriteStock.stock.stockCode, favoriteStock.stock.stockName))
-//                .from(favoriteStock)
-//                .join(favoriteStock.stock, stock).fetchJoin()
-//                .where(favoriteStock.user.userId.eq(userId))
-//                .fetch();
-
-
     }
 }
