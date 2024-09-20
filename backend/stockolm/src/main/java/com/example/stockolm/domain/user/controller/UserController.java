@@ -55,7 +55,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.getAccessToken())
-                .body(loginResponse);
+                .body(new LoginResponse(loginResponse.getUserId()));
     }
 
     @PostMapping("/logout")
