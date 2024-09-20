@@ -1,0 +1,47 @@
+.top {
+  width: 100%;
+  display: flex;
+  min-height: 25vh;
+  /* border: 1px solid; */
+}
+.chart-info {
+  min-width: 70%;
+  /* border: 1px solid skyblue; */
+}
+.middle {
+  width: 100%;
+  display: flex;
+  min-height: 35vh;
+  /* border: 1px solid; */
+  gap: 20px;
+  align-items: center;
+}
+.chart {
+  min-width: 70%;
+  /* border: 1px solid skyblue; */
+}
+.bottom {
+  width: 100%;
+  display: flex;
+  min-height: 25vh;
+  /* border: 1px solid; */
+  align-items: center;
+  justify-content: center;
+}
+.divider {
+  width: 1%;
+  margin: 0 auto;
+}
+.infos {
+  width: 49%;
+  /* border: 1px solid skyblue; */
+}
+
+.navigator {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  gap: 1rem;
+}
