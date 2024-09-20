@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> runtimException(RuntimeException ex) {
+    public ResponseEntity<?> runtimeException(RuntimeException ex) {
         ex.printStackTrace();
         log.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("런타임에러");
