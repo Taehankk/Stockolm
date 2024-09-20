@@ -32,6 +32,7 @@ const SignUp = ({ handleImgLocation }: Props) => {
     const value = e.target.value;
     setNicknameInput(value);
   };
+  const error = message;
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -58,6 +59,7 @@ const SignUp = ({ handleImgLocation }: Props) => {
   };
 
   const sendValidateNumber = () => {
+    validateEmail(emailInput);
     console.log(Math.random());
   };
 
@@ -85,13 +87,13 @@ const SignUp = ({ handleImgLocation }: Props) => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full justify-start">
+    <div className="flex flex-col items-center w-full">
       <div className="mb-10 text-[2.4rem]">회원가입</div>
 
-      <div className="flex-col justify-start w-full">
+      <div className="flex flex-col">
         {/* 닉네임 input */}
-        <div className="flex mb-2 items-center justify-between">
-          <span className="">닉네임</span>
+        <div className="flex min-h-[3.4rem] items-start justify-between">
+          <span className="mt-1.5">닉네임</span>
           <Input
             onChange={handleNicknameInputChange}
             value={nicknameInput}
@@ -134,8 +136,8 @@ const SignUp = ({ handleImgLocation }: Props) => {
         </div>
 
         {/* 비밀번호 input */}
-        <div className="flex mb-2 items-center justify-between">
-          <span className="">비밀번호</span>
+        <div className="flex min-h-[3.4rem] items-start justify-between">
+          <span className="mt-1.5">비밀번호</span>
           <Input
             onChange={handlePasswordInputChange}
             value={passwordInput}
@@ -145,8 +147,8 @@ const SignUp = ({ handleImgLocation }: Props) => {
         </div>
 
         {/* 비밀번호 확인 input */}
-        <div className="flex mb-2 items-center justify-between">
-          <span className="mr-2">비밀번호 확인</span>
+        <div className="flex min-h-[3.4rem] items-start justify-between">
+          <span className="mt-1.5 mr-2">비밀번호 확인</span>
           <Input
             onChange={handlePwCheckInputChange}
             value={pwCheckInput}

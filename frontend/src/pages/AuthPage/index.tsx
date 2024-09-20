@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Login from "./Login";
 import SignUp from "./SignUp";
-import ChangePassword from "./FindPassword";
+import ChangePassword from "./ChangePassword";
 
 // import StockOlm from "../../assets/STOCKOLM.jpg";
 import { useLocation } from "react-router-dom";
@@ -15,15 +15,14 @@ const AuthPage = () => {
   };
 
   useEffect(() => {
-    console.log(location);
     if (location.state.imgLocation) {
       setImgLocation(location.state.imgLocation);
     }
   }, []);
 
   return (
-    <div className="flex justify-center items-start h-[95vh] w-[95vw]">
-      <div className="absolute flex items-start h-full w-[80%]">
+    <div className="flex justify-center items-center h-[95vh] w-[95vw]">
+      <div className="absolute border border-[#D9D9D9] flex justify-center h-[80%] w-[70%]">
         {/* <img
         src={StockOlm}
         alt=""
@@ -37,36 +36,16 @@ const AuthPage = () => {
           }`}
         ></div>
         <div
-          className={`w-1/2 h-full flex items-center justify-center transition-transform duration-300 ${
+          className={`h-full w-1/2 tansition-transform duration-300 ${
             imgLocation === 0 ? "translate-x-0" : "translate-x-[-100%]"
           }`}
         >
-          {imgLocation === 0 && (
-            <div
-              className={`transition-opacity duration-500 ${
-                imgLocation === 0 ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <Login handleImgLocation={handleImgLocation} />{" "}
-            </div>
-          )}
+          {imgLocation === 0 && <Login handleImgLocation={handleImgLocation} />}
           {imgLocation === 1 && (
-            <div
-              className={`transition-opacity duration-500 ${
-                imgLocation === 1 ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <SignUp handleImgLocation={handleImgLocation} />
-            </div>
+            <SignUp handleImgLocation={handleImgLocation} />
           )}
           {imgLocation === 2 && (
-            <div
-              className={`transition-opacity duration-500 ${
-                imgLocation === 2 ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <ChangePassword handleImgLocation={handleImgLocation} />
-            </div>
+            <ChangePassword handleImgLocation={handleImgLocation} />
           )}
         </div>
       </div>
