@@ -3,6 +3,7 @@ package com.example.stockolm.domain.user.service;
 import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
+import com.example.stockolm.domain.user.dto.response.UserInfoResponse;
 import com.example.stockolm.domain.user.entity.AnalystCode;
 import com.example.stockolm.domain.user.entity.EmailAuth;
 import com.example.stockolm.domain.user.entity.User;
@@ -190,5 +191,13 @@ public class UserServiceImpl implements UserService {
             return user.getUserId();
 
         throw new AuthenticationFailedException();
+    }
+
+    @Override
+    public UserInfoResponse getUserInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        return new UserInfoResponse(user.getUserNickname(), user.getUserImagePath());
     }
 }
