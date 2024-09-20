@@ -18,17 +18,17 @@ public class SwaggerConfig {
                 .description("Stockolm application API documentation")
                 .version("1.0.0");
 
-//        SecurityScheme securityScheme = new SecurityScheme()
-//                .name("Authorization")
-//                .type(SecurityScheme.Type.HTTP)
-//                .scheme("Bearer")
-//                .bearerFormat("JWT");
+        SecurityScheme securityScheme = new SecurityScheme()
+                .name("Authorization")
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("Bearer")
+                .bearerFormat("JWT");
 
-//        SecurityRequirement securityRequirement = new SecurityRequirement().addList("Authorization");
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("Authorization");
 
         return new OpenAPI()
-                .info(info);
-//                .addSecurityItem(securityRequirement)
-//                .components(new Components().addSecuritySchemes("Authorization", securityScheme));
+                .info(info)
+                .addSecurityItem(securityRequirement)
+                .components(new Components().addSecuritySchemes("Authorization", securityScheme));
     }
 }
