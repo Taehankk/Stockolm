@@ -4,23 +4,45 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <nav>
-      <ul className="flex w-full mt-10 mb-10 justify-center ">
-        <li className="text-PrimaryRed mr-10 font-bold text-xl">
-          <Link to={"/"}>STOCKALM</Link>
+    <nav className="flex justify-between gap-[2rem] mt-8 mb-6">
+      <ul className="flex gap-[1rem]">
+        <li className="text-PrimaryRed font-bold text-xl">
+          <Link to={"/"}>STOCKOLM</Link>
         </li>
-        <li className="mr-5 text-xl">
+      </ul>
+      <ul className="flex gap-[1rem]">
+        <li className="text-xl">
           <Link to={"/ranking"}>분석가</Link>
         </li>
-        <li className="mr-5 text-xl">
+        <li className=" text-xl">
           <Link to={"/community/"}>커뮤니티</Link>
         </li>
-        <Input className="mr-20" placeholder="종목명입력"></Input>
-        <li className="ml-20 mr-5 text-xl">
-          <Link to={"/auth"}>로그인</Link>
+      </ul>
+      <Input placeholder="종목명입력"></Input>
+      <ul className="flex gap-[1rem]">
+        <li className="text-xl">
+          <Link
+            to={{
+              pathname: "/auth",
+            }}
+            state={{
+              imgLocation: 0,
+            }}
+          >
+            로그인
+          </Link>
         </li>
-        <li className="flex-1 text-xl">
-          <Link to={"/auth"}>회원가입</Link>
+        <li className="text-xl">
+          <Link
+            to={{
+              pathname: "/auth",
+            }}
+            state={{
+              imgLocation: 1,
+            }}
+          >
+            회원가입
+          </Link>
         </li>
       </ul>
     </nav>
