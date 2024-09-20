@@ -31,9 +31,15 @@ public class BoardController {
 
     @PutMapping("/{boardId}")
     @Operation(summary = "글 수정", description = "자유게시판 글 수정 API")
-    public  ResponseEntity<?> modifyBoard(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId, @RequestBody ModifyBoardRequest modifyBoardRequest) {
+    public ResponseEntity<?> modifyBoard(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId, @RequestBody ModifyBoardRequest modifyBoardRequest) {
         boardService.modifyBoard(boardId, userId, modifyBoardRequest);
         return ResponseEntity.status(NO_CONTENT).build();
     }
 
+    @DeleteMapping("/{boardId}")
+    @Operation(summary = "글 삭제", description = "자유게시판 글 삭제 API")
+    public ResponseEntity<?> removeBoard(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId) {
+        boardService.removeBoard(boardId, userId);
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
 }
