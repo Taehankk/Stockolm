@@ -3,9 +3,13 @@ package com.example.stockolm.domain.user.controller;
 import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
+import com.example.stockolm.domain.user.dto.response.UserInfoResponse;
 import com.example.stockolm.domain.user.service.UserService;
+import com.example.stockolm.global.auth.AuthPrincipal;
+import com.example.stockolm.global.exception.custom.LoginRequiredException;
 import com.example.stockolm.global.util.jwt.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -51,18 +55,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.getAccessToken())
-                .body(loginResponse);
+                .body(new LoginResponse(loginResponse.getUserId()));
     }
 
     @PostMapping("/logout")
     @Operation(summary = "로그아웃", description = "로그아웃 API")
-    public ResponseEntity<?> logout(@CookieValue(value = "refreshToken",required = false) String refreshToken){
-        if(refreshToken == null || !jwtUtil.checkRefreshToken(refreshToken)){
+    public ResponseEntity<?> logout(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+        if (refreshToken == null || !jwtUtil.checkRefreshToken(refreshToken)) {
             return ResponseEntity.status(UNAUTHORIZED).body("리프레시 토큰을 확인할 수 없음");
         }
 
         Long userId = jwtUtil.getUserIdByRefreshToken(refreshToken);
-        if(userId != null){
+        if (userId != null) {
             userService.deleteRefreshToken(userId);
         }
 
@@ -143,10 +147,22 @@ public class UserController {
 
     @PostMapping("/password")
     @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
-    public ResponseEntity<?> updatePassword(@RequestBody FindPasswordRequest findPasswordRequest){
+    public ResponseEntity<?> updatePassword(@RequestBody FindPasswordRequest findPasswordRequest) {
         userService.updatePassword(findPasswordRequest);
 
         return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @GetMapping("/info")
+    @Operation(summary = "내 정보 조회", description = "내 정보 조회 API")
+    public ResponseEntity<?> myUserInfo(@AuthPrincipal @Parameter(hidden = true) Long userId) {
+
+        if (userId == null) {
+            throw new LoginRequiredException();
+        }
+        UserInfoResponse userInfo = userService.getUserInfo(userId);
+
+        return ResponseEntity.status(OK).body(userInfo);
     }
 }
 

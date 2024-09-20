@@ -3,6 +3,8 @@ package com.example.stockolm.domain.user.service;
 import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
+import com.example.stockolm.domain.user.dto.response.UserInfoResponse;
+import com.example.stockolm.domain.user.entity.User;
 import jakarta.mail.MessagingException;
 
 public interface UserService {
@@ -29,4 +31,6 @@ public interface UserService {
     void updatePassword(FindPasswordRequest findPasswordRequest);
 
     void deleteRefreshToken(Long userId);
+
+    UserInfoResponse getUserInfo(Long userId);
 }
