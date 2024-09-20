@@ -3,8 +3,6 @@ import { useState } from "react";
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
 
-import { validateEmail, validatePassword } from "../../../utils/validation";
-
 interface Props {
   handleImgLocation: (value: number) => void;
 }
@@ -31,15 +29,11 @@ const Login = ({ handleImgLocation }: Props) => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="mb-10 text-[2.4rem]">로그인</div>
-      <div>
-        <div className="flex mb-2 items-center">
-          <span className="mr-10">이메일</span>
-          <Input
-            onChange={handleEmailInputChange}
-            value={emailInput}
-            validate={validateEmail}
-          />
+      <div className="my-16 text-[2.4rem]">로그인</div>
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center justify-between">
+          <span className="">이메일</span>
+          <Input onChange={handleEmailInputChange} value={emailInput} />
         </div>
         <div>
           <div className="flex mb-2 items-center">
@@ -47,7 +41,6 @@ const Login = ({ handleImgLocation }: Props) => {
             <Input
               onChange={handlePasswordInputChange}
               value={passwordInput}
-              validate={validatePassword}
               type="password"
             />
           </div>
@@ -55,7 +48,7 @@ const Login = ({ handleImgLocation }: Props) => {
             onClick={() => handleImgLocation(2)}
             className="flex justify-end text-xs opacity-50"
           >
-            비밀번호 찾기
+            비밀번호 변경
           </span>
         </div>
       </div>

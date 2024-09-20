@@ -56,7 +56,7 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="mb-20 text-[2.4rem]">비밀번호 변경</div>
+      <div className="mt-16 mb-20 text-[2.4rem]">비밀번호 변경</div>
 
       {/* 이메일 input */}
       <div className="flex-col justify-between">
