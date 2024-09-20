@@ -4,8 +4,10 @@ import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.service.UserService;
+import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.util.jwt.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +53,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.getAccessToken())
-                .body(loginResponse);
+                .body(new LoginResponse(loginResponse.getUserId()));
     }
 
     @PostMapping("/logout")
