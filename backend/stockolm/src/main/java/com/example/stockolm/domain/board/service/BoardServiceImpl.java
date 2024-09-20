@@ -8,7 +8,7 @@ import com.example.stockolm.domain.board.repository.BoardRepository;
 import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.UserRepository;
 import com.example.stockolm.global.exception.custom.BoardNotFoundException;
-import com.example.stockolm.global.exception.custom.UnauthorizedModificationException;
+import com.example.stockolm.global.exception.custom.UnauthorizedAccessException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class BoardServiceImpl implements BoardService {
 
         // 작성자가 아닌 사람이 URL로 접근하여 수정을 시도하는 경우, 접근 금지 조치
         if (!userId.equals(board.getUser().getUserId())) {
-            throw new UnauthorizedModificationException();
+            throw new UnauthorizedAccessException();
         }
 
         board.update(
@@ -52,5 +52,17 @@ public class BoardServiceImpl implements BoardService {
         );
 
 //        boardRepository.save(board); // 영속성 컨텍스트가 자동으로 DB 업데이트
+    }
+
+    @Override
+    public void removeBoard(Long boardId, Long userId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+
+        // 작성자가 아닌 사람이 URL로 접근하여 삭제를 시도하는 경우, 접근 금지 조치
+        if (!userId.equals(board.getUser().getUserId())) {
+            throw new UnauthorizedAccessException();
+        }
+
+        boardRepository.deleteById(boardId);
     }
 }
