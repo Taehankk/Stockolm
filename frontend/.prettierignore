@@ -1,0 +1,14 @@
+# 빌드 결과물
+dist/
+build/
+
+# TypeScript 설정 파일
+tsconfig.json
+tsconfig.*.json
+
+# Node 모듈
+node_modules/
+
+# 환경 설정 파일
+.vscode/
+.idea/
