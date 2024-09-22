@@ -1,0 +1,36 @@
+.summary {
+  display: flex;
+  flex-direction: column;
+}
+.top-title {
+  align-items: center;
+  display: flex;
+  height: 20%;
+  border-bottom: 1px solid;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.title-info {
+  display: flex;
+  gap: 1rem;
+  width: 80%;
+  align-items: baseline;
+}
+
+.summary-detail {
+  display: flex;
+  width: 80%;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.infomation {
+  display: flex;
+  flex-direction: column;
+}
+.infomation > div {
+  display: flex;
+  flex-direction: column;
+}
