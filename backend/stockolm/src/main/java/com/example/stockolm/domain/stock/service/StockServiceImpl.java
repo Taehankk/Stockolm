@@ -1,8 +1,8 @@
 package com.example.stockolm.domain.stock.service;
 
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
-import com.example.stockolm.domain.stock.dto.response.HotStockList;
-import com.example.stockolm.domain.stock.dto.response.RecentStockList;
+import com.example.stockolm.domain.stock.dto.response.HotStock;
+import com.example.stockolm.domain.stock.dto.response.RecentStock;
 import com.example.stockolm.domain.stock.dto.response.StockSearchResponse;
 import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.stock.repository.StockRepository;
@@ -64,9 +64,9 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockSearchResponse stockSearchList(Long userId) {
 
-        List<HotStockList> hotStockList = stockRepository.getHotStockList();
+        List<HotStock> hotStockList = stockRepository.getHotStockList();
 
-        List<RecentStockList> recentStockList = stockRepository.getRecentStockList(userId);
+        List<RecentStock> recentStockList = stockRepository.getRecentStockList(userId);
 
         return StockSearchResponse.builder()
                 .recentStockList(recentStockList)

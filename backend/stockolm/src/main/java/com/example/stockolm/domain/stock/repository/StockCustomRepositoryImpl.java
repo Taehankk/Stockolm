@@ -2,8 +2,8 @@ package com.example.stockolm.domain.stock.repository;
 
 import com.example.stockolm.domain.follow.entity.QFollow;
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
-import com.example.stockolm.domain.stock.dto.response.HotStockList;
-import com.example.stockolm.domain.stock.dto.response.RecentStockList;
+import com.example.stockolm.domain.stock.dto.response.HotStock;
+import com.example.stockolm.domain.stock.dto.response.RecentStock;
 import com.example.stockolm.domain.stock.entity.QFavoriteStock;
 import com.example.stockolm.domain.stock.entity.QStock;
 import com.example.stockolm.domain.user.entity.QUserSearchList;
@@ -36,11 +36,11 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
     }
 
     @Override
-    public List<HotStockList> getHotStockList() {
+    public List<HotStock> getHotStockList() {
         QStock stock = QStock.stock;
 
         return queryFactory
-                .select(Projections.constructor(HotStockList.class,
+                .select(Projections.constructor(HotStock.class,
                         stock.stockName, stock.stockCode))
                 .from(stock)
                 .orderBy(stock.stockSearchCnt.desc())
@@ -49,7 +49,7 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
     }
 
     @Override
-    public List<RecentStockList> getRecentStockList(Long userId) {
+    public List<RecentStock> getRecentStockList(Long userId) {
         if (userId == null) {
             return Collections.emptyList(); // 빈 리스트 반환
         }
@@ -59,7 +59,7 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
 
 
         return queryFactory
-                .select(Projections.constructor(RecentStockList.class,
+                .select(Projections.constructor(RecentStock.class,
                         stock.stockCode,stock.stockName))
                 .from(stock)
                 .innerJoin(userSearchList)
