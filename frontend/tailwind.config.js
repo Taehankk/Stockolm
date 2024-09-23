@@ -59,11 +59,9 @@ export default {
     },
     {
       // text-클래스에 대해서 safelist 추가
-      pattern: new RegExp(`^text-(${Object.keys(fontSize).join("|")})$`),
-    },
-    {
-      // text-클래스에 대해서 safelist 추가
-      pattern: new RegExp(`^text-(${Object.keys(textColor).join("|")})$`),
+      pattern: new RegExp(
+        `^text-(${Object.keys(fontSize, textColor).join("|")})$`
+      ),
     },
     {
       // bg-클래스에 대해서 safelist 추가
