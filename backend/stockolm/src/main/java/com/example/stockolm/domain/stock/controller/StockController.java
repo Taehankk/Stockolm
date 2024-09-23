@@ -2,6 +2,7 @@ package com.example.stockolm.domain.stock.controller;
 
 import com.example.stockolm.domain.follow.dto.response.FollowAnalystResponse;
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
+import com.example.stockolm.domain.stock.dto.response.StockSearchResponse;
 import com.example.stockolm.domain.stock.service.StockService;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
@@ -47,6 +48,16 @@ public class StockController {
 
         return ResponseEntity.status(NO_CONTENT).build();
     }
+
+    @GetMapping("/search-list")
+    @Operation(summary = "주식 종목 최근 검색/ 인기 검색어 조회", description = "주식 종목 최근 검색/ 인기 검색어 조회 API")
+    public ResponseEntity<?> stockSearchList(@AuthPrincipal @Parameter(hidden = true) Long userId) {
+
+        StockSearchResponse stockSearchResponse = stockService.stockSearchList(userId);
+
+        return ResponseEntity.status(OK).body(stockSearchResponse);
+    }
+
 
 
 }
