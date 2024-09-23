@@ -68,9 +68,6 @@ public class StockServiceImpl implements StockService {
 
         List<RecentStockList> recentStockList = stockRepository.getRecentStockList(userId);
 
-        System.out.println(hotStockList);
-        System.out.println(recentStockList);
-
         return StockSearchResponse.builder()
                 .recentStockList(recentStockList)
                 .hotStockList(hotStockList)
