@@ -10,6 +10,9 @@
     sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   font-synthesis: none;
+}
+
+html {
+  width: 100%;
 }

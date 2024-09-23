@@ -3,7 +3,11 @@ import "./App.css";
 import root from "./router/root";
 
 function App() {
-  return <RouterProvider router={root} />;
+  return (
+    <div className="w-[90vw] mx-auto my-0">
+      <RouterProvider router={root} />
+    </div>
+  );
 }
 
 export default App;
