@@ -1,6 +1,8 @@
 package com.example.stockolm.domain.stock.service;
 
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
+import com.example.stockolm.domain.stock.dto.response.HotStockList;
+import com.example.stockolm.domain.stock.dto.response.RecentStockList;
 import com.example.stockolm.domain.stock.dto.response.StockSearchResponse;
 import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.stock.repository.StockRepository;
@@ -61,20 +63,18 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public StockSearchResponse stockSearchList(Long userId) {
-        List<String> hotStockCodeList = stockRepository.getHotStockCodeList();
-        List<String> hotStockNameList = stockRepository.getHotStockNameList();
 
-        List<String> recentStockCodeList = stockRepository.getRecentStockCodeList(userId);
-        List<String> recentStockNameList = stockRepository.getRecentStockNameList(userId);
+        List<HotStockList> hotStockList = stockRepository.getHotStockList();
+
+        List<RecentStockList> recentStockList = stockRepository.getRecentStockList(userId);
+
+        System.out.println(hotStockList);
+        System.out.println(recentStockList);
 
         return StockSearchResponse.builder()
-
-                .hotStockCodeList(hotStockCodeList)
-                .hotStockNameList(hotStockNameList)
-                .recentStockCodeList(recentStockCodeList)
-                .recentStockNameList(recentStockNameList)
+                .recentStockList(recentStockList)
+                .hotStockList(hotStockList)
                 .build();
-
     }
 
 

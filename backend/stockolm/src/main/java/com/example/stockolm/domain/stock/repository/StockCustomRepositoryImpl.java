@@ -2,6 +2,8 @@ package com.example.stockolm.domain.stock.repository;
 
 import com.example.stockolm.domain.follow.entity.QFollow;
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
+import com.example.stockolm.domain.stock.dto.response.HotStockList;
+import com.example.stockolm.domain.stock.dto.response.RecentStockList;
 import com.example.stockolm.domain.stock.entity.QFavoriteStock;
 import com.example.stockolm.domain.stock.entity.QStock;
 import com.example.stockolm.domain.user.entity.QUserSearchList;
@@ -34,12 +36,12 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
     }
 
     @Override
-    public List<String> getHotStockCodeList() {
+    public List<HotStockList> getHotStockList() {
         QStock stock = QStock.stock;
 
         return queryFactory
-                .select(Projections.constructor(String.class,
-                        stock.stockCode))
+                .select(Projections.constructor(HotStockList.class,
+                        stock.stockName, stock.stockCode))
                 .from(stock)
                 .orderBy(stock.stockSearchCnt.desc())
                 .limit(5)
@@ -47,20 +49,7 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
     }
 
     @Override
-    public List<String> getHotStockNameList() {
-        QStock stock = QStock.stock;
-
-        return queryFactory
-                .select(Projections.constructor(String.class,
-                        stock.stockName))
-                .from(stock)
-                .orderBy(stock.stockSearchCnt.desc())
-                .limit(5)
-                .fetch();
-    }
-
-    @Override
-    public List<String> getRecentStockNameList(Long userId) {
+    public List<RecentStockList> getRecentStockList(Long userId) {
         if (userId == null) {
             return Collections.emptyList(); // 빈 리스트 반환
         }
@@ -70,30 +59,8 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
 
 
         return queryFactory
-                .select(Projections.constructor(String.class,
-                        stock.stockName))
-                .from(stock)
-                .innerJoin(userSearchList)
-                .on(stock.stockName.eq(userSearchList.stockSearchContent))
-                .where(userSearchList.user.userId.eq(userId))
-                .orderBy(userSearchList.updateAt.desc())
-                .limit(5)
-                .fetch();
-    }
-
-    @Override
-    public List<String> getRecentStockCodeList(Long userId) {
-        if (userId == null) {
-            return Collections.emptyList(); // 빈 리스트 반환
-        }
-
-        QStock stock = QStock.stock;
-        QUserSearchList userSearchList = QUserSearchList.userSearchList;
-
-
-        return queryFactory
-                .select(Projections.constructor(String.class,
-                        stock.stockCode))
+                .select(Projections.constructor(RecentStockList.class,
+                        stock.stockCode,stock.stockName))
                 .from(stock)
                 .innerJoin(userSearchList)
                 .on(stock.stockName.eq(userSearchList.stockSearchContent))
