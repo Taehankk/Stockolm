@@ -10,13 +10,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -39,5 +37,16 @@ public class StockController {
 
         return ResponseEntity.status(OK).body(followStockList);
     }
+
+    @PostMapping("/search/{stock-name}")
+    @Operation(summary = "주식 종목 검색", description = "주식 종목 검색 API")
+    public ResponseEntity<?> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
+                                         @PathVariable("stock-name") String stockName) {
+
+        stockService.searchStock(userId, stockName);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
 
 }

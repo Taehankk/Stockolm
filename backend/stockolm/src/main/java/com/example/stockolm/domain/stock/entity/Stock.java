@@ -23,4 +23,8 @@ public class Stock {
 
     private int stockSearchCnt;
 
+    public void plusStockSearchCnt(){
+        stockSearchCnt++;
+    }
+
 }
