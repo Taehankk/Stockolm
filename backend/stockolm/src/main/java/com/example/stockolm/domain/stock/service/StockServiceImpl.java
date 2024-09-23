@@ -1,6 +1,7 @@
 package com.example.stockolm.domain.stock.service;
 
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
+import com.example.stockolm.domain.stock.dto.response.StockSearchResponse;
 import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.stock.repository.StockRepository;
 import com.example.stockolm.domain.user.entity.User;
@@ -56,6 +57,24 @@ public class StockServiceImpl implements StockService {
                 userSearchListRepository.save(newSearchList);
             }
         }
+    }
+
+    @Override
+    public StockSearchResponse stockSearchList(Long userId) {
+        List<String> hotStockCodeList = stockRepository.getHotStockCodeList();
+        List<String> hotStockNameList = stockRepository.getHotStockNameList();
+
+        List<String> recentStockCodeList = stockRepository.getRecentStockCodeList(userId);
+        List<String> recentStockNameList = stockRepository.getRecentStockNameList(userId);
+
+        return StockSearchResponse.builder()
+
+                .hotStockCodeList(hotStockCodeList)
+                .hotStockNameList(hotStockNameList)
+                .recentStockCodeList(recentStockCodeList)
+                .recentStockNameList(recentStockNameList)
+                .build();
+
     }
 
 
