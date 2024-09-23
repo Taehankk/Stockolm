@@ -11,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 public class StockSearchResponse {
 
-    List<RecentStockList> recentStockList;
-    List<HotStockList> hotStockList;
+    List<RecentStock> recentStockList;
+    List<HotStock> hotStockList;
 
     @Builder
-    public StockSearchResponse(List<RecentStockList> recentStockList, List<HotStockList> hotStockList) {
+    public StockSearchResponse(List<RecentStock> recentStockList, List<HotStock> hotStockList) {
         this.recentStockList = recentStockList;
         this.hotStockList = hotStockList;
     }
