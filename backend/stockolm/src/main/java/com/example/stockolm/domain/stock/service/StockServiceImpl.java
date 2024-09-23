@@ -40,7 +40,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public void searchStock(Long userId, String stockName) {
+    public void createStockSearchLog(Long userId, String stockName) {
         Stock stock = stockRepository.findByStockName(stockName);
         if (stock == null) {
             throw new StockNotFoundException();
