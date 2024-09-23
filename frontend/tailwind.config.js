@@ -50,6 +50,16 @@ export default {
       colors: colors,
       border: border,
       borderRadius: borderRadius,
+      opacity: {
+        0: "0",
+        100: "1",
+      },
+      translate: {
+        12: "3rem",
+      },
+      transitionDuration: {
+        1000: "1000ms",
+      },
     },
   },
   safelist: [
