@@ -9,6 +9,7 @@ import com.example.stockolm.global.exception.custom.LoginRequiredException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +42,8 @@ public class StockController {
 
     @PostMapping("/search/{stock-name}")
     @Operation(summary = "주식 종목 검색", description = "주식 종목 검색 API")
-    public ResponseEntity<?> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
-                                         @PathVariable("stock-name") String stockName) {
+    public ResponseEntity<Void> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
+                                            @PathVariable("stock-name") String stockName) {
 
         stockService.searchStock(userId, stockName);
 
@@ -51,13 +52,25 @@ public class StockController {
 
     @GetMapping("/search-list")
     @Operation(summary = "주식 종목 최근 검색/ 인기 검색어 조회", description = "주식 종목 최근 검색/ 인기 검색어 조회 API")
-    public ResponseEntity<?> stockSearchList(@AuthPrincipal @Parameter(hidden = true) Long userId) {
+    public ResponseEntity<StockSearchResponse> stockSearchList(@AuthPrincipal @Parameter(hidden = true) Long userId) {
 
         StockSearchResponse stockSearchResponse = stockService.stockSearchList(userId);
 
         return ResponseEntity.status(OK).body(stockSearchResponse);
     }
 
+    @PostMapping("/follow/{stock-name}")
+    @Operation(summary = "관심 종목 등록", description = "관심 종목 등록 API")
+    public ResponseEntity<?> followStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
+                                         @PathVariable("stock-name") String stockName) {
+        if (userId == null) {
+            throw new LoginRequiredException();
+        }
+        stockService.followStock(userId, stockName);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+
+    }
 
 
 }

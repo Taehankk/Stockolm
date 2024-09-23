@@ -11,4 +11,6 @@ public interface StockService {
     void searchStock(Long userId, String stockName);
 
     StockSearchResponse stockSearchList(Long userId);
+
+    void followStock(Long userId, String stockName);
 }
