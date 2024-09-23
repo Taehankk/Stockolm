@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const appkey = "";
-const appsecret = "";
-const accessToken = "";
+const appkey = import.meta.env.VITE_STOCK_APP_KEY;
+const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
+const accessToken = import.meta.env.VITE_STOCK_ACCESS_TOKEN;
 
 export const getStockData = async (mockCode: string) => {
   const headers = {
