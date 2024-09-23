@@ -10,16 +10,14 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class StockSearchResponse {
-    List<String> recentStockCodeList = new ArrayList<>();
-    List<String> recentStockNameList = new ArrayList<>();
-    List<String> hotStockCodeList = new ArrayList<>();
-    List<String> hotStockNameList = new ArrayList<>();
+
+    List<RecentStockList> recentStockList;
+    List<HotStockList> hotStockList;
 
     @Builder
-    public StockSearchResponse(List<String> recentStockCodeList, List<String> recentStockNameList, List<String> hotStockCodeList, List<String> hotStockNameList){
-        this.recentStockCodeList = recentStockCodeList;
-        this.recentStockNameList = recentStockNameList;
-        this.hotStockCodeList = hotStockCodeList;
-        this.hotStockNameList = hotStockNameList;
+    public StockSearchResponse(List<RecentStockList> recentStockList, List<HotStockList> hotStockList) {
+        this.recentStockList = recentStockList;
+        this.hotStockList = hotStockList;
     }
+
 }
