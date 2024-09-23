@@ -1,8 +1,23 @@
+import axios from "axios";
+
 // 닉네임 검증: 1~8자의 한글
 export const validateNickname = (value: string): string | undefined => {
   const nicknameRegex = /^[가-힣a-zA-Z]{2,8}$/;
   if (!nicknameRegex.test(value)) {
     return "닉네임은 2~8자의 글자여야 합니다.";
+  } else {
+    axios
+      .post("https://j11b201.p.ssafy.io/api/v1/user/nickname", {
+        userNickname: value,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        if (e.response.statue === 409) {
+          return e.response.data;
+        }
+      });
   }
   return undefined;
 };
