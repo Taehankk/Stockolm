@@ -8,7 +8,7 @@ import java.util.List;
 public interface StockService {
     public List<FollowStockResponse> getFollowStockList(Long userId);
 
-    void searchStock(Long userId, String stockName);
+    void createStockSearchLog(Long userId, String stockName);
 
     StockSearchResponse stockSearchList(Long userId);
 
