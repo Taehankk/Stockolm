@@ -1,13 +1,15 @@
+import axios from "axios";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 
 import Input from "../../../components/elements/Input";
 import Button from "../../../components/elements/Button";
 import {
-  validateEmail,
-  validateMatchPassword,
   validateNickname,
+  validateEmail,
   validatePassword,
+  validateMatchPassword,
 } from "../../../utils/validation";
 import { useState } from "react";
 
@@ -26,13 +28,14 @@ const SignUp = ({ handleImgLocation }: Props) => {
   const [codeInput, setCodeInput] = useState("");
   const [nameInput, setNameInput] = useState("");
 
+  const [emailAuthId, setEmailAuthId] = useState(0);
+
   const handleNicknameInputChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
     setNicknameInput(value);
   };
-  const error = message;
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -59,8 +62,28 @@ const SignUp = ({ handleImgLocation }: Props) => {
   };
 
   const sendValidateNumber = () => {
-    validateEmail(emailInput);
-    console.log(Math.random());
+    axios
+      .post("https://j11b201.p.ssafy.io/api/v1/user/send-mail", {
+        userEmail: emailInput,
+      })
+      .then((res) => {
+        setEmailAuthId(res.data.emailAuthId);
+      })
+      .catch((e) => {
+        console.log(e.response.status);
+        console.log(e.response.data);
+      });
+  };
+
+  const checkValidateNumber = () => {
+    axios
+      .post("https://j11b201.p.ssafy.io/api/v1/user/send-mail/validation", {
+        emailAuthId: emailAuthId,
+        randomKey: validateNumInput,
+      })
+      .then((res) => {
+        console.log(res);
+      });
   };
 
   const handleCodeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +132,6 @@ const SignUp = ({ handleImgLocation }: Props) => {
               onChange={handleEmailInputChange}
               value={emailInput}
               validate={validateEmail}
-              type="password"
             />
           </div>
           <div className="flex justify-end">
@@ -129,6 +151,7 @@ const SignUp = ({ handleImgLocation }: Props) => {
             />
             <Button
               size="small"
+              onClick={checkValidateNumber}
               children="확인"
               className="text-[0.8rem] w-20"
             />
@@ -210,7 +233,7 @@ const SignUp = ({ handleImgLocation }: Props) => {
           </div>
         </div>
       </div>
-      <Button onClick={signUp} children="회원가입" className="mt-10" />
+      <Button onClick={signUp} children="회원가입" className="mt-8" />
     </div>
   );
 };

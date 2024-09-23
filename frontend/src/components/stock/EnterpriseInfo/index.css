@@ -1,0 +1,25 @@
+.invest-info-title {
+  height: 10%;
+  margin: 1rem;
+  border-bottom: 1px solid;
+}
+
+.invest-infomations {
+  font-size: medium;
+  margin: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.invest-divider {
+  flex-basis: 0;
+  min-height: 80%;
+  border-right: 1.5px solid;
+}
+
+.invest-infomation-right {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}

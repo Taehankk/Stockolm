@@ -36,7 +36,7 @@ const AuthPage = () => {
           }`}
         ></div>
         <div
-          className={`h-full w-1/2 tansition-transform duration-300 ${
+          className={`mt-2 h-full w-1/2 tansition-transform duration-300 ${
             imgLocation === 0 ? "translate-x-0" : "translate-x-[-100%]"
           }`}
         >
