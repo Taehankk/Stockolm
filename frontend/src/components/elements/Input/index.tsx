@@ -54,8 +54,10 @@ const Input = ({
         }`}
       />
       {error
-        ? value && <p className="text-red-500 text-[12px] mt-1">{error}</p>
-        : value && (
+        ? validate &&
+          value && <p className="text-red-500 text-[12px] mt-1">{error}</p>
+        : validate &&
+          value && (
             <p className="text-green-500 text-[12px] mt-1">
               사용 가능한 {label} 입니다
             </p>
