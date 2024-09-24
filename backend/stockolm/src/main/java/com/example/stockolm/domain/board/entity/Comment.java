@@ -12,25 +12,20 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boardId;
+    private Long commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
 
     private String content;
-
-    private int viewCnt;
-
-    private int likeCnt;
-
-    @Enumerated(EnumType.STRING)
-    private Category category;
 
     private LocalDateTime createAt;
 
@@ -46,22 +41,10 @@ public class Board {
         this.updateAt = LocalDateTime.now();
     }
 
-    // 조회수 증가
-    public void incrementViewCnt() {
-        this.viewCnt++;
-    }
-
     @Builder
-    public Board(User user, String title, String content, Category category) {
+    public Comment(User user, Board board, String content) {
         this.user = user;
-        this.title = title;
+        this.board = board;
         this.content = content;
-        this.category = category;
-    }
-
-    public void update(String title, String content, Category category) {
-        this.title = title;
-        this.content = content;
-        this.category = category;
     }
 }
