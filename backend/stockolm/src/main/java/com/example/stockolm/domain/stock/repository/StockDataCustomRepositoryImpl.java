@@ -21,7 +21,7 @@ public class StockDataCustomRepositoryImpl implements StockDataCustomRepository 
 
         return queryFactory
                 .selectFrom(stockData)
-                .where(stockData.stock.id.eq(stockId))
+                .where(stockData.stock.stockId.eq(stockId))
                 .orderBy(stockData.stockDate.asc())
                 .fetch();
     }
