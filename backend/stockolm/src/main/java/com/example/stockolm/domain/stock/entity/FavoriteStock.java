@@ -3,6 +3,7 @@ package com.example.stockolm.domain.stock.entity;
 import com.example.stockolm.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,9 @@ public class FavoriteStock {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
+    @Builder
+    public FavoriteStock(User user, Stock stock) {
+        this.user = user;
+        this.stock = stock;
+    }
 }
