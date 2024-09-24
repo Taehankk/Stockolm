@@ -8,7 +8,7 @@ import lombok.Getter;
 public class StockData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long StockDataId;
+    private Long stockDataId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id")

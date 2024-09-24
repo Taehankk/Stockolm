@@ -105,17 +105,28 @@ public class StockServiceImpl implements StockService {
             throw new StockNotFoundException();
         }
 
-        System.out.println(stock.getStockName());
 
-//        User user = userRepository.findById(userId);
-        System.out.println(userId);
+        Boolean existFavoriteStockUser = false;
+
+        if(userId != null){
+            User user = userRepository.findById(userId)
+                    .orElseThrow(UserNotFoundException::new);
+
+            existFavoriteStockUser = favoriteStockRepository.existsByUser(user);
+        }
+
         List<StockData> stockDataList = stockDataRepository.findByStockId(stock.getId());
 
         return StockDetailResponse.builder()
                 .stockData(stockDataList)
-                .stockCode(stock.getStockCode())
-                .stockName(stock.getStockName())
+                .isFollow(existFavoriteStockUser)
                 .build();
+    }
+
+    @Override
+    public List<StockSearchResultResponse> getStockSearchResult(String searchKeyword) {
+
+        return stockRepository.findBySearchKeyword(searchKeyword);
     }
 
 

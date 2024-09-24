@@ -16,7 +16,7 @@ public class StockDetailResponse {
     private Boolean isFollow;
 
     @Builder
-    public StockDetailResponse(List<StockData> stockData, Boolean isFollow, String stockName, String stockCode) {
+    public StockDetailResponse(List<StockData> stockData, Boolean isFollow) {
         this.stockData = stockData;
         this.isFollow = isFollow;
     }
