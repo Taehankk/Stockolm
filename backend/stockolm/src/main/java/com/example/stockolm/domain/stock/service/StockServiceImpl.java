@@ -115,7 +115,7 @@ public class StockServiceImpl implements StockService {
             existFavoriteStockUser = favoriteStockRepository.existsByUser(user);
         }
 
-        List<StockData> stockDataList = stockDataRepository.findByStockId(stock.getId());
+        List<StockData> stockDataList = stockDataRepository.findByStockId(stock.getStockId());
 
         return StockDetailResponse.builder()
                 .stockData(stockDataList)
