@@ -13,6 +13,7 @@ interface InputProps {
   type?: string;
   disabled?: boolean;
   validate?: (value: string) => string | undefined;
+  setValidateState?: (value: boolean) => void | undefined;
 }
 
 const Input = ({
@@ -28,6 +29,7 @@ const Input = ({
   type = "text",
   disabled = false,
   validate,
+  setValidateState,
 }: InputProps) => {
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -37,6 +39,14 @@ const Input = ({
     if (validate) {
       const validationResult = validate(e.target.value);
       setError(validationResult);
+
+      if (setValidateState) {
+        setValidateState(!validationResult);
+      }
+    } else {
+      if (setValidateState) {
+        setValidateState(true);
+      }
     }
   };
 
