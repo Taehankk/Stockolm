@@ -65,6 +65,8 @@ public class User {
         this.userPassword = newPassword;
     }
 
+    public void updateNickname(String nickname) { this.userNickname = nickname; }
+
     public void deleteRefreshToken() {
         this.refreshToken = null;
     }

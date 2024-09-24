@@ -35,4 +35,6 @@ public interface UserService {
     UserInfoResponse getUserInfo(Long userId);
 
     void withdraw(Long userId);
+
+    void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest);
 }
