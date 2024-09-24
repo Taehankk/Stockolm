@@ -164,5 +164,19 @@ public class UserController {
 
         return ResponseEntity.status(OK).body(userInfo);
     }
+
+    @DeleteMapping("/withdraw")
+    @Operation(summary = "회원탈퇴", description = "회원탈퇴 API")
+    public ResponseEntity<?> withdraw(@AuthPrincipal @Parameter(hidden = true) Long userId) {
+        if (userId == null) {
+            throw new LoginRequiredException();
+        }
+
+        System.out.println(userId);
+        userService.withdraw(userId);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
 }
 
