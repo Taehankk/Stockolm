@@ -172,7 +172,6 @@ public class UserController {
             throw new LoginRequiredException();
         }
 
-        System.out.println(userId);
         userService.withdraw(userId);
 
         return ResponseEntity.status(NO_CONTENT).build();
