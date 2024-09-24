@@ -33,4 +33,6 @@ public interface UserService {
     void deleteRefreshToken(Long userId);
 
     UserInfoResponse getUserInfo(Long userId);
+
+    void withdraw(Long userId);
 }
