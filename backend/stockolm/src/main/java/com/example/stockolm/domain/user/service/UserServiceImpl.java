@@ -200,4 +200,12 @@ public class UserServiceImpl implements UserService {
 
         return new UserInfoResponse(user.getUserNickname(), user.getUserImagePath());
     }
+
+    @Override
+    public void withdraw(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        userRepository.delete(user);
+    }
 }
