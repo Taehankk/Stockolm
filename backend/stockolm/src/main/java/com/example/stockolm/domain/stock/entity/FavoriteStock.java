@@ -14,8 +14,7 @@ public class FavoriteStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "favorite_stock_id")
-    private Long id;
+    private Long favoriteStockId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
