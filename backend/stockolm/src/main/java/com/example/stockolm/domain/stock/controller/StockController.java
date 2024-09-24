@@ -2,7 +2,9 @@ package com.example.stockolm.domain.stock.controller;
 
 import com.example.stockolm.domain.follow.dto.response.FollowAnalystResponse;
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
+import com.example.stockolm.domain.stock.dto.response.StockDetailResponse;
 import com.example.stockolm.domain.stock.dto.response.StockSearchResponse;
+import com.example.stockolm.domain.stock.dto.response.StockSearchResultResponse;
 import com.example.stockolm.domain.stock.service.StockService;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
@@ -50,6 +52,16 @@ public class StockController {
         return ResponseEntity.status(NO_CONTENT).build();
     }
 
+    @GetMapping("/search-result/{search-keyword}")
+    @Operation(summary = "종목 검색결과 조회", description = "종목 검색결과 조회 API")
+    public ResponseEntity<List<StockSearchResultResponse>> getStockSearchResult(@PathVariable("search-keyword") String searchKeyword) {
+
+        List<StockSearchResultResponse> response = stockService.getStockSearchResult(searchKeyword);
+
+        return ResponseEntity.status(OK).body(response);
+    }
+
+
     @GetMapping("/search-list")
     @Operation(summary = "주식 종목 최근 검색/ 인기 검색어 조회", description = "주식 종목 최근 검색/ 인기 검색어 조회 API")
     public ResponseEntity<StockSearchResponse> stockSearchList(@AuthPrincipal @Parameter(hidden = true) Long userId) {
@@ -69,8 +81,18 @@ public class StockController {
         stockService.followStock(userId, stockName);
 
         return ResponseEntity.status(NO_CONTENT).build();
-
     }
+
+    @GetMapping("/{stock-name}")
+    @Operation(summary = "검색한 종목 조회", description = "검색한 종목 조회 API")
+    public ResponseEntity<StockDetailResponse> getStockDetail(@AuthPrincipal @Parameter(hidden = true) Long userId,
+                                                              @PathVariable("stock-name")String stockName){
+
+      StockDetailResponse stockDetailResponse = stockService.getStockDetail(userId,stockName);
+
+        return ResponseEntity.status(OK).body(stockDetailResponse);
+    }
+
 
 
 }

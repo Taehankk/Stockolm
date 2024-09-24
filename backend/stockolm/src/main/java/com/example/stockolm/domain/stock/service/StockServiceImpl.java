@@ -1,12 +1,11 @@
 package com.example.stockolm.domain.stock.service;
 
-import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
-import com.example.stockolm.domain.stock.dto.response.HotStock;
-import com.example.stockolm.domain.stock.dto.response.RecentStock;
-import com.example.stockolm.domain.stock.dto.response.StockSearchResponse;
+import com.example.stockolm.domain.stock.dto.response.*;
 import com.example.stockolm.domain.stock.entity.FavoriteStock;
 import com.example.stockolm.domain.stock.entity.Stock;
+import com.example.stockolm.domain.stock.entity.StockData;
 import com.example.stockolm.domain.stock.repository.FavoriteStockRepository;
+import com.example.stockolm.domain.stock.repository.StockDataRepository;
 import com.example.stockolm.domain.stock.repository.StockRepository;
 import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.entity.UserSearchList;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -29,6 +29,7 @@ public class StockServiceImpl implements StockService {
     private final UserRepository userRepository;
     private final UserSearchListRepository userSearchListRepository;
     private final FavoriteStockRepository favoriteStockRepository;
+    private final StockDataRepository stockDataRepository;
 
     @Override
     public List<FollowStockResponse> getFollowStockList(Long userId) {
@@ -95,6 +96,37 @@ public class StockServiceImpl implements StockService {
                         .stock(stock)
                         .build()
         );
+    }
+
+    @Override
+    public StockDetailResponse getStockDetail(Long userId, String stockName) {
+        Stock stock = stockRepository.findByStockName(stockName);
+        if (stock == null) {
+            throw new StockNotFoundException();
+        }
+
+
+        Boolean existFavoriteStockUser = false;
+
+        if(userId != null){
+            User user = userRepository.findById(userId)
+                    .orElseThrow(UserNotFoundException::new);
+
+            existFavoriteStockUser = favoriteStockRepository.existsByUser(user);
+        }
+
+        List<StockData> stockDataList = stockDataRepository.findByStockId(stock.getId());
+
+        return StockDetailResponse.builder()
+                .stockData(stockDataList)
+                .isFollow(existFavoriteStockUser)
+                .build();
+    }
+
+    @Override
+    public List<StockSearchResultResponse> getStockSearchResult(String searchKeyword) {
+
+        return stockRepository.findBySearchKeyword(searchKeyword);
     }
 
 

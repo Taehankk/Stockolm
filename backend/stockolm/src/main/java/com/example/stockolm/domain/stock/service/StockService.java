@@ -1,7 +1,9 @@
 package com.example.stockolm.domain.stock.service;
 
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
+import com.example.stockolm.domain.stock.dto.response.StockDetailResponse;
 import com.example.stockolm.domain.stock.dto.response.StockSearchResponse;
+import com.example.stockolm.domain.stock.dto.response.StockSearchResultResponse;
 
 import java.util.List;
 
@@ -13,4 +15,8 @@ public interface StockService {
     StockSearchResponse stockSearchList(Long userId);
 
     void followStock(Long userId, String stockName);
+
+    StockDetailResponse getStockDetail(Long userId, String stockName);
+
+    List<StockSearchResultResponse> getStockSearchResult(String searchKeyword);
 }
