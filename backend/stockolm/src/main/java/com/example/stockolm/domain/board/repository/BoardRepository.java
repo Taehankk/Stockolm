@@ -7,7 +7,4 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BoardRepository extends JpaRepository<Board, Long>, BoardCustomRepository {
-    @Modifying
-    @Query("UPDATE Board b SET b.viewCnt = b.viewCnt + 1 WHERE b.boardId = :boardId")
-    void incrementViewCnt(@Param("boardId") Long boardId);
 }

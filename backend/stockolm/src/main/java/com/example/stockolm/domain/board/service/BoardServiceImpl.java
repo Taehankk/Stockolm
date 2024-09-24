@@ -83,7 +83,7 @@ public class BoardServiceImpl implements BoardService {
 
         List<Comment> commentList = boardRepository.findCommentById(boardId);
 
-        boardRepository.incrementViewCnt(boardId);
+        board.incrementViewCnt(); // 조회수 증가 -> 영속성 컨텍스트가 자동으로 DB 업데이트
 
         return BoardResponse.builder()
                 .userNickname(user.getUserNickname())

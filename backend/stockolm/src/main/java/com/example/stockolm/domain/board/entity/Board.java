@@ -46,6 +46,11 @@ public class Board {
         this.updateAt = LocalDateTime.now();
     }
 
+    // 조회수 증가
+    public void incrementViewCnt() {
+        this.viewCnt++;
+    }
+
     @Builder
     public Board(User user, String title, String content, Category category) {
         this.user = user;
