@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StockRepository extends JpaRepository<Stock, Long>, StockCustomRepository {
 
+    Stock findByStockName(String stockName);
 }
