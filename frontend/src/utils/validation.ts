@@ -22,6 +22,13 @@ export const validateNickname = (value: string): string | undefined => {
   return undefined;
 };
 
+export const validateName = (value: string): string | undefined => {
+  const nameRegex = /^[가-힣]{2,8}$/;
+  if (nameRegex.test(value)) {
+    return "한글 이름만 입력 가능합니다.";
+  }
+};
+
 // 비밀번호 검증: 6~20글자 이내의 문자
 export const validatePassword = (value: string): string | undefined => {
   if (value.length < 6 || value.length > 20) {
