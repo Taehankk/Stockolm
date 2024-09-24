@@ -4,8 +4,10 @@ import com.example.stockolm.domain.follow.entity.QFollow;
 import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
 import com.example.stockolm.domain.stock.dto.response.HotStock;
 import com.example.stockolm.domain.stock.dto.response.RecentStock;
+import com.example.stockolm.domain.stock.dto.response.StockSearchResultResponse;
 import com.example.stockolm.domain.stock.entity.QFavoriteStock;
 import com.example.stockolm.domain.stock.entity.QStock;
+import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.user.entity.QUserSearchList;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -67,6 +69,19 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
                 .where(userSearchList.user.userId.eq(userId))
                 .orderBy(userSearchList.updateAt.desc())
                 .limit(5)
+                .fetch();
+    }
+
+    @Override
+    public List<StockSearchResultResponse> findBySearchKeyword(String searchKeyword) {
+
+        QStock stock = QStock.stock;
+
+        return queryFactory
+                .select(Projections.constructor(StockSearchResultResponse.class,
+                        stock.stockName,stock.stockCode))
+                .from(stock)
+                .where(stock.stockName.contains(searchKeyword))
                 .fetch();
     }
 }
