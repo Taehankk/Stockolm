@@ -1,15 +1,23 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// import Cookies from "universal-cookie";
 
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
+import axios from "axios";
+import axiosInstance from "../../../api/axiosInstance";
 
 interface Props {
   handleImgLocation: (value: number) => void;
 }
 
 const Login = ({ handleImgLocation }: Props) => {
+  const navigate = useNavigate();
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+
+  // const cookies = new Cookies();
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -24,7 +32,21 @@ const Login = ({ handleImgLocation }: Props) => {
   };
 
   const login = () => {
-    console.log(emailInput, passwordInput);
+    axiosInstance
+      .post("/user/login", {
+        userEmail: emailInput, //유저 이메일
+        userPassword: passwordInput,
+      })
+      .then((res) => {
+        localStorage.setItem("access_token", res.headers.authorization); // 만료시간 1시간, refresh는 43200분(720시간, 30일)
+        // cookies.set("refresh_token");
+        navigate("/");
+      })
+      .catch((e) => {
+        if (e.response) {
+          alert(e.response.data);
+        }
+      });
   };
 
   return (
