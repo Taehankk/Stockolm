@@ -208,4 +208,16 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(user);
     }
+
+    @Override
+    public void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest) {
+        boolean nicknameExists = userRepository.existsByUserNickname(nicknameUpdateRequest.getUserNickname());
+        if(nicknameExists)
+            throw new NicknameConflictException();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.updateNickname(nicknameUpdateRequest.getUserNickname());
+    }
 }
