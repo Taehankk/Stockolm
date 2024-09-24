@@ -1,0 +1,49 @@
+package com.example.stockolm.domain.analystBoard.repository;
+
+import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
+import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
+import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
+import com.example.stockolm.domain.stock.entity.QStock;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+
+import java.util.List;
+
+public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepository {
+
+    private final JPAQueryFactory queryFactory;
+
+    public AnalystBoardCustomRepositoryImpl(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
+
+
+    @Override
+    public List<AnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName) {
+        QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
+        QAnalystBoardLike analystBoardLike = QAnalystBoardLike.analystBoardLike;
+        QStock stock = QStock.stock;
+
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(analystBoardLike.user.userId.eq(userId));
+
+        if (stockName != null && !stockName.isEmpty()) {
+            builder.and(stock.stockName.contains(stockName));
+        }
+
+        return queryFactory
+                .select(Projections.constructor(AnalystBoardResponse.class,
+                        analystBoard.analystBoardId, analystBoard.stock.stockName,
+                        analystBoard.title, analystBoard.user.userName,
+                        analystBoard.user.userNickname, analystBoard.filePath))
+                .from(analystBoard)
+                .join(analystBoardLike).on(analystBoard.analystBoardId.eq(analystBoardLike.analystBoard.analystBoardId))
+                .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
+                .where(builder)
+                .fetch();
+    }
+
+}
