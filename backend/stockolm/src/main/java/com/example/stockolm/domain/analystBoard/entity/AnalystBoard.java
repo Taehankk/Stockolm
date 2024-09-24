@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 public class AnalystBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "analyst_board_id")
     private Long analystBoardId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,5 +44,15 @@ public class AnalystBoard {
     private int viewCnt;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
 
 }
