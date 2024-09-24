@@ -35,7 +35,7 @@ const root = createBrowserRouter([
     ),
   },
   {
-    path: "analyst",
+    path: "analyst/:nickname",
     element: (
       <Suspense fallback={<Loading />}>
         <AnalystIndex />

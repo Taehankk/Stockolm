@@ -96,17 +96,17 @@ const BarChart = ({
   ];
 
   return (
-    <div className="flex">
+    <div className="flex justify-between w-[400px]">
       <span className="pt-[27px]">{children}</span>
-        <div className="relative w-[300px] h-[200px] justify-center items-center">
-          <div className="absolute w-full top-0 left-0 z-1">
-              <ReactApexChart options={optionsLight} series={seriesLight} type="bar" height={60} />
-          </div>
-          <div className="absolute top-0 left-0 w-full z-2">
-              <ReactApexChart options={optionsDark} series={seriesDark} type="bar" height={60} />
-          </div>
-          <span className="absolute top-[30px] left-[150px] text-[14px]">{value}%</span>
+      <div className="relative w-[300px] justify-center items-center">
+        <div className="absolute w-full top-0 left-0 z-1">
+            <ReactApexChart options={optionsLight} series={seriesLight} type="bar" height={60} />
         </div>
+        <div className="absolute top-0 left-0 w-full z-2">
+            <ReactApexChart options={optionsDark} series={seriesDark} type="bar" height={60} />
+        </div>
+        <span className="absolute top-[28px] left-[150px] text-[14px]">{value}%</span>
+      </div>
     </div>
   );
 };
