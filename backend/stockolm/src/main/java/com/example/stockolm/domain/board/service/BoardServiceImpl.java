@@ -2,8 +2,10 @@ package com.example.stockolm.domain.board.service;
 
 import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
 import com.example.stockolm.domain.board.dto.request.ModifyBoardRequest;
+import com.example.stockolm.domain.board.dto.response.BoardResponse;
 import com.example.stockolm.domain.board.entity.Board;
 import com.example.stockolm.domain.board.entity.Category;
+import com.example.stockolm.domain.board.entity.Comment;
 import com.example.stockolm.domain.board.repository.BoardRepository;
 import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.UserRepository;
@@ -13,6 +15,8 @@ import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional
 @Service
@@ -64,5 +68,36 @@ public class BoardServiceImpl implements BoardService {
         }
 
         boardRepository.deleteById(boardId);
+    }
+
+    @Override
+    public BoardResponse retrieveBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+
+        Long userId = board.getUser().getUserId();
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        List<String> imagePathList = boardRepository.findImagePathById(boardId);
+
+        boolean isLike = boardRepository.isLike(boardId, userId);
+
+        List<Comment> commentList = boardRepository.findCommentById(boardId);
+
+        boardRepository.incrementViewCnt(boardId);
+
+        return BoardResponse.builder()
+                .userNickname(user.getUserNickname())
+                .userImagePath(user.getUserImagePath())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .category(board.getCategory().toString())
+                .imagePathList(imagePathList)
+                .viewCnt(board.getViewCnt())
+                .likeCnt(board.getLikeCnt())
+                .createAt(board.getCreateAt())
+                .updateAt(board.getUpdateAt())
+                .isLike(isLike)
+                .commentList(commentList)
+                .build();
     }
 }
