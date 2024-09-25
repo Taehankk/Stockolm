@@ -123,6 +123,9 @@ public class UserServiceImpl implements UserService {
 
         User user = signUpRequest.toEntity();
 
+        if(user.getRoleType().name().equals("ANALYST") && user.getUserName()==null)
+            throw new AnalystSignUpException();
+
         user.encryptPassword(encryptHelper);
 
         userRepository.save(user);
