@@ -20,4 +20,10 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
 
         return analystBoardRepository.getLikedAnalystBoard(userId, stockName);
     }
+
+    @Override
+    public void setMainContent(Long userId, Long analystBoardId) {
+
+        analystBoardRepository.choseMainContent(userId, analystBoardId);
+    }
 }
