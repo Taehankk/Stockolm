@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -36,4 +37,20 @@ public class AnalystBoardController {
 
         return ResponseEntity.status(OK).body(likedAnalystBoardList);
     }
+
+    @PatchMapping("/main-content/{analystBoardId}")
+    @Operation(summary = "대표글 설정", description = "대표글 설정 API")
+    public ResponseEntity<?> setMainContent(
+            @AuthPrincipal @Parameter(hidden = true) Long userId,
+            @PathVariable Long analystBoardId) {
+        if (userId == null) {
+            throw new LoginRequiredException();
+        }
+
+        analystBoardService.setMainContent(userId, analystBoardId);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+
 }

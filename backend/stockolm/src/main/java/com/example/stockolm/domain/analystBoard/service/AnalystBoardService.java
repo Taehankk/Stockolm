@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface AnalystBoardService {
     List<AnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName);
+
+    void setMainContent(Long userId, Long analystBoardId);
 }

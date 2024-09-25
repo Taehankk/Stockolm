@@ -7,7 +7,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 
 @Getter
@@ -22,12 +21,13 @@ public class AnalystBoard {
     @JoinColumn(name = "user_id")
     private User user;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
     private String title;
+
+    @Column(name = "main_content", nullable = false, columnDefinition = "TINYINT", length = 1)
     private boolean mainContent;
     private String opinion;
     private int goalStock;
@@ -36,7 +36,7 @@ public class AnalystBoard {
     private String content;
     private LocalDateTime goalDate;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private GoalCategory goalSuccess;
 
     private String filePath;
