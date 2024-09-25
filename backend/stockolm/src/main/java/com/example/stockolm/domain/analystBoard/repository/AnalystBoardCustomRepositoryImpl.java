@@ -6,11 +6,11 @@ import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
 import com.example.stockolm.domain.stock.entity.QStock;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
+
 
 public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepository {
 
@@ -44,6 +44,26 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                 .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
                 .where(builder)
                 .fetch();
+    }
+
+    @Override
+    public void choseMainContent(Long userId, Long analystBoardId) {
+        QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
+
+        queryFactory
+                .update(analystBoard)
+                .set(analystBoard.mainContent, false)
+                .where(analystBoard.mainContent.eq(true)
+                        .and(analystBoard.user.userId.eq(userId)))
+                .execute();
+
+        queryFactory
+                .update(analystBoard)
+                .set(analystBoard.mainContent, true)
+                .where(analystBoard.analystBoardId.eq(analystBoardId)
+                        .and(analystBoard.user.userId.eq(userId)))
+                .execute();
+
     }
 
 }
