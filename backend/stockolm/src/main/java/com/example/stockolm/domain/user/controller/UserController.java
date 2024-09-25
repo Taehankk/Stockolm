@@ -8,6 +8,7 @@ import com.example.stockolm.domain.user.service.UserService;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
 import com.example.stockolm.global.util.jwt.JwtUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -145,8 +146,8 @@ public class UserController {
                 .body(new LoginResponse(userId));
     }
 
-    @PostMapping("/password")
-    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
+    @PatchMapping("/password")
+    @Operation(summary = "비 로그인시 비밀번호 변경", description = "비 로그인시 비밀번호 변경 API")
     public ResponseEntity<?> updatePassword(@RequestBody FindPasswordRequest findPasswordRequest) {
         userService.updatePassword(findPasswordRequest);
 
@@ -188,6 +189,32 @@ public class UserController {
 
         return ResponseEntity.status(NO_CONTENT).build();
 
+    }
+
+    @PatchMapping("/update-password")
+    @Operation(summary = "로그인 시 비밀번호 변경", description = "로그인 시 비밀번호 변경 API")
+    public ResponseEntity<?> updatePassword(@AuthPrincipal @Parameter(hidden = true) Long userId,
+                                            @RequestBody PasswordUpdateRequest passwordUpdateRequest){
+        if (userId == null) {
+            throw new LoginRequiredException();
+        }
+
+        userService.updateNewPassword(userId,passwordUpdateRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @PostMapping("/follow")
+    @Operation(summary = "애널리스트 팔로우", description = "애널리스트 팔로우 API")
+    public ResponseEntity<?> followAnalyst(@AuthPrincipal @Parameter(hidden = true)Long userId,
+                                           @RequestBody FollowRequest followRequest){
+        if(userId == null){
+            throw new LoginRequiredException();
+        }
+
+        userService.followAnalyst(userId,followRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
 }

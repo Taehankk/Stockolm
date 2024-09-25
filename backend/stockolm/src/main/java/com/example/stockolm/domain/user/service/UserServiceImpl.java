@@ -1,5 +1,7 @@
 package com.example.stockolm.domain.user.service;
 
+import com.example.stockolm.domain.follow.entity.Follow;
+import com.example.stockolm.domain.follow.repository.FollowRepository;
 import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.auth.login.LoginException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Transactional
@@ -37,6 +40,8 @@ public class UserServiceImpl implements UserService {
     private final EmailAuthRepository emailAuthRepository;
 
     private final AnalystCodeRepository analystCodeRepository;
+
+    private final FollowRepository followRepository;
 
     private final EncryptHelper encryptHelper;
     private final JwtUtil jwtUtil;
@@ -122,6 +127,9 @@ public class UserServiceImpl implements UserService {
         emailAuthRepository.delete(auth);
 
         User user = signUpRequest.toEntity();
+
+        if (user.getRoleType().name().equals("ANALYST") && user.getUserName() == null)
+            throw new AnalystSignUpException();
 
         user.encryptPassword(encryptHelper);
 
@@ -212,7 +220,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest) {
         boolean nicknameExists = userRepository.existsByUserNickname(nicknameUpdateRequest.getUserNickname());
-        if(nicknameExists)
+        if (nicknameExists)
             throw new NicknameConflictException();
 
         User user = userRepository.findById(userId)
@@ -220,4 +228,39 @@ public class UserServiceImpl implements UserService {
 
         user.updateNickname(nicknameUpdateRequest.getUserNickname());
     }
+
+    @Override
+    public void updateNewPassword(Long userId, PasswordUpdateRequest passwordUpdateRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        // 새로운 비밀번호와 기존 비밀번호 비교 (평문 비밀번호를 암호화된 비밀번호와 비교)
+        if (encryptHelper.isMatch(passwordUpdateRequest.getNewPassword(), user.getUserPassword())) {
+            throw new NewPasswordException();
+        }
+
+        // 새로운 비밀번호 암호화 및 업데이트
+        String newPassword = encryptHelper.encrypt(passwordUpdateRequest.getNewPassword());
+        user.updatePassword(newPassword);
+    }
+
+    @Override
+    public void followAnalyst(Long userId, FollowRequest followRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        User analyst = Optional.ofNullable(userRepository.findByUserName(followRequest.getUserName()))
+                .filter(a -> "ANALYST".equals(a.getRoleType().name()))
+                .orElseThrow(AnalystNotFoundException::new);
+
+        followRepository.findByAnalystAndUser(analyst, user)
+                .ifPresentOrElse(
+                        followRepository::delete,
+                        () -> followRepository.save(Follow.builder()
+                                .analyst(analyst)
+                                .user(user)
+                                .build())
+                );
+    }
+
 }

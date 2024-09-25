@@ -37,4 +37,8 @@ public interface UserService {
     void withdraw(Long userId);
 
     void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest);
+
+    void updateNewPassword(Long userId, PasswordUpdateRequest passwordUpdateRequest);
+
+    void followAnalyst(Long userId, FollowRequest followRequest);
 }
