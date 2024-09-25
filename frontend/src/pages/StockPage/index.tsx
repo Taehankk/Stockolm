@@ -7,7 +7,27 @@ import EnterpriseInfo from "../../components/stock/EnterpriseInfo";
 import BestAnalystList from "../../components/stock/bestAnalyst/BestAnalystList";
 import StockChart from "../../components/stock/StockChart";
 
+import { useEffect } from "react";
+import { RootState, useAppDispatch } from "../../store";
+import { useSelector } from "react-redux";
+import { fetchStockData } from "../../slices/stockSlice";
+
 const StockPage = () => {
+  const dispatch = useAppDispatch();
+  const searchTerm = useSelector((state: RootState) => state.stock.searchTerm);
+  const stockData = useSelector((state: RootState) => state.stock.stockData);
+  const isLoading = useSelector((state: RootState) => state.stock.loading);
+  const error = useSelector((state: RootState) => state.stock.error);
+
+  useEffect(() => {
+    if (searchTerm) {
+      dispatch(fetchStockData(searchTerm));
+    }
+  }, [dispatch, searchTerm]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error fetching stock data</div>;
+
   return (
     <BasicLayout>
       <div className="top">
@@ -21,7 +41,7 @@ const StockPage = () => {
       </div>
       <div className="middle">
         <div className="chart">
-          <StockChart></StockChart>
+          <StockChart stockData={stockData.stockData}></StockChart>
         </div>
         <div>
           <BestAnalystList></BestAnalystList>

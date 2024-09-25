@@ -24,7 +24,6 @@ const LandingPage = () => {
       }
 
       if (currentIndex === 4 && deltaY > 0) {
-        console.log(currentIndex);
         return;
       }
 
@@ -101,7 +100,7 @@ const LandingPage = () => {
           className="headersection"
           ref={(el) => (sectionsRef.current[0] = el!)}
         >
-          <header className="header-content w-[90vw] mx-auto">
+          <header className="header-content w-[90vw] mx-auto border-b border-b-[#B4B4B4] border-opacity-20">
             <Header></Header>
           </header>
         </section>
