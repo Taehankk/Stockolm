@@ -177,5 +177,18 @@ public class UserController {
         return ResponseEntity.status(NO_CONTENT).build();
     }
 
+    @PatchMapping("/nickname")
+    @Operation(summary = "닉네임 변경", description = "닉네임 변경 API")
+    public ResponseEntity<?> updateNickname(@AuthPrincipal @Parameter(hidden = true) Long userId, @RequestBody NicknameUpdateRequest nicknameUpdateRequest) {
+        if (userId == null) {
+            throw new LoginRequiredException();
+        }
+
+        userService.modifyUserNickname(userId,nicknameUpdateRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+
+    }
+
 }
 
