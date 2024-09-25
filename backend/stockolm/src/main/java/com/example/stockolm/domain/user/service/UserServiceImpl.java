@@ -1,5 +1,7 @@
 package com.example.stockolm.domain.user.service;
 
+import com.example.stockolm.domain.follow.entity.Follow;
+import com.example.stockolm.domain.follow.repository.FollowRepository;
 import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.auth.login.LoginException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Transactional
@@ -37,6 +40,8 @@ public class UserServiceImpl implements UserService {
     private final EmailAuthRepository emailAuthRepository;
 
     private final AnalystCodeRepository analystCodeRepository;
+
+    private final FollowRepository followRepository;
 
     private final EncryptHelper encryptHelper;
     private final JwtUtil jwtUtil;
@@ -123,7 +128,7 @@ public class UserServiceImpl implements UserService {
 
         User user = signUpRequest.toEntity();
 
-        if(user.getRoleType().name().equals("ANALYST") && user.getUserName()==null)
+        if (user.getRoleType().name().equals("ANALYST") && user.getUserName() == null)
             throw new AnalystSignUpException();
 
         user.encryptPassword(encryptHelper);
@@ -215,7 +220,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest) {
         boolean nicknameExists = userRepository.existsByUserNickname(nicknameUpdateRequest.getUserNickname());
-        if(nicknameExists)
+        if (nicknameExists)
             throw new NicknameConflictException();
 
         User user = userRepository.findById(userId)
@@ -238,4 +243,24 @@ public class UserServiceImpl implements UserService {
         String newPassword = encryptHelper.encrypt(passwordUpdateRequest.getNewPassword());
         user.updatePassword(newPassword);
     }
+
+    @Override
+    public void followAnalyst(Long userId, FollowRequest followRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        User analyst = Optional.ofNullable(userRepository.findByUserName(followRequest.getUserName()))
+                .filter(a -> "ANALYST".equals(a.getRoleType().name()))
+                .orElseThrow(AnalystNotFoundException::new);
+
+        followRepository.findByAnalystAndUser(analyst, user)
+                .ifPresentOrElse(
+                        followRepository::delete,
+                        () -> followRepository.save(Follow.builder()
+                                .analyst(analyst)
+                                .user(user)
+                                .build())
+                );
+    }
+
 }
