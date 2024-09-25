@@ -1,10 +1,8 @@
 package com.example.stockolm.domain.stock.repository;
 
+import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.follow.entity.QFollow;
-import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
-import com.example.stockolm.domain.stock.dto.response.HotStock;
-import com.example.stockolm.domain.stock.dto.response.RecentStock;
-import com.example.stockolm.domain.stock.dto.response.StockSearchResultResponse;
+import com.example.stockolm.domain.stock.dto.response.*;
 import com.example.stockolm.domain.stock.entity.QFavoriteStock;
 import com.example.stockolm.domain.stock.entity.QStock;
 import com.example.stockolm.domain.stock.entity.Stock;
@@ -62,7 +60,7 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
 
         return queryFactory
                 .select(Projections.constructor(RecentStock.class,
-                        stock.stockCode,stock.stockName))
+                        stock.stockCode, stock.stockName))
                 .from(stock)
                 .innerJoin(userSearchList)
                 .on(stock.stockName.eq(userSearchList.stockSearchContent))
@@ -79,9 +77,23 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
 
         return queryFactory
                 .select(Projections.constructor(StockSearchResultResponse.class,
-                        stock.stockName,stock.stockCode))
+                        stock.stockName, stock.stockCode))
                 .from(stock)
                 .where(stock.stockName.contains(searchKeyword))
+                .fetch();
+    }
+
+    @Override
+    public List<AnalyzedStockResponse> getAnalyzedStockList(Long UserId) {
+        QStock stock = QStock.stock;
+        QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
+
+        return queryFactory
+                .select(Projections.constructor(AnalyzedStockResponse.class,
+                        stock.stockName, stock.stockCode)).distinct()
+                .from(analystBoard)
+                .join(analystBoard.stock, stock)
+                .where(analystBoard.user.userId.eq(UserId))
                 .fetch();
     }
 }
