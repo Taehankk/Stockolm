@@ -30,3 +30,21 @@ export const getStockData = async (mockCode: string) => {
     throw error;
   }
 };
+
+export const getChartData = async (stockName: string) => {
+  // const token = "YOUR_JWT_ACCESS_TOKEN";
+
+  try {
+    const response = await axios.get(`/api/v1/stock/${stockName}`, {
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // },
+    });
+    console.log(stockName);
+    console.log("chart정보 요청 : ", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock data:", error);
+    throw error;
+  }
+};
