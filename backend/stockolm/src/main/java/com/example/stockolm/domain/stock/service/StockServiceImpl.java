@@ -129,5 +129,11 @@ public class StockServiceImpl implements StockService {
         return stockRepository.findBySearchKeyword(searchKeyword);
     }
 
+    @Override
+    public List<AnalyzedStockResponse> getAnalyzedStockList(Long userId) {
+
+        return stockRepository.getAnalyzedStockList(userId);
+    }
+
 
 }
