@@ -25,12 +25,16 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @PostMapping
-    @Operation(summary = "글 생성", description = "자유게시판 글 생성 API")
-    public ResponseEntity<Void> createBoard(@AuthPrincipal @Parameter(hidden = true) Long userId, @RequestBody CreateBoardRequest createBoardRequest) {
+    public void validateLogin(Long userId) {
         if (userId == null) {
             throw new LoginRequiredException();
         }
+    }
+
+    @PostMapping
+    @Operation(summary = "글 생성", description = "자유게시판 글 생성 API")
+    public ResponseEntity<Void> createBoard(@AuthPrincipal @Parameter(hidden = true) Long userId, @RequestBody CreateBoardRequest createBoardRequest) {
+        validateLogin(userId);
         boardService.createBoard(userId, createBoardRequest);
         return ResponseEntity.status(CREATED).build();
     }
@@ -38,9 +42,7 @@ public class BoardController {
     @PutMapping("/{boardId}")
     @Operation(summary = "글 수정", description = "자유게시판 글 수정 API")
     public ResponseEntity<Void> modifyBoard(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId, @RequestBody ModifyBoardRequest modifyBoardRequest) {
-        if (userId == null) {
-            throw new LoginRequiredException();
-        }
+        validateLogin(userId);
         boardService.modifyBoard(boardId, userId, modifyBoardRequest);
         return ResponseEntity.status(NO_CONTENT).build();
     }
@@ -48,9 +50,7 @@ public class BoardController {
     @DeleteMapping("/{boardId}")
     @Operation(summary = "글 삭제", description = "자유게시판 글 삭제 API")
     public ResponseEntity<Void> removeBoard(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId) {
-        if (userId == null) {
-            throw new LoginRequiredException();
-        }
+        validateLogin(userId);
         boardService.removeBoard(boardId, userId);
         return ResponseEntity.status(NO_CONTENT).build();
     }
@@ -58,7 +58,16 @@ public class BoardController {
     @GetMapping("/{boardId}")
     @Operation(summary = "글 상세 조회", description = "자유게시판 글 상세 조회 API")
     public ResponseEntity<BoardResponse> retrieveBoard(@PathVariable Long boardId) {
+        // 로그인 없이 글 조회 가능
         BoardResponse boardResponse = boardService.retrieveBoard(boardId);
         return ResponseEntity.status(OK).body(boardResponse);
+    }
+
+    @PostMapping("/like/{boardId}")
+    @Operation(summary = "글 좋아요", description = "자유게시판 글 좋아요 API")
+    public ResponseEntity<Void> likeBoard(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId) {
+        validateLogin(userId);
+        boardService.likeBoard(boardId, userId);
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 }

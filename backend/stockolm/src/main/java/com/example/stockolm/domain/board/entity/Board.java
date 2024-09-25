@@ -46,9 +46,18 @@ public class Board {
         this.updateAt = LocalDateTime.now();
     }
 
-    // 조회수 증가
     public void incrementViewCnt() {
         this.viewCnt++;
+    }
+
+    public void incrementLikeCnt() {
+        this.likeCnt++;
+    }
+
+    public void decrementLikeCnt() {
+        if (likeCnt > 0) {
+            this.likeCnt--;
+        }
     }
 
     @Builder
