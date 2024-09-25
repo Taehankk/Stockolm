@@ -145,8 +145,8 @@ public class UserController {
                 .body(new LoginResponse(userId));
     }
 
-    @PostMapping("/password")
-    @Operation(summary = "비밀번호 변경", description = "비밀번호 변경 API")
+    @PatchMapping("/password")
+    @Operation(summary = "비 로그인시 비밀번호 변경", description = "비 로그인시 비밀번호 변경 API")
     public ResponseEntity<?> updatePassword(@RequestBody FindPasswordRequest findPasswordRequest) {
         userService.updatePassword(findPasswordRequest);
 
@@ -188,6 +188,19 @@ public class UserController {
 
         return ResponseEntity.status(NO_CONTENT).build();
 
+    }
+
+    @PatchMapping("/update-password")
+    @Operation(summary = "로그인 시 비밀번호 변경", description = "로그인 시 비밀번호 변경 API")
+    public ResponseEntity<?> updatePassword(@AuthPrincipal @Parameter(hidden = true) Long userId,
+                                            @RequestBody PasswordUpdateRequest passwordUpdateRequest){
+        if (userId == null) {
+            throw new LoginRequiredException();
+        }
+
+        userService.updateNewPassword(userId,passwordUpdateRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
 }

@@ -220,4 +220,19 @@ public class UserServiceImpl implements UserService {
 
         user.updateNickname(nicknameUpdateRequest.getUserNickname());
     }
+
+    @Override
+    public void updateNewPassword(Long userId, PasswordUpdateRequest passwordUpdateRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        // 새로운 비밀번호와 기존 비밀번호 비교 (평문 비밀번호를 암호화된 비밀번호와 비교)
+        if (encryptHelper.isMatch(passwordUpdateRequest.getNewPassword(), user.getUserPassword())) {
+            throw new NewPasswordException();
+        }
+
+        // 새로운 비밀번호 암호화 및 업데이트
+        String newPassword = encryptHelper.encrypt(passwordUpdateRequest.getNewPassword());
+        user.updatePassword(newPassword);
+    }
 }
