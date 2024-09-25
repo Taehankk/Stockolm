@@ -39,4 +39,6 @@ public interface UserService {
     void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest);
 
     void updateNewPassword(Long userId, PasswordUpdateRequest passwordUpdateRequest);
+
+    void followAnalyst(Long userId, FollowRequest followRequest);
 }
