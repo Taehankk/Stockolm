@@ -8,6 +8,7 @@ import com.example.stockolm.domain.user.service.UserService;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
 import com.example.stockolm.global.util.jwt.JwtUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -199,6 +200,19 @@ public class UserController {
         }
 
         userService.updateNewPassword(userId,passwordUpdateRequest);
+
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @PostMapping("/follow")
+    @Operation(summary = "애널리스트 팔로우", description = "애널리스트 팔로우 API")
+    public ResponseEntity<?> followAnalyst(@AuthPrincipal @Parameter(hidden = true)Long userId,
+                                           @RequestBody FollowRequest followRequest){
+        if(userId == null){
+            throw new LoginRequiredException();
+        }
+
+        userService.followAnalyst(userId,followRequest);
 
         return ResponseEntity.status(NO_CONTENT).build();
     }
