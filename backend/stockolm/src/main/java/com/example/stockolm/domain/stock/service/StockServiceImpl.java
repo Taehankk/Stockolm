@@ -89,13 +89,15 @@ public class StockServiceImpl implements StockService {
             throw new StockNotFoundException();
         }
 
-
-        favoriteStockRepository.save(
-                FavoriteStock.builder()
-                        .user(user)
-                        .stock(stock)
-                        .build()
-        );
+        favoriteStockRepository.findByStockAndUser(stock, user)
+                .ifPresentOrElse(
+                        favoriteStockRepository::delete,
+                        () -> favoriteStockRepository.save(
+                                FavoriteStock.builder()
+                                        .user(user)
+                                        .stock(stock)
+                                        .build())
+                );
     }
 
     @Override
