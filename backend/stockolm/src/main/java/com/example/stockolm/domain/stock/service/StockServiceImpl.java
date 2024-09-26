@@ -14,6 +14,7 @@ import com.example.stockolm.domain.user.repository.UserSearchListRepository;
 import com.example.stockolm.global.exception.custom.StockNotFoundException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,15 +90,18 @@ public class StockServiceImpl implements StockService {
             throw new StockNotFoundException();
         }
 
-
-        favoriteStockRepository.save(
-                FavoriteStock.builder()
-                        .user(user)
-                        .stock(stock)
-                        .build()
-        );
+        favoriteStockRepository.findByStockAndUser(stock, user)
+                .ifPresentOrElse(
+                        favoriteStockRepository::delete,
+                        () -> favoriteStockRepository.save(
+                                FavoriteStock.builder()
+                                        .user(user)
+                                        .stock(stock)
+                                        .build())
+                );
     }
 
+    @Cacheable(value = "stockDetailCache", key = "#stockName")
     @Override
     public StockDetailResponse getStockDetail(Long userId, String stockName) {
         Stock stock = stockRepository.findByStockName(stockName);
