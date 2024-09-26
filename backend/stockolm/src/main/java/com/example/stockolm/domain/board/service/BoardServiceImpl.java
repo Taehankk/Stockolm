@@ -1,12 +1,16 @@
 package com.example.stockolm.domain.board.service;
 
 import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
+import com.example.stockolm.domain.board.dto.request.CreateCommentRequest;
 import com.example.stockolm.domain.board.dto.request.ModifyBoardRequest;
 import com.example.stockolm.domain.board.dto.response.BoardResponse;
 import com.example.stockolm.domain.board.entity.Board;
+import com.example.stockolm.domain.board.entity.BoardLike;
 import com.example.stockolm.domain.board.entity.Category;
 import com.example.stockolm.domain.board.entity.Comment;
+import com.example.stockolm.domain.board.repository.BoardLikeRepository;
 import com.example.stockolm.domain.board.repository.BoardRepository;
+import com.example.stockolm.domain.board.repository.CommentRepository;
 import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.UserRepository;
 import com.example.stockolm.global.exception.custom.BoardNotFoundException;
@@ -25,6 +29,8 @@ public class BoardServiceImpl implements BoardService {
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final BoardLikeRepository boardLikeRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public void createBoard(Long userId, CreateBoardRequest createBoardRequest) {
@@ -99,5 +105,44 @@ public class BoardServiceImpl implements BoardService {
                 .isLike(isLike)
                 .commentList(commentList)
                 .build();
+    }
+
+    @Override
+    public void likeBoard(Long boardId, Long userId) {
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        boardLikeRepository.findByBoardAndUser(board, user)
+                .ifPresentOrElse(
+                        // 이미 좋아요 되어있는 경우, 좋아요 취소
+                        boardLike -> {
+                            boardLikeRepository.delete(boardLike);
+                            board.decrementLikeCnt();
+                        },
+                        // 좋아요 되어있지 않은 경우, 좋아요 추가
+                        () -> {
+                            boardLikeRepository.save(
+                                    BoardLike.builder()
+                                            .board(board)
+                                            .user(user)
+                                            .build()
+                            );
+                            board.incrementLikeCnt();
+                        }
+                );
+    }
+
+    @Override
+    public void createComment(Long boardId, Long userId, CreateCommentRequest createCommentRequest) {
+        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        Comment comment = Comment.builder()
+                .board(board)
+                .user(user)
+                .content(createCommentRequest.getContent())
+                .build();
+
+        commentRepository.save(comment);
     }
 }
