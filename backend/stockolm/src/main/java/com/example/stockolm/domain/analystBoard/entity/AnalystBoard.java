@@ -4,6 +4,7 @@ import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -55,4 +56,32 @@ public class AnalystBoard {
         this.updateAt = LocalDateTime.now();
     }
 
+    public void incrementViewCnt() {
+        this.viewCnt++;
+    }
+
+    public void incrementLikeCnt() {
+        this.likeCnt++;
+    }
+
+    public void decrementLikeCnt() {
+        if (likeCnt > 0) {
+            this.likeCnt--;
+        }
+    }
+
+    @Builder
+    public AnalystBoard(User user, Stock stock, String title, String opinion, int goalStock, int currentStock, Long marketCapitalization, String content, LocalDateTime goalDate, GoalCategory goalSuccess, String filePath) {
+        this.user = user;
+        this.stock = stock;
+        this.title = title;
+        this.opinion = opinion;
+        this.goalStock = goalStock;
+        this.currentStock = currentStock;
+        this.marketCapitalization = marketCapitalization;
+        this.content = content;
+        this.goalDate = goalDate;
+        this.goalSuccess = goalSuccess;
+        this.filePath = filePath;
+    }
 }
