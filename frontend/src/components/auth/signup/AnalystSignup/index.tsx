@@ -8,7 +8,7 @@ import { validateName } from "../../../../utils/validation";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
-import { SignUpContext } from "../../SignUpContext";
+import { AuthContext } from "../../AuthContext";
 
 const AnalystSignUp = () => {
   const {
@@ -20,7 +20,7 @@ const AnalystSignUp = () => {
     setNameInput,
     setCodeValid,
     setNameValid,
-  } = useContext(SignUpContext);
+  } = useContext(AuthContext);
 
   const handleCodeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
