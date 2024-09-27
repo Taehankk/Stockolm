@@ -26,13 +26,13 @@ public class JwtUtil {
     @Value("${jwt.refresh-token.expiretime}")
     private long refreshTokenExpireTime;
 
-    public String createAccessToken(Long userId) {
-        return create(userId, "access-token", accessTokenExpireTime);
+    public String createAccessToken(Long userId , String roleType) {
+        return create(userId,roleType, "access-token", accessTokenExpireTime);
     }
 
     //	AccessToken에 비해 유효기간을 길게 설정.
-    public String createRefreshToken(Long userId) {
-        return create(userId, "refresh-token", refreshTokenExpireTime);
+    public String createRefreshToken(Long userId, String roleType) {
+        return create(userId, roleType, "refresh-token", refreshTokenExpireTime);
     }
 
     //	Token 발급
@@ -41,7 +41,7 @@ public class JwtUtil {
 //		subject : payload에 sub의 value로 들어갈 subject값
 //		expire : 토큰 유효기간 설정을 위한 값
 //		jwt 토큰의 구성 : header + payload + signature
-    private String create(Long userId, String subject, long expireTime) {
+    private String create(Long userId, String roleType, String subject, long expireTime) {
 //		Payload 설정 : 생성일 (IssuedAt), 유효기간 (Expiration),
 //		토큰 제목 (Subject), 데이터 (Claim) 등 정보 세팅.
         Claims claims = Jwts.claims()
@@ -50,8 +50,10 @@ public class JwtUtil {
 //				만료일 설정 (유효기간)
                 .setExpiration(new Date(System.currentTimeMillis() + expireTime));
 
+
 //		저장할 data의 key, value
         claims.put("userId", userId);
+        claims.put("roleType", roleType);
 
         String jwt = Jwts.builder()
 //			Header 설정 : 토큰의 타입, 해쉬 알고리즘 정보 세팅.

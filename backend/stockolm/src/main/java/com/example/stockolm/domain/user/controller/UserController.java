@@ -4,6 +4,7 @@ import com.example.stockolm.domain.user.dto.request.*;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.dto.response.UserInfoResponse;
+import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.service.UserService;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
@@ -139,7 +140,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
 
-        String newAccessToken = jwtUtil.createAccessToken(userId);
+        String roleType = userService.getRoleType(userId);
+
+        String newAccessToken = jwtUtil.createAccessToken(userId,roleType);
 
         return ResponseEntity.status(OK)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken)
