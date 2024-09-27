@@ -3,7 +3,9 @@ package com.example.stockolm.domain.analystBoard.service;
 import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRequest;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
+import com.example.stockolm.domain.analystBoard.entity.AnalystBoardLike;
 import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
+import com.example.stockolm.domain.analystBoard.repository.AnalystBoardLikeRepository;
 import com.example.stockolm.domain.analystBoard.repository.AnalystBoardRepository;
 import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.stock.repository.StockRepository;
@@ -26,6 +28,7 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
     private final AnalystBoardRepository analystBoardRepository;
     private final UserRepository userRepository;
     private final StockRepository stockRepository;
+    private final AnalystBoardLikeRepository analystBoardLikeRepository;
 
     @Override
     public List<AnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName) {
@@ -94,5 +97,30 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
                 .updateAt(analystBoard.getUpdateAt())
                 .isLike(isLike)
                 .build();
+    }
+
+    @Override
+    public void likeAnalystBoard(Long analystBoardId, Long userId) {
+        AnalystBoard analystBoard = analystBoardRepository.findById(analystBoardId).orElseThrow(BoardNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        analystBoardLikeRepository.findByAnalystBoardAndUser(analystBoard, user)
+                .ifPresentOrElse(
+                        // 이미 좋아요 되어있는 경우, 좋아요 취소
+                        analystBoardLike -> {
+                            analystBoardLikeRepository.delete(analystBoardLike);
+                            analystBoard.decrementLikeCnt();
+                        },
+                        // 좋아요 되어있지 않은 경우, 좋아요 추가
+                        () -> {
+                            analystBoardLikeRepository.save(
+                                    AnalystBoardLike.builder()
+                                            .analystBoard(analystBoard)
+                                            .user(user)
+                                            .build()
+                            );
+                            analystBoard.incrementLikeCnt();
+                        }
+                );
     }
 }
