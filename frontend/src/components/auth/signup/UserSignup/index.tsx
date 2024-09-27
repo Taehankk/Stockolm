@@ -2,34 +2,26 @@ import { useContext } from "react";
 
 import { SignUpContext } from "../../SignUpContext";
 import Input from "../../../../components/elements/Input";
-import Button from "../../../../components/elements/Button";
 
 import {
   validateNickname,
-  validateEmail,
   validatePassword,
   validateMatchPassword,
 } from "../../../../utils/validation";
 
-import { sendEmailAPI, checkValidateAPI } from "../../../../api/authAPI";
+import { checkNicknameDuplicateAPI } from "../../../../api/authAPI";
+
+import EmailVerification from "../../common/EmailVerification";
 
 const UserSignUp = () => {
   const {
     nicknameInput,
     setNicknameInput,
-    emailInput,
-    setEmailInput,
-    validateNumInput,
-    setValidateNumInput,
     passwordInput,
     setPasswordInput,
     pwCheckInput,
     setPwCheckInput,
-    emailAuthId,
-    setEmailAuthId,
     setNicknameValid,
-    setEmailValid,
-    setValidateNumValid,
     setPasswordValid,
     setPwCheckValid,
   } = useContext(SignUpContext);
@@ -39,18 +31,6 @@ const UserSignUp = () => {
   ) => {
     const value = e.target.value;
     setNicknameInput(value);
-  };
-
-  const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmailInput(value);
-  };
-
-  const handleValidateNumInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    setValidateNumInput(value);
   };
 
   const handlePasswordInputChange = (
@@ -65,24 +45,19 @@ const UserSignUp = () => {
     setPwCheckInput(value);
   };
 
-  const sendEmail = async () => {
-    const authID = await sendEmailAPI(emailInput);
-    setEmailAuthId(authID);
-  };
-
-  const checkValidateNumber = async () => {
-    if (!emailAuthId) {
-      alert("이메일 인증이 필요합니다.");
-      return;
+  const checkNicknameValidation = async (nickname: string) => {
+    const formatError = validateNickname(nickname);
+    if (formatError) {
+      return formatError; // 형식 검증 실패 시 바로 리턴
     }
 
-    const valid = await checkValidateAPI(emailAuthId, validateNumInput);
-
-    if (valid) {
-      setValidateNumValid(true);
-    } else {
-      setValidateNumValid(false);
+    const duplicateError: string | undefined =
+      await checkNicknameDuplicateAPI(nickname);
+    if (duplicateError) {
+      return duplicateError; // 중복 체크 실패 시 리턴
     }
+
+    return undefined;
   };
 
   return (
@@ -93,45 +68,13 @@ const UserSignUp = () => {
         <Input
           onChange={handleNicknameInputChange}
           value={nicknameInput}
-          validate={validateNickname}
+          validate={checkNicknameValidation}
           setValidateState={setNicknameValid}
         />
       </div>
 
       {/* 이메일 input */}
-      <div className="flex-col contents-between">
-        <div className="flex mb-2 items-center justify-between">
-          <span className="">이메일</span>
-          <Input
-            onChange={handleEmailInputChange}
-            value={emailInput}
-            validate={validateEmail}
-            setValidateState={setEmailValid}
-          />
-        </div>
-        <div className="flex justify-end">
-          <Button
-            onClick={sendEmail}
-            children="이메일 인증"
-            className="mb-2 text-[0.85rem]"
-          />
-        </div>
-        <div className="flex items-center justify-end mb-2">
-          <Input
-            size="small"
-            placeholder="인증 코드 입력"
-            onChange={handleValidateNumInputChange}
-            value={validateNumInput}
-            className="mr-8 w-32 text-sm"
-          />
-          <Button
-            size="small"
-            onClick={checkValidateNumber}
-            children="확인"
-            className="text-[0.8rem] w-20"
-          />
-        </div>
-      </div>
+      <EmailVerification />
 
       {/* 비밀번호 input */}
       <div className="flex min-h-[3.4rem] items-start justify-between">
