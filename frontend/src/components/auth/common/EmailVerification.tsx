@@ -6,14 +6,14 @@ import Input from "../../../components/elements/Input";
 import { validateEmail } from "../../../utils/validation";
 
 import { sendEmailAPI, checkValidateAPI } from "../../../api/authAPI";
-import { SignUpContext } from "../../../components/auth/SignUpContext";
+import { AuthContext } from "../AuthContext";
 
 const EmailVerification = () => {
   const [emailInput, setEmailInput] = useState("");
   const [validateNumInput, setValidateNumInput] = useState("");
 
   const { emailAuthId, setEmailAuthId, setValidateNumValid } =
-    useContext(SignUpContext);
+    useContext(AuthContext);
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -48,7 +48,7 @@ const EmailVerification = () => {
   };
 
   return (
-    <div className="flex-col justify-between">
+    <div className="flex-col justify-between w-full">
       <div className="flex mb-2 items-center justify-between">
         <span className="">이메일</span>
         <Input

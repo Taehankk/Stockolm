@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { SignUpContext } from "../../SignUpContext";
+import { AuthContext } from "../../AuthContext";
 import Input from "../../../../components/elements/Input";
 
 import {
@@ -24,7 +24,7 @@ const UserSignUp = () => {
     setNicknameValid,
     setPasswordValid,
     setPwCheckValid,
-  } = useContext(SignUpContext);
+  } = useContext(AuthContext);
 
   const handleNicknameInputChange = (
     e: React.ChangeEvent<HTMLInputElement>

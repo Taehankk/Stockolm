@@ -5,7 +5,7 @@ import Button from "../../../components/elements/Button";
 import { signUpAPI } from "../../../api/authAPI";
 import UserSignUp from "../../../components/auth/signup/UserSignup";
 import AnalystSignUp from "../../../components/auth/signup/AnalystSignup";
-import { SignUpContext } from "../../../components/auth/SignUpContext";
+import { AuthContext } from "../../../components/auth/AuthContext";
 
 interface Props {
   handleImgLocation: (value: number) => void;
@@ -26,7 +26,7 @@ const SignUp = ({ handleImgLocation }: Props) => {
     isAnalyst,
     isCodeValid,
     isNameValid,
-  } = useContext(SignUpContext);
+  } = useContext(AuthContext);
 
   const signUp = async () => {
     if (!isNicknameValid) {
@@ -72,7 +72,7 @@ const SignUp = ({ handleImgLocation }: Props) => {
     <div className="flex flex-col items-center w-full">
       <div className="mb-10 text-[2.4rem]">회원가입</div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[24vw]">
         <UserSignUp />
         <AnalystSignUp />
       </div>

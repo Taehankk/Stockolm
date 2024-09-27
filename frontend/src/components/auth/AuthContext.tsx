@@ -37,7 +37,7 @@ interface Context {
   setNameValid: (value: boolean) => void;
 }
 
-const SignUpContext = createContext<Context>({
+const AuthContext = createContext<Context>({
   nicknameInput: "",
   setNicknameInput: () => {},
   emailInput: "",
@@ -78,7 +78,7 @@ interface Props {
   children: ReactNode;
 }
 
-const SignUpContextProvider = ({ children }: Props) => {
+const AuthContextProvider = ({ children }: Props) => {
   const [nicknameInput, setNicknameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [validateNumInput, setValidateNumInput] = useState("");
@@ -99,7 +99,7 @@ const SignUpContextProvider = ({ children }: Props) => {
   const [isNameValid, setNameValid] = useState(false);
 
   return (
-    <SignUpContext.Provider
+    <AuthContext.Provider
       value={{
         nicknameInput,
         setNicknameInput,
@@ -138,8 +138,8 @@ const SignUpContextProvider = ({ children }: Props) => {
       }}
     >
       {children}
-    </SignUpContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
-export { SignUpContext, SignUpContextProvider };
+export { AuthContext, AuthContextProvider };
