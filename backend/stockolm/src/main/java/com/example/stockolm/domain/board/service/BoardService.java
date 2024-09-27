@@ -12,7 +12,7 @@ public interface BoardService {
 
     void removeBoard(Long boardId, Long userId);
 
-    BoardResponse retrieveBoard(Long boardId);
+    BoardResponse retrieveBoard(Long boardId, Long userId);
 
     void likeBoard(Long boardId, Long userId);
 

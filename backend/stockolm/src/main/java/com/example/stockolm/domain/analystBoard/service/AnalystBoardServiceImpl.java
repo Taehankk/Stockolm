@@ -9,6 +9,7 @@ import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.stock.repository.StockRepository;
 import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.UserRepository;
+import com.example.stockolm.global.exception.custom.BoardNotFoundException;
 import com.example.stockolm.global.exception.custom.StockNotFoundException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +66,33 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
                 .build();
 
         analystBoardRepository.save(analystBoard);
+    }
+
+    @Override
+    public AnalystBoardResponse retrieveAnalystBoard(Long analystBoardId, Long userId) {
+        AnalystBoard analystBoard = analystBoardRepository.findById(analystBoardId).orElseThrow(BoardNotFoundException::new);
+
+        boolean isLike = analystBoardRepository.isLike(analystBoardId, userId);
+
+        analystBoard.incrementViewCnt(); // 조회수 증가
+
+        return AnalystBoardResponse.builder()
+                .stockName(analystBoard.getStock().getStockName())
+                .title(analystBoard.getTitle())
+                .userName(analystBoard.getUser().getUserName())
+                .userNickName(analystBoard.getUser().getUserNickname())
+                .userImagePath(analystBoard.getUser().getUserImagePath())
+                .opinion(analystBoard.getOpinion())
+                .goalStock(analystBoard.getGoalStock())
+                .currentStock(analystBoard.getCurrentStock())
+                .marketCapitalization(analystBoard.getMarketCapitalization())
+                .content(analystBoard.getContent())
+                .filePath(analystBoard.getFilePath())
+                .likeCnt(analystBoard.getLikeCnt())
+                .viewCnt(analystBoard.getViewCnt())
+                .createAt(analystBoard.getCreateAt())
+                .updateAt(analystBoard.getUpdateAt())
+                .isLike(isLike)
+                .build();
     }
 }
