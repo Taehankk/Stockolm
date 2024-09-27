@@ -141,9 +141,11 @@ public class UserServiceImpl implements UserService {
     public LoginResponse login(LoginRequest loginRequest) {
         Long userId = authenticateUser(loginRequest);
 
-        String accessToken = jwtUtil.createAccessToken(userId);
+        String roleType = getRoleType(userId);
 
-        String refreshToken = jwtUtil.createRefreshToken(userId);
+        String accessToken = jwtUtil.createAccessToken(userId,roleType);
+
+        String refreshToken = jwtUtil.createRefreshToken(userId,roleType);
 
         saveRefreshToken(userId, refreshToken);
 
@@ -261,6 +263,14 @@ public class UserServiceImpl implements UserService {
                                 .user(user)
                                 .build())
                 );
+    }
+
+    @Override
+    public String getRoleType(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        return user.getRoleType().name();
     }
 
 }

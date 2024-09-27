@@ -1,9 +1,6 @@
 package com.example.stockolm.domain.stock.repository;
 
-import com.example.stockolm.domain.stock.dto.response.FollowStockResponse;
-import com.example.stockolm.domain.stock.dto.response.HotStock;
-import com.example.stockolm.domain.stock.dto.response.RecentStock;
-import com.example.stockolm.domain.stock.dto.response.StockSearchResultResponse;
+import com.example.stockolm.domain.stock.dto.response.*;
 
 import java.util.List;
 
@@ -15,4 +12,6 @@ public interface StockCustomRepository {
     List<RecentStock> getRecentStockList(Long userId);
 
     List<StockSearchResultResponse> findBySearchKeyword(String searchKeyword);
+
+    List<AnalyzedStockResponse> getAnalyzedStockList(Long UserId);
 }

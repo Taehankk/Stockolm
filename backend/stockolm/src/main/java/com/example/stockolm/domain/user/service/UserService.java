@@ -41,4 +41,6 @@ public interface UserService {
     void updateNewPassword(Long userId, PasswordUpdateRequest passwordUpdateRequest);
 
     void followAnalyst(Long userId, FollowRequest followRequest);
+
+    String getRoleType(Long userId);
 }
