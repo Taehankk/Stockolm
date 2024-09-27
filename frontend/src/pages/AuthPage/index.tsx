@@ -44,14 +44,14 @@ const AuthPage = () => {
           }`}
         >
           {imgLocation === 0 && <Login handleImgLocation={handleImgLocation} />}
-          {imgLocation === 1 && (
-            <SignUpContextProvider>
+          <SignUpContextProvider>
+            {imgLocation === 1 && (
               <SignUp handleImgLocation={handleImgLocation} />
-            </SignUpContextProvider>
-          )}
-          {imgLocation === 2 && (
-            <ChangePassword handleImgLocation={handleImgLocation} />
-          )}
+            )}
+            {imgLocation === 2 && (
+              <ChangePassword handleImgLocation={handleImgLocation} />
+            )}
+          </SignUpContextProvider>
         </div>
       </div>
     </div>

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
-import axios from "axios";
 import axiosInstance from "../../../api/axiosInstance";
 
 interface Props {
@@ -38,8 +37,38 @@ const Login = ({ handleImgLocation }: Props) => {
         userPassword: passwordInput,
       })
       .then((res) => {
-        localStorage.setItem("access_token", res.headers.authorization); // 만료시간 1시간, refresh는 43200분(720시간, 30일)
+        const accessToken = res.headers.authorization.replace("Bearer ", "");
+        sessionStorage.setItem("access_token", accessToken); // 만료시간 1시간, refresh는 43200분(720시간, 30일)
         // cookies.set("refresh_token");
+        const token = sessionStorage.getItem("access_token");
+
+        const payload = token?.split(".")[1];
+
+        if (payload) {
+          const base64 = payload?.replace(/-/g, "+").replace(/_/g, "/");
+
+          try {
+            const decodedJWT = JSON.parse(
+              decodeURIComponent(
+                window
+                  .atob(base64)
+                  .split("")
+                  .map(function (c) {
+                    return (
+                      "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                    );
+                  })
+                  .join("")
+              )
+            );
+
+            sessionStorage.setItem("role", decodedJWT.roleType);
+            console.log(decodedJWT.roleType);
+          } catch (e) {
+            console.log("JWT 디코딩 오류 발생 : " + e);
+          }
+        }
+
         navigate("/");
       })
       .catch((e) => {
@@ -70,7 +99,7 @@ const Login = ({ handleImgLocation }: Props) => {
             onClick={() => handleImgLocation(2)}
             className="flex justify-end text-xs opacity-50"
           >
-            비밀번호 변경
+            비밀번호 찾기
           </span>
         </div>
       </div>
