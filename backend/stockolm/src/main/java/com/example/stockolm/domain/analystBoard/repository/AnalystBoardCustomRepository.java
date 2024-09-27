@@ -9,4 +9,5 @@ public interface AnalystBoardCustomRepository {
 
     void choseMainContent(Long userId, Long analystBoardId);
 
+    boolean isLike(Long analystBoardId, Long userId);
 }

@@ -58,9 +58,9 @@ public class BoardController {
 
     @GetMapping("/{boardId}")
     @Operation(summary = "글 상세 조회", description = "자유게시판 글 상세 조회 API")
-    public ResponseEntity<BoardResponse> retrieveBoard(@PathVariable Long boardId) {
+    public ResponseEntity<BoardResponse> retrieveBoard(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId) {
         // 로그인 없이 글 조회 가능
-        BoardResponse boardResponse = boardService.retrieveBoard(boardId);
+        BoardResponse boardResponse = boardService.retrieveBoard(boardId, userId);
         return ResponseEntity.status(OK).body(boardResponse);
     }
 
