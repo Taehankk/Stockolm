@@ -3,6 +3,7 @@ package com.example.stockolm.domain.analystBoard.entity;
 import com.example.stockolm.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,9 @@ public class AnalystBoardLike {
     @JoinColumn(name = "analyst_board_id")
     private AnalystBoard analystBoard;
 
+    @Builder
+    public AnalystBoardLike(User user, AnalystBoard analystBoard) {
+        this.user = user;
+        this.analystBoard = analystBoard;
+    }
 }
