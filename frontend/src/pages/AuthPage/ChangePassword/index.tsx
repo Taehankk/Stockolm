@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
@@ -9,6 +9,9 @@ import {
   validatePassword,
 } from "../../../utils/validation";
 
+import { sendEmailAPI, checkValidateAPI } from "../../../api/authAPI";
+import { SignUpContext } from "../../../components/auth/SignUpContext";
+
 interface Props {
   handleImgLocation: (value: number) => void;
 }
@@ -18,6 +21,9 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
   const [validateNumInput, setValidateNumInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [pwCheckInput, setPwCheckInput] = useState("");
+
+  const { emailAuthId, setEmailAuthId, setValidateNumValid } =
+    useContext(SignUpContext);
 
   // useEffect();
 
@@ -33,8 +39,24 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
     setValidateNumInput(value);
   };
 
-  const sendValidateNumber = () => {
-    console.log(Math.random());
+  const sendEmail = async () => {
+    const authID = await sendEmailAPI(emailInput);
+    setEmailAuthId(authID);
+  };
+
+  const checkValidateNumber = async () => {
+    if (!emailAuthId) {
+      alert("이메일 인증이 필요합니다.");
+      return;
+    }
+
+    const valid = await checkValidateAPI(emailAuthId, validateNumInput);
+
+    if (valid) {
+      setValidateNumValid(true);
+    } else {
+      setValidateNumValid(false);
+    }
   };
 
   const handlePasswordInputChange = (
@@ -71,7 +93,7 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
         </div>
         <div className="flex justify-end">
           <Button
-            onClick={sendValidateNumber}
+            onClick={sendEmail}
             children="이메일 인증"
             className="mb-2 text-[0.85rem]"
           />
@@ -84,7 +106,12 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
             value={validateNumInput}
             className="mr-8 w-32 text-sm"
           />
-          <Button size="small" children="확인" className="text-[0.8rem] w-20" />
+          <Button
+            size="small"
+            onClick={checkValidateNumber}
+            children="확인"
+            className="text-[0.8rem] w-20"
+          />
         </div>
         {/* 새 비밀번호 input */}
         <div className="flex mb-2 items-center justify-between">
