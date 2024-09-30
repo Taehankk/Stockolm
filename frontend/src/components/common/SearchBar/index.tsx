@@ -84,9 +84,9 @@ const SearchBar = () => {
           searchResults={searchResults}
           popularKeywords={hotStockList}
           recentKeywords={recentStockList}
-          onKeywordClick={(stockCode: string, stockName: string) => {
-            dispatch(setSearchCode(stockCode));
+          onKeywordClick={(stockName: string, stockCode: string) => {
             dispatch(setSearchTerm(stockName));
+            dispatch(setSearchCode(stockCode));
             navigate(`/stock`);
             setIsFocused(false);
             setValue("");
