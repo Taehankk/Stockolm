@@ -12,7 +12,9 @@ interface InputProps {
   onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   type?: string;
   disabled?: boolean;
-  validate?: (value: string) => string | undefined;
+  validate?: (
+    value: string
+  ) => Promise<string | undefined> | string | undefined;
   setValidateState?: (value: boolean) => void | undefined;
 }
 
@@ -33,11 +35,11 @@ const Input = ({
 }: InputProps) => {
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) onChange(e);
 
     if (validate) {
-      const validationResult = validate(e.target.value);
+      const validationResult = await validate(e.target.value);
       setError(validationResult);
 
       if (setValidateState) {
