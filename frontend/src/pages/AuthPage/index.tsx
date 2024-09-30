@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Cookies from "universal-cookie";
 
 import Login from "./Login";
 import SignUp from "./SignUp";
@@ -7,7 +6,7 @@ import ChangePassword from "./ChangePassword";
 
 // import StockOlm from "../../assets/STOCKOLM.jpg";
 import { useLocation } from "react-router-dom";
-import { SignUpContextProvider } from "../../components/auth/SignUpContext";
+import { AuthContextProvider } from "../../components/auth/AuthContext";
 
 const AuthPage = () => {
   const location = useLocation();
@@ -44,14 +43,14 @@ const AuthPage = () => {
           }`}
         >
           {imgLocation === 0 && <Login handleImgLocation={handleImgLocation} />}
-          {imgLocation === 1 && (
-            <SignUpContextProvider>
+          <AuthContextProvider>
+            {imgLocation === 1 && (
               <SignUp handleImgLocation={handleImgLocation} />
-            </SignUpContextProvider>
-          )}
-          {imgLocation === 2 && (
-            <ChangePassword handleImgLocation={handleImgLocation} />
-          )}
+            )}
+            {imgLocation === 2 && (
+              <ChangePassword handleImgLocation={handleImgLocation} />
+            )}
+          </AuthContextProvider>
         </div>
       </div>
     </div>
