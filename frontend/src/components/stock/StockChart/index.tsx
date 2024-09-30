@@ -1,42 +1,76 @@
+import { ApexOptions } from "apexcharts";
 import { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
+import { aggregateData } from "../../../utils/aggregateDate";
 
-const StockChart = ({ stockData }) => {
-  const [data, setData] = useState([]);
+interface StockDataItem {
+  stockDate: string;
+  stockStartValue: number;
+  stockHigh: number;
+  stockLow: number;
+  stockEndValue: number;
+}
+interface ChartDataItem {
+  x: string;
+  y: [number, number, number, number];
+}
+interface StockChartProps {
+  stockData: StockDataItem[];
+}
+
+const StockChart = ({ stockData }: StockChartProps) => {
+  const [data, setData] = useState<ChartDataItem[]>([]);
+  const [timeFrame, setTimeFrame] = useState<
+    "real-time" | "day" | "week" | "month"
+  >("real-time");
 
   useEffect(() => {
     console.log("주식정보 전달 된 값 (차트컴포넌트)", stockData);
     if (stockData && stockData.length > 0) {
-      console.log(stockData[0].stockDate);
-      const transformedData = stockData.map((item) => ({
-        // x: ` ${item.stockDate.slice(4, 6)}월 ${item.stockDate.slice(6)}일`,
-        x: `${item.stockDate.slice(0, 4)}년 ${item.stockDate.slice(4, 6)}월 ${item.stockDate.slice(6)}일`,
-        // x: new Date(
-        //   `${item.stockDate.slice(0, 4)}-${item.stockDate.slice(4, 6)}-${item.stockDate.slice(6)}`
-        // ),
-        y: [
-          Number(item.stockStartValue),
-          Number(item.stockHigh),
-          Number(item.stockLow),
-          Number(item.stockEndValue),
-        ],
-      }));
-      setData(transformedData);
-      console.log("차트에 맞게 가공된 데이터", transformedData);
-    }
-  }, [stockData]);
+      let transformedData: ChartDataItem[] = [];
 
-  const options = {
+      if (timeFrame === "real-time") {
+        transformedData = stockData.map((item) => ({
+          x: item.stockDate,
+          y: [
+            Number(item.stockStartValue),
+            Number(item.stockHigh),
+            Number(item.stockLow),
+            Number(item.stockEndValue),
+          ],
+        }));
+      } else if (timeFrame === "day") {
+        transformedData = stockData.map((item) => ({
+          x: `${item.stockDate.slice(2, 4)}년 ${item.stockDate.slice(4, 6)}월 ${item.stockDate.slice(6)}일`,
+          y: [
+            Number(item.stockStartValue),
+            Number(item.stockHigh),
+            Number(item.stockLow),
+            Number(item.stockEndValue),
+          ],
+        }));
+      } else if (timeFrame === "month") {
+        transformedData = aggregateData(stockData, "month");
+      }
+      setData(transformedData);
+    }
+  }, [stockData, timeFrame]);
+
+  const options: ApexOptions = {
     chart: {
       type: "candlestick",
       height: 350,
-    },
-    title: {
-      text: "Stock Price Movement",
-      align: "left",
+      zoom: {
+        enabled: true,
+      },
     },
     xaxis: {
+      min: data.length > 80 ? data.length - 80 : data.length - 48,
+      max: data.length,
       type: "category",
+      labels: {
+        show: false,
+      },
     },
     yaxis: {
       tooltip: {
@@ -65,15 +99,24 @@ const StockChart = ({ stockData }) => {
         />
       </div>
       <div className="flex">
-        <div className="mx-1 py-1 px-6 text-medium text-white rounded-lg bg-PrimaryBlue">
+        <button
+          onClick={() => setTimeFrame("real-time")}
+          className={`mx-1 py-1 px-6 text-medium text-white rounded-lg ${timeFrame === "real-time" ? "bg-PrimaryBlue" : "bg-LightBlue"}`}
+        >
+          실시간
+        </button>
+        <button
+          onClick={() => setTimeFrame("day")}
+          className={`mx-1 py-1 px-6 text-medium text-white rounded-lg ${timeFrame === "day" ? "bg-PrimaryBlue" : "bg-LightBlue"}`}
+        >
           일
-        </div>
-        <div className="mr-1 py-1 px-6 text-medium text-white rounded-lg bg-LightBlue">
-          주
-        </div>
-        <div className="py-1 px-6 text-medium text-white rounded-lg bg-LightBlue">
+        </button>
+        <button
+          onClick={() => setTimeFrame("month")}
+          className={`mx-1 py-1 px-6 text-medium text-white rounded-lg ${timeFrame === "month" ? "bg-PrimaryBlue" : "bg-LightBlue"}`}
+        >
           월
-        </div>
+        </button>
       </div>
     </div>
   );
