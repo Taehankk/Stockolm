@@ -47,6 +47,16 @@ public class UserServiceImpl implements UserService {
     private final EncryptHelper encryptHelper;
     private final JwtUtil jwtUtil;
 
+    public void sendingMail(String email, String verificationCode) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setFrom("stockolm5563@naver.com"); // 보내는 사람 이메일
+        helper.setTo(email);  // 받는 사람 이메일
+        helper.setSubject("스톡올름에서 인증코드를 보내드립니다.");  // 이메일 제목
+        helper.setText("인증코드는 : " + verificationCode + " 입니다.");  // 이메일 내용
+        mailSender.send(message);  // 이메일 전송
+    }
+
 
     @Override
     public String generateVerificationCode() {
@@ -269,15 +279,6 @@ public class UserServiceImpl implements UserService {
         return user.getRoleType().name();
     }
 
-    public void sendingMail(String email, String verificationCode) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setFrom("stockolm5563@naver.com"); // 보내는 사람 이메일
-        helper.setTo(email);  // 받는 사람 이메일
-        helper.setSubject("스톡올름에서 인증코드를 보내드립니다.");  // 이메일 제목
-        helper.setText("인증코드는 : " + verificationCode + " 입니다.");  // 이메일 내용
-        mailSender.send(message);  // 이메일 전송
-    }
 
     @Override
     public FindPasswordResponse findPassword(FindMailRequest findMailRequest, String verificationCode) throws MessagingException {
