@@ -1,45 +1,25 @@
-import React from "react";
-import Input from "../../elements/Input";
+import SearchBar from "../SearchBar";
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setSearchTerm } from "../../../slices/stockSlice";
 
 const Header = () => {
-  const [inputValue, setInputValue] = useState("");
-  const dispatch = useDispatch();
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleSearch = () => {
-    dispatch(setSearchTerm(inputValue));
-  };
-
   return (
     <nav className="flex justify-between gap-[2rem] mt-8 mb-6">
       <ul className="flex gap-[1rem]">
-        <li className="text-PrimaryRed font-bold text-xl">
+        <li className="flex text-PrimaryRed font-bold text-xl items-center">
           <Link to={"/"}>STOCKOLM</Link>
         </li>
       </ul>
       <ul className="flex gap-[1rem]">
-        <li className="text-xl">
+        <li className="flex text-xl items-center">
           <Link to={"/ranking"}>분석가</Link>
         </li>
-        <li className=" text-xl">
+        <li className="flex text-xl items-center">
           <Link to={"/community/"}>커뮤니티</Link>
         </li>
       </ul>
-      <Input
-        placeholder="종목명입력"
-        value={inputValue}
-        onChange={handleInputChange}
-      ></Input>
-      <button onClick={handleSearch}>검색</button>
+      <SearchBar />
       <ul className="flex gap-[1rem]">
-        <li className="text-xl">
+        <li className="flex text-xl items-center">
           <Link
             to={{
               pathname: "/auth",
@@ -51,7 +31,7 @@ const Header = () => {
             로그인
           </Link>
         </li>
-        <li className="text-xl">
+        <li className="flex text-xl items-center">
           <Link
             to={{
               pathname: "/auth",

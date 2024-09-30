@@ -8,7 +8,7 @@ interface Props {
 const BasicLayout = ({ children }: Props) => {
   return (
     <div className="w-[90vw] mx-auto">
-      <header className="border-b border-b-[#B4B4B4] border-opacity-30">
+      <header className="flex-col border-b border-b-[#B4B4B4] border-opacity-30 ">
         <Header />
       </header>
       <main>{children}</main>
