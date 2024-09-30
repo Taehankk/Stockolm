@@ -103,9 +103,9 @@ public class StockController {
         return ResponseEntity.status(OK).body(analyzedStockList);
     }
 
-    @GetMapping("/stock-info")
+    @GetMapping("/stock-info/{stock-code}")
     @Operation(summary = "기업/투자 정보 조회", description = "기업/투자 정보 조회 API")
-    public ResponseEntity<?> getStockInfo(@RequestParam String stockCode) {
+    public ResponseEntity<?> getStockInfo(@PathVariable("stock-code") String stockCode) {
         if (stockCode == null)
             return ResponseEntity.status(NOT_FOUND).build();
 
