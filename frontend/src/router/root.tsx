@@ -21,7 +21,11 @@ const ReportWrite = lazy(() => import("../pages/ReportWritePage"));
 const BoardWrite = lazy(() => import("../pages/BoardWritePage"));
 
 const AuthPage = lazy(() => import("../pages/AuthPage"));
-const MyPage = lazy(() => import("../pages/MyPage"));
+
+const MyPageIndex = lazy(() => import("../pages/MyPage"));
+const MyPageProfile = lazy(() =>  import("../pages/MyPage/Profile"));
+const MyPagePassword = lazy(() => import("../pages/MyPage/Password"));
+
 const Ranking = lazy(() => import("../pages/RankingPage"));
 const Stock = lazy(() => import("../pages/StockPage"));
 
@@ -138,9 +142,31 @@ const root = createBrowserRouter([
     path: "mypage",
     element: (
       <Suspense fallback={<Loading />}>
-        <MyPage />
+        <MyPageIndex />
       </Suspense>
     ),
+    children: [
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <MyPageProfile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "password",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <MyPagePassword />
+          </Suspense>
+        ),
+      },
+      {
+        path: "",
+        element: <Navigate replace={true} to={"profile"} />,
+      },
+    ],
   },
   {
     path: "ranking",
