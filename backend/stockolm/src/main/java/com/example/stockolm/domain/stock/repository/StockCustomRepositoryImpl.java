@@ -41,7 +41,7 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
 
         return queryFactory
                 .select(Projections.constructor(HotStock.class,
-                        stock.stockName, stock.stockCode))
+                        stock.stockCode, stock.stockName))
                 .from(stock)
                 .orderBy(stock.stockSearchCnt.desc())
                 .limit(5)
@@ -60,7 +60,7 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
 
         return queryFactory
                 .select(Projections.constructor(RecentStock.class,
-                        stock.stockCode, stock.stockName))
+                        stock.stockName, stock.stockCode))
                 .from(stock)
                 .innerJoin(userSearchList)
                 .on(stock.stockName.eq(userSearchList.stockSearchContent))
