@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import landingChart from "/LANDING01.svg"; // 절대 경로로 설정
-import landingAnalyst from "/LANDING02.svg"; // 절대 경로로 설정
-import landingCommunity from "/LANDING03.svg"; // 절대 경로로 설정
+import landingChart from "../../assets/LANDING01.svg"; // 절대 경로로 설정
+import landingAnalyst from "../../assets/LANDING02.svg"; // 절대 경로로 설정
+import landingCommunity from "../../assets/LANDING03.svg"; // 절대 경로로 설정
 import Header from "../../components/common/Header";
 import "./index.css";
 import Footer from "../../components/common/Footer";
 
 const LandingPage = () => {
-  const sectionsRef = useRef<HTMLDivElement[]>([]);
+  const sectionsRef = useRef<(HTMLElement | null)[]>([]);
   const [showTopButton, setShowTopButton] = useState(false);
 
   useEffect(() => {
@@ -28,16 +28,24 @@ const LandingPage = () => {
       }
 
       if (deltaY > 0 && currentIndex < sectionsRef.current.length - 1) {
-        sectionsRef.current[currentIndex + 1].scrollIntoView({
-          behavior: "smooth",
-        });
+        const nextSection = sectionsRef.current[currentIndex + 1];
+        if (nextSection) {
+          nextSection.scrollIntoView({ behavior: "smooth" });
+        }
+        // sectionsRef.current[currentIndex + 1].scrollIntoView({
+        //   behavior: "smooth",
+        // });
       } else if (deltaY < 0 && currentIndex > 0) {
         if (currentIndex === 1) {
           window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
-          sectionsRef.current[currentIndex - 1].scrollIntoView({
-            behavior: "smooth",
-          });
+          const prevSection = sectionsRef.current[currentIndex - 1];
+          if (prevSection) {
+            prevSection.scrollIntoView({ behavior: "smooth" });
+          }
+          // sectionsRef.current[currentIndex - 1].scrollIntoView({
+          //   behavior: "smooth",
+          // });
         }
       }
     };
@@ -82,7 +90,7 @@ const LandingPage = () => {
   }, []);
 
   const handleScroll = () => {
-    if (window.pageYOffset > 100) {
+    if (window.scrollY > 100) {
       setShowTopButton(true);
     } else {
       setShowTopButton(false);
