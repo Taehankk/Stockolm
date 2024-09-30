@@ -1,5 +1,16 @@
-import axios from "axios";
 import axiosInstance from "./axiosInstance";
+
+export const checkNicknameDuplicateAPI = async (nickname: string) => {
+  try {
+    await axiosInstance.post("/user/nickname", {
+      userNickname: nickname,
+    });
+  } catch (e: any) {
+    if (e.response && e.response.status === 409) {
+      return e.response.data;
+    }
+  }
+};
 
 export const sendEmailAPI = async (email: string) => {
   try {

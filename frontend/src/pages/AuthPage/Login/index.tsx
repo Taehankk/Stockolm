@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
-import axios from "axios";
 import axiosInstance from "../../../api/axiosInstance";
 
 interface Props {
@@ -38,8 +37,38 @@ const Login = ({ handleImgLocation }: Props) => {
         userPassword: passwordInput,
       })
       .then((res) => {
-        localStorage.setItem("access_token", res.headers.authorization); // 만료시간 1시간, refresh는 43200분(720시간, 30일)
+        const accessToken = res.headers.authorization.replace("Bearer ", "");
+        sessionStorage.setItem("access_token", accessToken); // 만료시간 1시간, refresh는 43200분(720시간, 30일)
         // cookies.set("refresh_token");
+        const token = sessionStorage.getItem("access_token");
+
+        const payload = token?.split(".")[1];
+
+        if (payload) {
+          const base64 = payload?.replace(/-/g, "+").replace(/_/g, "/");
+
+          try {
+            const decodedJWT = JSON.parse(
+              decodeURIComponent(
+                window
+                  .atob(base64)
+                  .split("")
+                  .map(function (c) {
+                    return (
+                      "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+                    );
+                  })
+                  .join("")
+              )
+            );
+
+            sessionStorage.setItem("role", decodedJWT.roleType);
+            console.log(decodedJWT.roleType);
+          } catch (e) {
+            console.log("JWT 디코딩 오류 발생 : " + e);
+          }
+        }
+
         navigate("/");
       })
       .catch((e) => {
@@ -52,27 +81,25 @@ const Login = ({ handleImgLocation }: Props) => {
   return (
     <div className="flex flex-col items-center w-full">
       <div className="my-16 text-[2.4rem]">로그인</div>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2 w-[24vw]">
         <div className="flex items-center justify-between">
           <span className="">이메일</span>
           <Input onChange={handleEmailInputChange} value={emailInput} />
         </div>
-        <div>
-          <div className="flex mb-2 items-center">
-            <span className="mr-6">비밀번호</span>
-            <Input
-              onChange={handlePasswordInputChange}
-              value={passwordInput}
-              type="password"
-            />
-          </div>
-          <span
-            onClick={() => handleImgLocation(2)}
-            className="flex justify-end text-xs opacity-50"
-          >
-            비밀번호 변경
-          </span>
+        <div className="flex items-center justify-between">
+          <span className="mr-6">비밀번호</span>
+          <Input
+            onChange={handlePasswordInputChange}
+            value={passwordInput}
+            type="password"
+          />
         </div>
+        <span
+          onClick={() => handleImgLocation(2)}
+          className="flex justify-end text-xs opacity-50"
+        >
+          비밀번호 찾기
+        </span>
       </div>
       <Button onClick={login} children="로그인" className="mt-10 mb-4" />
 
