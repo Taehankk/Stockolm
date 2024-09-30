@@ -20,7 +20,7 @@ const CommunityCard = ({
   writeTime = "20분 전",
 }: CommunityCardProps) => {    
     return(
-      <div className="flex flex-col w-[19rem] h-[16rem] shadow-sm shadow-gray-400 rounded-[0.625rem]">
+      <div className="flex flex-col w-[17rem] h-[16rem] shadow-sm shadow-gray-400 rounded-[0.625rem]">
         <Link to={`/analyst/report/${id}`}>
           <div className="relative flex justify-center items-center h-[9rem] border-[#D9D9D9]] border-b-[0.0625rem]">
             {represent ? <div className="absolute w-[4rem] h-[1.375rem] top-[0.6rem] right-[0.6rem] bg-[#FF6B5A] rounded-full text-[white] text-[0.75rem] text-center leading-[1.6rem]">대표글</div> : <></>}
