@@ -4,6 +4,7 @@ import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardRespons
 import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
+import com.example.stockolm.domain.board.entity.QBoardLike;
 import com.example.stockolm.domain.stock.entity.QStock;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -65,6 +66,17 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                         .and(analystBoard.user.userId.eq(userId)))
                 .execute();
 
+    }
+
+    @Override
+    public boolean isLike(Long analystBoardId, Long userId) {
+        QAnalystBoardLike analystBoardLike = QAnalystBoardLike.analystBoardLike;
+
+        return queryFactory
+                .selectFrom(analystBoardLike)
+                .where(analystBoardLike.user.userId.eq(userId)
+                        .and(analystBoardLike.analystBoard.analystBoardId.eq(analystBoardId)))
+                .fetchFirst() != null;
     }
 
 }
