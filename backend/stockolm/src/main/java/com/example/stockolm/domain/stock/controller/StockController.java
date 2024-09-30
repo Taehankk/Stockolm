@@ -2,9 +2,11 @@ package com.example.stockolm.domain.stock.controller;
 
 import com.example.stockolm.domain.follow.dto.response.FollowAnalystResponse;
 import com.example.stockolm.domain.stock.dto.response.*;
+import com.example.stockolm.domain.stock.entity.StockInfo;
 import com.example.stockolm.domain.stock.service.StockService;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
+import com.example.stockolm.global.exception.custom.StockNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/v1/stock")
@@ -101,6 +102,18 @@ public class StockController {
 
         return ResponseEntity.status(OK).body(analyzedStockList);
     }
+
+    @GetMapping("/stock-info")
+    @Operation(summary = "기업/투자 정보 조회", description = "기업/투자 정보 조회 API")
+    public ResponseEntity<?> getStockInfo(@RequestParam String stockCode) {
+        if (stockCode == null)
+            return ResponseEntity.status(NOT_FOUND).build();
+
+        StockInfo stockInfoResponse = stockService.getStockInfo(stockCode);
+        System.out.println(stockInfoResponse);
+        return ResponseEntity.status(OK).body(stockInfoResponse);
+    }
+
 
 
 }

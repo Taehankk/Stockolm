@@ -4,8 +4,10 @@ import com.example.stockolm.domain.stock.dto.response.*;
 import com.example.stockolm.domain.stock.entity.FavoriteStock;
 import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.stock.entity.StockData;
+import com.example.stockolm.domain.stock.entity.StockInfo;
 import com.example.stockolm.domain.stock.repository.FavoriteStockRepository;
 import com.example.stockolm.domain.stock.repository.StockDataRepository;
+import com.example.stockolm.domain.stock.repository.StockInfoRepository;
 import com.example.stockolm.domain.stock.repository.StockRepository;
 import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.entity.UserSearchList;
@@ -31,6 +33,7 @@ public class StockServiceImpl implements StockService {
     private final UserSearchListRepository userSearchListRepository;
     private final FavoriteStockRepository favoriteStockRepository;
     private final StockDataRepository stockDataRepository;
+    private final StockInfoRepository stockInfoRepository;
 
     @Override
     public List<FollowStockResponse> getFollowStockList(Long userId) {
@@ -137,6 +140,11 @@ public class StockServiceImpl implements StockService {
     public List<AnalyzedStockResponse> getAnalyzedStockList(Long userId) {
 
         return stockRepository.getAnalyzedStockList(userId);
+    }
+
+    @Override
+    public StockInfo getStockInfo(String stockCode) {
+        return stockInfoRepository.findByStockCode(stockCode);
     }
 
 
