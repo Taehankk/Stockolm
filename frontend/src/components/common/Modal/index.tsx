@@ -9,11 +9,28 @@ interface ModalProps {
   content?: string;
   name?: string;
   file?: string;
+  watch?: number;
+  like?: number;
   onCloseClick?: () => void;
   onConfirmClick?: () => void;
   onFileClick?: () => void;
   onContentClick?: () => void; 
 }
+
+interface UserDataProps {
+  content: string;
+  name: string;
+  file: string;
+}
+
+interface AnalDataProps {
+  content: string;
+  watch: number;
+  like: number;
+  file: string;
+}
+
+type Props = ModalProps & UserDataProps & AnalDataProps;
 
 const Modal = ({
   size = "smal",
@@ -22,11 +39,11 @@ const Modal = ({
   onConfirmClick,
   onFileClick,
   onContentClick,
-}: ModalProps) => {
+}: Props) => {
   
   const role: string = "USER";
 
-  const userData = [
+  const userData: UserDataProps[] = [
     {
       content: "1. [삼성전자] 3분기 분석 결과",
       name: "장원영",
@@ -79,7 +96,7 @@ const Modal = ({
     }
   ];
 
-  const analData = [
+  const analData: AnalDataProps[] = [
     {
       content: "1. [삼성전자] 3분기 분석 결과",
       watch: 1,
