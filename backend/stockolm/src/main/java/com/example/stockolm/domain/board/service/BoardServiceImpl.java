@@ -77,11 +77,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponse retrieveBoard(Long boardId) {
+    public BoardResponse retrieveBoard(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-
-        Long userId = board.getUser().getUserId();
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         List<String> imagePathList = boardRepository.findImagePathById(boardId);
 
@@ -92,8 +89,8 @@ public class BoardServiceImpl implements BoardService {
         board.incrementViewCnt(); // 조회수 증가 -> 영속성 컨텍스트가 자동으로 DB 업데이트
 
         return BoardResponse.builder()
-                .userNickname(user.getUserNickname())
-                .userImagePath(user.getUserImagePath())
+                .userNickname(board.getUser().getUserNickname())
+                .userImagePath(board.getUser().getUserImagePath())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .category(board.getCategory().toString())
