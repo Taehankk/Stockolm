@@ -15,9 +15,9 @@ const StockInfoList = ({
   dataProps, 
 }: StockInfoListProps) => {
 
-    // const data = dataProps || [];
+    
 
-    const data = [
+    dataProps = [
         {
           stockName: "삼성전자",
           currentPrice: "74,300",
@@ -64,7 +64,7 @@ const StockInfoList = ({
       </div>
     <div>
     <div className="w-[60rem] min-h-[15rem] max-h-[15rem] border-b-black border-b-[0.1rem] overflow-y-auto overflow-x-hidden custom-scrollbar">
-        {data.length > 0 ? data.map((item, index) => (
+        {dataProps.length > 0 ? dataProps.map((item, index) => (
           <div key={index} className="flex justify-around items-center w-[60rem] h-[5rem]">
             <span className="w-1/6 text-center">{item.stockName}</span>
             <span className="w-1/6 text-center">{item.currentPrice}</span>

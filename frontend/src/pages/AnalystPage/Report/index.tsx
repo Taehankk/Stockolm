@@ -19,7 +19,7 @@ const Report = () => {
       <div>
         <div className="flex justify-center items-center gap-[4rem] flex-wrap mt-[3rem]">
           {cards[0] ? cards.map((card) => (
-            <CommunityCard key={card.id} represent={card.represent} />
+            <CommunityCard id={1} stock="" title="" key={card.id} writer="" writeTime="" represent={card.represent} />
           )) : <span className="mt-[10rem] text-[1.5rem]">등록된 글이 없습니다.</span>}
         </div>
       </div>

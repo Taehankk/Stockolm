@@ -1,6 +1,6 @@
 import BasicLayout from "../../layouts/BasicLayout";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
@@ -12,10 +12,17 @@ import follow from "/src/assets/follow.svg"
 
 const Analyst = () => {
   const [analyst, setAnalyst] = useState("장원영");
-  
   const [write, setWrite] = useState(0);
   const [subscribe, setSubscribe] = useState(0);
   const [rank, setRank] = useState(0);
+
+  useEffect(() => {
+    setAnalyst("장원영");
+    setWrite(0);
+    setSubscribe(0);
+    setRank(0);
+  },[])
+
 
   return (
     <BasicLayout>
