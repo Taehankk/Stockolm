@@ -1,6 +1,7 @@
 package com.example.stockolm.domain.analystBoard.repository;
 
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
+import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
 import com.example.stockolm.domain.stock.entity.QStock;
