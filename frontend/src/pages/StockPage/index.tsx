@@ -15,6 +15,7 @@ import { fetchStockData } from "../../slices/stockSlice";
 const StockPage = () => {
   const dispatch = useAppDispatch();
   const searchTerm = useSelector((state: RootState) => state.stock.searchTerm);
+  const searchCode = useSelector((state: RootState) => state.stock.searchCode);
   const stockData = useSelector((state: RootState) => state.stock.stockData);
   const isLoading = useSelector((state: RootState) => state.stock.loading);
   const error = useSelector((state: RootState) => state.stock.error);
@@ -32,7 +33,7 @@ const StockPage = () => {
     <BasicLayout>
       <div className="top">
         <div className="chart-info">
-          <Summary></Summary>
+          <Summary searchCode={searchCode} searchTerm={searchTerm}></Summary>
         </div>
         <div className="navigator">
           <Button size="medium">종목게시판</Button>
@@ -41,7 +42,7 @@ const StockPage = () => {
       </div>
       <div className="middle">
         <div className="chart">
-          <StockChart stockData={stockData.stockData}></StockChart>
+          <StockChart stockData={stockData}></StockChart>
         </div>
         <div>
           <BestAnalystList></BestAnalystList>
