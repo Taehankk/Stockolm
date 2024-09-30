@@ -1,7 +1,31 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { getChartData } from "../api/stockAPI";
 
-// 비동기 API 요청
+interface StockDataItem {
+  stockDate: string;
+  stockStartValue: number;
+  stockHigh: number;
+  stockLow: number;
+  stockEndValue: number;
+}
+
+interface StockState {
+  searchTerm: string;
+  searchCode: string;
+  stockData: StockDataItem[];
+  loading: boolean;
+  error: string | null;
+}
+
+// 초기 상태 정의
+const initialState: StockState = {
+  searchTerm: "삼성전자",
+  searchCode: "005930",
+  stockData: [],
+  loading: false,
+  error: null,
+};
+
 export const fetchStockData = createAsyncThunk(
   "stock/fetchStockData",
   async (searchTerm: string) => {
@@ -13,16 +37,14 @@ export const fetchStockData = createAsyncThunk(
 
 const stockSlice = createSlice({
   name: "stock",
-  initialState: {
-    // 검색없이 일단 기본값 넣어둠 << 나중에 "" 으로 변경
-    searchTerm: "삼성전자",
-    stockData: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    setSearchTerm: (state, action) => {
+    setSearchTerm: (state, action: PayloadAction<string>) => {
       state.searchTerm = action.payload;
+    },
+    setSearchCode: (state, action: PayloadAction<string>) => {
+      console.log("검색어 코드입력확인", action);
+      state.searchCode = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -32,15 +54,15 @@ const stockSlice = createSlice({
       })
       .addCase(fetchStockData.fulfilled, (state, action) => {
         state.loading = false;
-        state.stockData = action.payload;
+        state.stockData = action.payload.stockData;
         console.log("slice에 stock데이터 담겼는지 확인", action.payload);
       })
       .addCase(fetchStockData.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.error.message || "주식 데이터 호출 실패";
       });
   },
 });
 
-export const { setSearchTerm } = stockSlice.actions;
+export const { setSearchTerm, setSearchCode } = stockSlice.actions;
 export default stockSlice.reducer;
