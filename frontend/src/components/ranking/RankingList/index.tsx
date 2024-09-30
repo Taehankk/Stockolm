@@ -3,10 +3,13 @@ import RankingListItem from "../RankingListItem";
 
 interface RankingListProps {
   items: {
-    ranking: number;
-    analystName: string;
-    postCount: number;
-    totalScore: number;
+    userName: string;
+    userNickname: string;
+    userImagePath: string;
+    totalAnalystRanking: number;
+    totalBoardSize: number;
+    reliability: number;
+    accuracy: number;
   }[];
 }
 

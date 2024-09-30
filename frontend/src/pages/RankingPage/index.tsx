@@ -1,56 +1,36 @@
 import { useState } from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../store";
+import { getRankings } from "../../slices/rankingSlice";
 import BasicLayout from "../../layouts/BasicLayout";
 import RankingList from "../../components/ranking/RankingList";
 import RankingSearch from "../../components/ranking/RankingSearch";
 import Pagination from "../../components/common/Pagination";
 import Button from "../../components/elements/Button";
 
-const RankingPage = () => {
+const RankingPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { rankings, totalPages } = useSelector(
+    (state: RootState) => state.rankings
+  );
+
   const [currentPage, setCurrentPage] = useState(1);
-  const totalItems = 100;
-  const itemsPerPage = 10;
+  const [rankValue, setRankValue] = useState<string | null>(null);
+
+  useEffect(() => {
+    dispatch(
+      getRankings({ rankValue, page: currentPage, size: 5, sort: null })
+    );
+  }, [dispatch, currentPage, rankValue]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleSearch = (query: string) => {
-    console.log("Search for:", query);
-    // 검색 로직 추가 예정
+    console.log(query);
   };
-
-  const rankingItems = [
-    {
-      ranking: 1,
-      analystName: "김태한",
-      postCount: 10,
-      totalScore: 12.34,
-    },
-    {
-      ranking: 2,
-      analystName: "이상휘",
-      postCount: 10,
-      totalScore: 12.34,
-    },
-    {
-      ranking: 3,
-      analystName: "이름",
-      postCount: 10,
-      totalScore: 12.34,
-    },
-    {
-      ranking: 4,
-      analystName: "이름",
-      postCount: 10,
-      totalScore: 12.34,
-    },
-    {
-      ranking: 5,
-      analystName: "이름",
-      postCount: 10,
-      totalScore: 12.34,
-    },
-  ];
 
   return (
     <BasicLayout>
@@ -59,13 +39,16 @@ const RankingPage = () => {
           <div className="flex m-auto justify-center mt-5">
             <RankingSearch onSearch={handleSearch} />
           </div>
-          <div className="flex justify-end my-3">
+          <div className="flex justify-end my-3 gap-3">
             <Button
               size="small"
               fontSize="medium"
               color="black"
-              className="bg-white"
               border="1"
+              className={
+                rankValue === null ? "bg-white border-slate-700" : "bg-white"
+              }
+              onClick={() => setRankValue(null)}
             >
               종합
             </Button>
@@ -73,8 +56,13 @@ const RankingPage = () => {
               size="small"
               fontSize="medium"
               color="black"
-              className="bg-white"
               border="1"
+              className={
+                rankValue === "accuracy"
+                  ? "bg-white border-slate-700"
+                  : "bg-white"
+              }
+              onClick={() => setRankValue("accuracy")}
             >
               정확도
             </Button>
@@ -82,8 +70,13 @@ const RankingPage = () => {
               size="small"
               fontSize="medium"
               color="black"
-              className="bg-white"
               border="1"
+              className={
+                rankValue === "reliability"
+                  ? "bg-white border-slate-700"
+                  : "bg-white"
+              }
+              onClick={() => setRankValue("reliability")}
             >
               신뢰도
             </Button>
@@ -95,13 +88,13 @@ const RankingPage = () => {
             <span className="w-1/6 text-center">종합</span>
           </div>
           <div className="h-3/5">
-            <RankingList items={rankingItems} />
+            <RankingList items={rankings} />
           </div>
           <Pagination
             currentPage={currentPage}
-            totalItems={totalItems}
+            totalItems={totalPages * 5}
             onPageChange={handlePageChange}
-            itemsPerPage={itemsPerPage}
+            itemsPerPage={5}
           />
         </div>
       </div>
