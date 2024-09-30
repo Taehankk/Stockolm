@@ -4,8 +4,9 @@ import CardArrow from "/src/assets/cardArrow.svg"
 import CardArrowReverse from "/src/assets/cardArrowReverse.svg"
 
 interface FavoriteCardData {
+    id?: string;
     name: string;
-    reliability : number;
+    reliability: number;
     accuracy: number;
     rank: number;
 }
@@ -20,18 +21,21 @@ const FavoriteCardList = ({
 
   const cards = dataProps || [
     {
+        id: "1",
         name: "백지헌",
         reliability: "90",
         accuracy: "79",
         rank: "1",
     },
     {
+        id: "2",
         name: "카리나",
         reliability: "86",
         accuracy: "71",
         rank: "2",
     },
     {
+        id: "3",
         name: "장원영",
         reliability: "70",
         accuracy: "99",
