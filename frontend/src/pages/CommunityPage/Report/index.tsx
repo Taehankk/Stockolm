@@ -5,6 +5,7 @@ import Input from "../../../components/elements/Input";
 import Samsung from "../../../assets/samsung.jpg";
 
 const Report = () => {
+  const nickname = "nickname";
   const id = "10";
   return (
     <>
@@ -20,7 +21,7 @@ const Report = () => {
         </div>
         <hr />
         <div className="grid grid-cols-3">
-          <Link to={`/analyst/report/${id}`} className="m-5">
+          <Link to={`/analyst/${nickname}/report/${id}`} className="m-5">
             <div className="w-48 h-40 shadow-sm shadow-gray-400 rounded-lg">
               <img
                 src={Samsung}
@@ -40,7 +41,7 @@ const Report = () => {
               </div>
             </div>
           </Link>
-          <Link to={`/analyst/report/${id}`} className="m-5">
+          <Link to={`/analyst/${nickname}/report/${id}`} className="m-5">
             <div className="w-48 h-40 shadow-sm shadow-gray-400 rounded-lg">
               <img
                 src={Samsung}
@@ -60,7 +61,7 @@ const Report = () => {
               </div>
             </div>
           </Link>
-          <Link to={`/analyst/report/${id}`} className="m-5">
+          <Link to={`/analyst/${nickname}/report/${id}`} className="m-5">
             <div className="w-48 h-40 shadow-sm shadow-gray-400 rounded-lg">
               <img
                 src={Samsung}
@@ -80,7 +81,7 @@ const Report = () => {
               </div>
             </div>
           </Link>
-          <Link to={`/analyst/report/${id}`} className="m-5">
+          <Link to={`/analyst/${nickname}/report/${id}`} className="m-5">
             <div className="w-48 h-40 shadow-sm shadow-gray-400 rounded-lg">
               <img
                 src={Samsung}
@@ -100,7 +101,7 @@ const Report = () => {
               </div>
             </div>
           </Link>
-          <Link to={`/analyst/report/${id}`} className="m-5">
+          <Link to={`/analyst/${nickname}/report/${id}`} className="m-5">
             <div className="w-48 h-40 shadow-sm shadow-gray-400 rounded-lg">
               <img
                 src={Samsung}
@@ -120,7 +121,7 @@ const Report = () => {
               </div>
             </div>
           </Link>
-          <Link to={`/analyst/report/${id}`} className="m-5">
+          <Link to={`/analyst/${nickname}/report/${id}`} className="m-5">
             <div className="w-48 h-40 shadow-sm shadow-gray-400 rounded-lg">
               <img
                 src={Samsung}
