@@ -33,7 +33,7 @@ const AuthPage = () => {
         }`}
       /> */}
         <div
-          className={`bg-[url('/STOCKOLM.jpg')] bg-center bg-cover h-full w-1/2 object-cover transition-transform duration-300 z-10 ${
+          className={`bg-[url('/src/assets/STOCKOLM.jpg')] bg-center bg-cover h-full w-1/2 object-cover transition-transform duration-300 z-10 ${
             imgLocation === 0 ? "translate-x-0" : "translate-x-full"
           }`}
         ></div>
