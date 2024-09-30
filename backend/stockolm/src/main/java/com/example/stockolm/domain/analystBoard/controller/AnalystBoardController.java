@@ -72,4 +72,11 @@ public class AnalystBoardController {
         return ResponseEntity.status(OK).body(analystBoardResponse);
     }
 
+    @PostMapping("/like/{analystBoardId}")
+    @Operation(summary = "글 좋아요", description = "종목게시판 글 좋아요 API")
+    public ResponseEntity<Void> likeAnalystBoard(@PathVariable Long analystBoardId, @AuthPrincipal @Parameter(hidden = true) Long userId) {
+        validateLogin(userId);
+        analystBoardService.likeAnalystBoard(analystBoardId, userId);
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
 }
