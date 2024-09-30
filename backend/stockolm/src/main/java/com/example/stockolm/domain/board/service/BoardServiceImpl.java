@@ -3,6 +3,7 @@ package com.example.stockolm.domain.board.service;
 import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
 import com.example.stockolm.domain.board.dto.request.CreateCommentRequest;
 import com.example.stockolm.domain.board.dto.request.ModifyBoardRequest;
+import com.example.stockolm.domain.board.dto.response.BoardPageResponse;
 import com.example.stockolm.domain.board.dto.response.BoardResponse;
 import com.example.stockolm.domain.board.entity.Board;
 import com.example.stockolm.domain.board.entity.BoardLike;
@@ -17,6 +18,8 @@ import com.example.stockolm.global.exception.custom.BoardNotFoundException;
 import com.example.stockolm.global.exception.custom.UnauthorizedAccessException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,11 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
     private final CommentRepository commentRepository;
+
+    @Override
+    public Page<BoardPageResponse> getBoardPage(String searchWord, Pageable pageable, Long userId) {
+        return boardRepository.getBoardPage(searchWord, pageable, userId);
+    }
 
     @Override
     public void createBoard(Long userId, CreateBoardRequest createBoardRequest) {
@@ -77,7 +85,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponse retrieveBoard(Long boardId, Long userId) {
+    public BoardResponse getBoard(Long boardId, Long userId) {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
 
         List<String> imagePathList = boardRepository.findImagePathById(boardId);
@@ -142,4 +150,5 @@ public class BoardServiceImpl implements BoardService {
 
         commentRepository.save(comment);
     }
+
 }

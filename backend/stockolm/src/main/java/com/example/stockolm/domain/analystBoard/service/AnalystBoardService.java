@@ -12,7 +12,7 @@ public interface AnalystBoardService {
 
     void createAnalystBoard(Long userId, CreateAnalystBoardRequest createAnalystBoardRequest);
 
-    AnalystBoardResponse retrieveAnalystBoard(Long analystBoardId, Long userId);
+    AnalystBoardResponse getAnalystBoard(Long analystBoardId, Long userId);
 
     void likeAnalystBoard(Long analystBoardId, Long userId);
 }
