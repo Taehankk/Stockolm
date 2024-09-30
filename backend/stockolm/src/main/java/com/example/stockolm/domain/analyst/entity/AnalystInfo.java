@@ -26,9 +26,17 @@ public class AnalystInfo {
 
     private LocalDateTime updateAt;
 
-    private float reliability;
+    private int reliability;
 
-    private float accuracy;
+    private int accuracy;
+
+    public void updateAccuracy(int accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public void updateReliability(int reliability) {
+        this.reliability = reliability;
+    }
 
     @PreUpdate
     public void preUpdate() {

@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -35,10 +36,13 @@ public class AnalystBoard {
     private int currentStock;
     private Long marketCapitalization;
     private String content;
-    private LocalDateTime goalDate;
+    private LocalDate goalDate;
 
     @Enumerated(EnumType.ORDINAL)
-    private GoalCategory goalSuccess;
+    private GoalCategory goalAccuracy;
+
+    @Enumerated(EnumType.ORDINAL)
+    private GoalCategory goalReliability;
 
     private String filePath;
     private int likeCnt;
@@ -70,8 +74,27 @@ public class AnalystBoard {
         }
     }
 
+    public void successGoalAccuracy() {
+        this.goalAccuracy = GoalCategory.SUCCESS;
+    }
+
+    public void failGoalAccuracy() {
+        this.goalAccuracy = GoalCategory.FAIL;
+    }
+
+    public void successGoalReliability () {
+        this.goalReliability = GoalCategory.SUCCESS;
+    }
+
+    public void failGoalReliability () {
+        this.goalReliability = GoalCategory.FAIL;
+    }
+
     @Builder
-    public AnalystBoard(User user, Stock stock, String title, String opinion, int goalStock, int currentStock, Long marketCapitalization, String content, LocalDateTime goalDate, GoalCategory goalSuccess, String filePath) {
+    public AnalystBoard(User user, Stock stock, String title, String opinion,
+                        int goalStock, int currentStock, Long marketCapitalization,
+                        String content, LocalDate goalDate, String filePath,
+                        GoalCategory goalReliability, GoalCategory goalAccuracy) {
         this.user = user;
         this.stock = stock;
         this.title = title;
@@ -81,7 +104,8 @@ public class AnalystBoard {
         this.marketCapitalization = marketCapitalization;
         this.content = content;
         this.goalDate = goalDate;
-        this.goalSuccess = goalSuccess;
         this.filePath = filePath;
+        this.goalReliability = goalReliability;
+        this.goalAccuracy = goalAccuracy;
     }
 }

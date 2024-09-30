@@ -8,5 +8,4 @@ public interface AnalystBoardCustomRepository {
     List<AnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName);
 
     void choseMainContent(Long userId, Long analystBoardId);
-
 }
