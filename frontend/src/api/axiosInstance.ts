@@ -15,8 +15,12 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async (config: CustomAxiosRequestConfig) => {
+    if (config.authRequired === undefined) {
+      config.authRequired = true;
+    }
+
     if (config.authRequired) {
-      const token = localStorage.getItem("access_token");
+      const token = sessionStorage.getItem("access_token");
       if (token) {
         config.headers["Authorization"] = "Bearer " + token;
       }
@@ -51,7 +55,7 @@ axiosInstance.interceptors.response.use(
         });
 
         const newAccessToken = data.headers.authorization;
-        localStorage.setItem("access_token", newAccessToken);
+        sessionStorage.setItem("access_token", newAccessToken);
 
         // 새로 발급된 토큰으로 다시 요청
         originalRequest.headers["Authorization"] = `${newAccessToken}`;
