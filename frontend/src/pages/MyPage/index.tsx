@@ -7,7 +7,7 @@ import memo from "/src/assets/memo.svg"
 import plusPerson from "/src/assets/plusPerson.svg"
 import ranking from "/src/assets/rank.svg"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const MyPage = () => {
   const [analyst, setAnalyst] = useState("장원영");
@@ -16,13 +16,20 @@ const MyPage = () => {
   const [subscribe, setSubscribe] = useState(0);
   const [rank, setRank] = useState(0);
 
-  const role = "USE";
+  useEffect(() => {
+    setAnalyst("장원영");
+    setWrite(0);
+    setSubscribe(0);
+    setRank(0);
+  },[])
+
+  const role: string = "USE";
   return(
     <BasicLayout>
       <div className="flex flex-col">
         <div className="flex relative self-end w-[80%] h-[110px] mt-[3rem] border-b-black border-b-2">
           <img className="absolute left-[-7rem] w-[9rem] h-[9rem] rounded-full" src={profile}></img>
-          <div className="pl-[3rem] h-full flex items-end text-[2.25rem]">장원영님, 안녕하세요!</div>
+          <div className="pl-[3rem] h-full flex items-end text-[2.25rem]">{analyst}님, 안녕하세요!</div>
           <div className="flex h-full">
             <img className="w-[1.6rem] h-[1.6rem] ml-[1rem] mb-[1rem] self-end" src={pencil}></img>
           </div>
@@ -32,7 +39,7 @@ const MyPage = () => {
                 <img src={memo} className="w-[1.5rem] h-[1.5rem]"></img>
                 <span>작성글</span>
               </div>
-              <span className="flex justify-end pr-[0.7rem]">30</span>
+              <span className="flex justify-end pr-[0.7rem]">{write}</span>
             </div>
             
             <div>
@@ -40,7 +47,7 @@ const MyPage = () => {
                 <img src={plusPerson} className="w-[1.5rem] h-[1.5rem]"></img>
                 <span>구독자</span>
               </div>
-              <span className="flex justify-end pr-[0.7rem]">20</span>
+              <span className="flex justify-end pr-[0.7rem]">{subscribe}</span>
             </div>
 
             <div>
@@ -48,7 +55,7 @@ const MyPage = () => {
                 <img src={ranking} className="w-[1.5rem] h-[1.5rem]"></img>
                 <span>순위</span>
               </div>
-              <span className="flex justify-end pr-[0.7rem]">1</span>
+              <span className="flex justify-end pr-[0.7rem]">{rank}</span>
             </div>
           </div> :
           <></>}

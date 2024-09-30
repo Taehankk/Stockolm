@@ -7,7 +7,7 @@ import BarChart from "../../../components/elements/BarChart";
 
 const Profile = () => {
 
-    const role = "USE";
+    const role: string = "USE";
 
   return (
     <div className="mt-[-5rem] w-full h-[100vh]">
@@ -16,7 +16,7 @@ const Profile = () => {
               <img src={person} className="flex h-[1.7rem] self-end"></img>
               <div className="text-[1.75rem] ml-[1rem] mb-[2rem]">관심 분석가</div>
             </div>
-            <FavoriteCardList />
+            <FavoriteCardList dataProps={[]} />
         </div> :
         <div className="w-full h-[200px] mb-[4rem]">
         <div className="h-[2rem] flex mb-[2rem]">
@@ -47,7 +47,7 @@ const Profile = () => {
               <img src={category} className="flex h-[1.7rem] self-end"></img>
               <div className="text-[1.75rem] ml-[1rem] mb-[2rem]">{role === "USER" ? "관심 종목" : "분석 종목"}</div>
             </div>
-            <StockInfoList />
+            <StockInfoList dataProps={[]} />
         </div>
     </div>
   );
