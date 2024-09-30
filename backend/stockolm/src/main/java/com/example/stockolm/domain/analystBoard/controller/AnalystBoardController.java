@@ -4,6 +4,7 @@ import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRe
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.service.AnalystBoardService;
 import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
+import com.example.stockolm.domain.board.dto.response.BoardResponse;
 import com.example.stockolm.domain.follow.dto.response.FollowAnalystResponse;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
@@ -63,4 +64,19 @@ public class AnalystBoardController {
         return ResponseEntity.status(CREATED).build();
     }
 
+    @GetMapping("/{analystBoardId}")
+    @Operation(summary = "글 상세 조회", description = "종목게시판 글 상세 조회 API")
+    public ResponseEntity<AnalystBoardResponse> retrieveAnalystBoard(@PathVariable Long analystBoardId, @AuthPrincipal @Parameter(hidden = true) Long userId) {
+        validateLogin(userId); // 자유게시판과 달리, 종목게시판은 로그인 해야 상세조회 가능
+        AnalystBoardResponse analystBoardResponse = analystBoardService.retrieveAnalystBoard(analystBoardId, userId);
+        return ResponseEntity.status(OK).body(analystBoardResponse);
+    }
+
+    @PostMapping("/like/{analystBoardId}")
+    @Operation(summary = "글 좋아요", description = "종목게시판 글 좋아요 API")
+    public ResponseEntity<Void> likeAnalystBoard(@PathVariable Long analystBoardId, @AuthPrincipal @Parameter(hidden = true) Long userId) {
+        validateLogin(userId);
+        analystBoardService.likeAnalystBoard(analystBoardId, userId);
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
 }
