@@ -110,7 +110,6 @@ public class StockController {
             return ResponseEntity.status(NOT_FOUND).build();
 
         StockInfo stockInfoResponse = stockService.getStockInfo(stockCode);
-        System.out.println(stockInfoResponse);
         return ResponseEntity.status(OK).body(stockInfoResponse);
     }
 
