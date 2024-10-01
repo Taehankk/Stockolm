@@ -10,13 +10,14 @@ import StockChart from "../../components/stock/StockChart";
 import { useEffect } from "react";
 import { RootState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
-import { fetchStockData } from "../../slices/stockSlice";
+import { fetchStockData, fetchStockInfo } from "../../slices/stockSlice";
 
 const StockPage = () => {
   const dispatch = useAppDispatch();
   const searchTerm = useSelector((state: RootState) => state.stock.searchTerm);
   const searchCode = useSelector((state: RootState) => state.stock.searchCode);
   const stockData = useSelector((state: RootState) => state.stock.stockData);
+  const stockInfo = useSelector((state: RootState) => state.stock.stockInfo);
   const isLoading = useSelector((state: RootState) => state.stock.loading);
   const error = useSelector((state: RootState) => state.stock.error);
 
@@ -24,7 +25,10 @@ const StockPage = () => {
     if (searchTerm) {
       dispatch(fetchStockData(searchTerm));
     }
-  }, [dispatch, searchTerm]);
+    if (searchCode) {
+      dispatch(fetchStockInfo(searchCode));
+    }
+  }, [dispatch, searchTerm, searchCode]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching stock data</div>;
@@ -49,13 +53,17 @@ const StockPage = () => {
         </div>
       </div>
       <div className="bottom">
-        <div className="infos">
-          <InvestInfo></InvestInfo>
-        </div>
-        <div className="divider">|</div>
-        <div className="infos">
-          <EnterpriseInfo></EnterpriseInfo>
-        </div>
+        {stockInfo && (
+          <>
+            <div className="infos">
+              <InvestInfo stockInfo={stockInfo}></InvestInfo>
+            </div>
+            <div className="divider">|</div>
+            <div className="infos">
+              <EnterpriseInfo stockInfo={stockInfo}></EnterpriseInfo>
+            </div>
+          </>
+        )}
       </div>
     </BasicLayout>
   );
