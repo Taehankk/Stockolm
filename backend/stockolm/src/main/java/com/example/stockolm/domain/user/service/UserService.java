@@ -1,6 +1,7 @@
 package com.example.stockolm.domain.user.service;
 
 import com.example.stockolm.domain.user.dto.request.*;
+import com.example.stockolm.domain.user.dto.response.FindPasswordResponse;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.dto.response.UserInfoResponse;
@@ -43,4 +44,6 @@ public interface UserService {
     void followAnalyst(Long userId, FollowRequest followRequest);
 
     String getRoleType(Long userId);
+
+    FindPasswordResponse findPassword(FindMailRequest findMailRequest, String verificationCode) throws MessagingException;
 }
