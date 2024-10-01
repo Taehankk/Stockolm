@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AnalystRepository extends JpaRepository<AnalystInfo, Long> {
-    List<AnalystInfo> findByUser(User user);
+    AnalystInfo findByUser(User user);
 }
