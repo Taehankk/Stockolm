@@ -73,7 +73,7 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
     }
 
     @Override
-    public AnalystBoardResponse retrieveAnalystBoard(Long analystBoardId, Long userId) {
+    public AnalystBoardResponse getAnalystBoard(Long analystBoardId, Long userId) {
         AnalystBoard analystBoard = analystBoardRepository.findById(analystBoardId).orElseThrow(BoardNotFoundException::new);
 
         boolean isLike = analystBoardRepository.isLike(analystBoardId, userId);

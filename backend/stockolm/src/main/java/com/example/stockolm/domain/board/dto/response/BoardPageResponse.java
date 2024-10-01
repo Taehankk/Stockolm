@@ -1,41 +1,35 @@
 package com.example.stockolm.domain.board.dto.response;
 
-import com.example.stockolm.domain.board.entity.Comment;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
-public class BoardResponse {
+public class BoardPageResponse {
     private String userNickname;
     private String userImagePath; // 프로필 이미지의 S3 경로
+    private Long boardId;
     private String title;
-    private String content;
     private String category;
-    private List<String> imagePathList; // 게시글 첨부 이미지들의 S3 경로
     private int viewCnt;
     private int likeCnt;
+    private int commentCnt;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private boolean isLike;
-    private List<Comment> commentList;
 
-    @Builder
-    public BoardResponse(String userNickname, String userImagePath, String title, String content, String category,
-                                 List<String> imagePathList, int viewCnt, int likeCnt, LocalDateTime createAt, LocalDateTime updateAt, boolean isLike, List<Comment> commentList) {
+    public BoardPageResponse(String userNickname, String userImagePath, Long boardId, String title, String category,
+                         int viewCnt, int likeCnt, int commentCnt, LocalDateTime createAt, LocalDateTime updateAt, boolean isLike) {
         this.userNickname = userNickname;
         this.userImagePath = userImagePath;
+        this.boardId = boardId;
         this.title = title;
-        this.content = content;
         this.category = category;
-        this.imagePathList = imagePathList;
         this.viewCnt = viewCnt;
         this.likeCnt = likeCnt;
+        this.commentCnt = commentCnt;
         this.createAt = createAt;
         this.updateAt = updateAt;
         this.isLike = isLike;
-        this.commentList = commentList;
     }
 }
