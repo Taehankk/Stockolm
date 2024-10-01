@@ -126,7 +126,7 @@ public class StockServiceImpl implements StockService {
 
         Boolean existFavoriteStockUser = false;
 
-        if(userId != null){
+        if (userId != null) {
             User user = userRepository.findById(userId)
                     .orElseThrow(UserNotFoundException::new);
 
@@ -161,38 +161,8 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<BestAnalystResponse> getBestAnalyst(Long stockId) {
 
-            // 필요한 데이터를 미리 모두 가져오기
-            List<BestAnalystResponse> boardInfo = analystBoardRepository.findBestAnalystByStockId(stockId);
-
-            if (boardInfo.isEmpty()) {
-                throw new BoardNotFoundException();
-            }
-
-            // 스트림을 활용하여 데이터를 변환 및 업데이트
-
-        return boardInfo.stream().map(response -> {
-                AnalystBoard analystBoard = analystBoardRepository.findById(response.getAnalystBoardId())
-                        .orElseThrow(BoardNotFoundException::new);
-
-                User user = userRepository.findById(analystBoard.getUser().getUserId())
-                        .orElseThrow(UserNotFoundException::new);
-
-                AnalystInfo analystInfo = analystRepository.findByUser(user);
-
-                // 기존 데이터를 유지하면서 새로운 값을 업데이트
-                return BestAnalystResponse.builder()
-                        .analystName(user.getUserName())
-                        .userImagePath(user.getUserImagePath())
-                        .reliability((float) analystInfo.getReliability())
-                        .accuracy((float) analystInfo.getAccuracy())
-                        .analystBoardId(response.getAnalystBoardId()) // 기존 데이터 유지
-                        .goalDate(response.getGoalDate())             // 기존 데이터 유지
-                        .opinion(response.getOpinion())               // 기존 데이터 유지
-                        .goalStock(response.getGoalStock())           // 기존 데이터 유지
-                        .build();
-            }).collect(Collectors.toList());
-        }
-
+        return analystBoardRepository.findBestAnalystByStockId(stockId);
+    }
 
 
 }
