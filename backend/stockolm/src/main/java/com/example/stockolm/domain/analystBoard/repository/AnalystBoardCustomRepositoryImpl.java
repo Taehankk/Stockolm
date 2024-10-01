@@ -95,10 +95,17 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                         analystBoard.analystBoardId,
                         analystBoard.goalDate,
                         analystBoard.opinion,
-                        analystBoard.goalStock
+                        analystBoard.goalStock,
+                        analystInfo.reliability,
+                        analystInfo.accuracy,
+                        user.userName,
+                        user.userImagePath
                 ))
                 .from(analystBoard)
+                .join(analystInfo).on(analystBoard.user.userId.eq(analystInfo.user.userId))
+                .join(user).on(analystBoard.user.userId.eq(user.userId))
                 .where(analystBoard.stock.stockId.eq(stockId))
+                .orderBy(analystInfo.reliability.desc())
                 .limit(5)
                 .fetch();
     }
