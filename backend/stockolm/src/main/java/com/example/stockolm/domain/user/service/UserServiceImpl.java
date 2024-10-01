@@ -3,6 +3,7 @@ package com.example.stockolm.domain.user.service;
 import com.example.stockolm.domain.follow.entity.Follow;
 import com.example.stockolm.domain.follow.repository.FollowRepository;
 import com.example.stockolm.domain.user.dto.request.*;
+import com.example.stockolm.domain.user.dto.response.FindPasswordResponse;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.dto.response.UserInfoResponse;
@@ -46,6 +47,16 @@ public class UserServiceImpl implements UserService {
     private final EncryptHelper encryptHelper;
     private final JwtUtil jwtUtil;
 
+    public void sendingMail(String email, String verificationCode) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        helper.setFrom("stockolm5563@naver.com"); // 보내는 사람 이메일
+        helper.setTo(email);  // 받는 사람 이메일
+        helper.setSubject("스톡올름에서 인증코드를 보내드립니다.");  // 이메일 제목
+        helper.setText("인증코드는 : " + verificationCode + " 입니다.");  // 이메일 내용
+        mailSender.send(message);  // 이메일 전송
+    }
+
 
     @Override
     public String generateVerificationCode() {
@@ -63,20 +74,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public SendMailResponse sendVerificationEmail(SendMailRequest sendMailRequest, String verificationCode) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         String email = sendMailRequest.getUserEmail();
+
         if (userRepository.existsByUserEmail(email)) {
             throw new EmailAlreadyExistsException();
         }
 
-        helper.setFrom("stockolm5563@naver.com"); // 보내는 사람 이메일
-        helper.setTo(sendMailRequest.getUserEmail());  // 받는 사람 이메일
-        helper.setSubject("스톡올름에서 인증코드를 보내드립니다.");  // 이메일 제목
-        helper.setText("인증코드는 : " + verificationCode + " 입니다.");  // 이메일 내용
+        sendingMail(email,verificationCode);
 
-        mailSender.send(message);  // 이메일 전송
         LocalDateTime createAt = LocalDateTime.now();
         EmailAuth emailAuth = emailAuthRepository.save(EmailAuth.builder()
                 .randomKey(verificationCode)
@@ -271,6 +277,27 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         return user.getRoleType().name();
+    }
+
+
+    @Override
+    public FindPasswordResponse findPassword(FindMailRequest findMailRequest, String verificationCode) throws MessagingException {
+        String email = findMailRequest.getUserEmail();
+
+        if (!userRepository.existsByUserEmail(email)) {
+            throw new EmailNotExistsException();
+        }
+
+        sendingMail(email,verificationCode);
+
+        LocalDateTime createAt = LocalDateTime.now();
+        EmailAuth emailAuth = emailAuthRepository.save(EmailAuth.builder()
+                .randomKey(verificationCode)
+                .createAt(createAt)
+                .authEmail(email)
+                .build());
+
+        return new FindPasswordResponse(emailAuth.getEmailAuthId());
     }
 
 }

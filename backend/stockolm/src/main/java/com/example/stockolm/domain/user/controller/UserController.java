@@ -1,6 +1,7 @@
 package com.example.stockolm.domain.user.controller;
 
 import com.example.stockolm.domain.user.dto.request.*;
+import com.example.stockolm.domain.user.dto.response.FindPasswordResponse;
 import com.example.stockolm.domain.user.dto.response.LoginResponse;
 import com.example.stockolm.domain.user.dto.response.SendMailResponse;
 import com.example.stockolm.domain.user.dto.response.UserInfoResponse;
@@ -109,6 +110,17 @@ public class UserController {
 
         return ResponseEntity.status(CREATED).body(response);
     }
+
+    @PostMapping("/find-password/send-mail")
+    @Operation(summary = "비밀번호 찾기 시 이메일 인증", description = "비밀번호 찾기 시 이메일 인증 API")
+    public ResponseEntity<?> findPassword(@RequestBody FindMailRequest findMailRequest) throws MessagingException {
+        String verificationCode = userService.generateVerificationCode();
+        FindPasswordResponse response = userService.findPassword(findMailRequest, verificationCode);
+
+        return ResponseEntity.status(CREATED).body(response);
+
+    }
+
 
     @PostMapping("/send-mail/validation")
     @Operation(summary = "이메일 인증 확인", description = "이메일 인증 확인 API")
