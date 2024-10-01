@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -27,7 +28,7 @@ public class CreateAnalystBoardRequest {
 
     private String content;            // 리포트 요약내용
 
-    private LocalDateTime goalDate;    // 목표 날짜
+    private LocalDate goalDate;    // 목표 날짜
 
     private MultipartFile file;        // 리포트 파일
 }

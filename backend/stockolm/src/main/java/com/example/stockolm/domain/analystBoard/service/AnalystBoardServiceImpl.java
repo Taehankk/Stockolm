@@ -64,7 +64,8 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
                 .marketCapitalization(createAnalystBoardRequest.getMarketCapitalization())
                 .content(createAnalystBoardRequest.getContent())
                 .goalDate(createAnalystBoardRequest.getGoalDate())
-                .goalSuccess(GoalCategory.WAIT) // 초기값은 "대기"
+                .goalAccuracy(GoalCategory.WAIT)    // 초기값은 "대기"
+                .goalReliability(GoalCategory.WAIT) // 초기값은 "대기"
 //                .filePath(filepath)
                 .build();
 
