@@ -1,11 +1,16 @@
 package com.example.stockolm.domain.analystBoard.repository;
 
+import com.example.stockolm.domain.analyst.entity.QAnalystInfo;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
+import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
 import com.example.stockolm.domain.board.entity.QBoardLike;
+import com.example.stockolm.domain.stock.dto.response.BestAnalystResponse;
+import com.example.stockolm.domain.stock.dto.response.HotStock;
 import com.example.stockolm.domain.stock.entity.QStock;
+import com.example.stockolm.domain.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -78,5 +83,25 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                         .and(analystBoardLike.analystBoard.analystBoardId.eq(analystBoardId)))
                 .fetchFirst() != null;
     }
+
+    public List<BestAnalystResponse> findBestAnalystByStockId(Long stockId) {
+        QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
+        QAnalystInfo analystInfo = QAnalystInfo.analystInfo;
+        QUser user = QUser.user;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        BestAnalystResponse.class,
+                        analystBoard.analystBoardId,
+                        analystBoard.goalDate,
+                        analystBoard.opinion,
+                        analystBoard.goalStock
+                ))
+                .from(analystBoard)
+                .where(analystBoard.stock.stockId.eq(stockId))
+                .limit(5)
+                .fetch();
+    }
+
 
 }
