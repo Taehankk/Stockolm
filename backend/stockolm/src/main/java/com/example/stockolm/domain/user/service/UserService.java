@@ -46,4 +46,6 @@ public interface UserService {
     String getRoleType(Long userId);
 
     FindPasswordResponse findPassword(FindMailRequest findMailRequest, String verificationCode) throws MessagingException;
+
+    void modifyUserImagePath(String filePath, Long userId);
 }
