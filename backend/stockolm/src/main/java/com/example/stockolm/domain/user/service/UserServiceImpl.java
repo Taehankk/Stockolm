@@ -300,4 +300,12 @@ public class UserServiceImpl implements UserService {
         return new FindPasswordResponse(emailAuth.getEmailAuthId());
     }
 
+    @Override
+    public void modifyUserImagePath(String filePath, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.updateImagePath(filePath);
+    }
+
 }
