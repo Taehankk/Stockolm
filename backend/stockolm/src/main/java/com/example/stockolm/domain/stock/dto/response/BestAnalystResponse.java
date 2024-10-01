@@ -3,10 +3,7 @@ package com.example.stockolm.domain.stock.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -44,19 +41,5 @@ public class BestAnalystResponse {
         this.goalDate = goalDate;
         this.opinion = opinion;
         this.goalStock = goalStock;
-    }
-
-    @Override
-    public String toString() {
-        return "BestAnalystResponse{" +
-                "analystName='" + analystName + '\'' +
-                ", userImagePath='" + userImagePath + '\'' +
-                ", reliability=" + reliability +
-                ", accuracy=" + accuracy +
-                ", analystBoardId=" + analystBoardId +
-                ", goalDate=" + goalDate +
-                ", opinion='" + opinion + '\'' +
-                ", goalStock=" + goalStock +
-                '}';
     }
 }
