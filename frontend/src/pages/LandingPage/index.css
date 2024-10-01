@@ -57,18 +57,6 @@
   background-color: #555;
 }
 
-.section1 {
-  /* background-color: #fdf8e7; */
-}
-
-.section2 {
-  /* background-color: seashell; */
-}
-
-.section3 {
-  /* background-color: #e6edf6; */
-}
-
 .landing-image-box {
   flex-grow: 1;
   display: flex;
@@ -78,7 +66,6 @@
 .landing-image {
   width: 500px;
   height: 400px;
-  background-image: url(/frontend/public/LANDING01.png);
   background-position: 50% 50%;
   background-size: 100% 100%;
 }

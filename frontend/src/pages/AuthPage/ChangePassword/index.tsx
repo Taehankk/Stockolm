@@ -37,9 +37,10 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
     handleImgLocation(0);
     console.log(passwordInput);
   };
-  // useEffect(() => {
-  //   setValidateNumValid(true);
-  // }, []);
+
+  useEffect(() => {
+    setValidateNumValid(false);
+  }, []);
 
   return (
     <div className="flex flex-col items-center w-full">
