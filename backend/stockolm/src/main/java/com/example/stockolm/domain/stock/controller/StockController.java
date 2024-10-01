@@ -113,6 +113,15 @@ public class StockController {
         return ResponseEntity.status(OK).body(stockInfoResponse);
     }
 
+    @GetMapping("/rank/{stock-id}")
+    @Operation(summary = "해당 종목 BEST 애널리스트 조회", description = "해당 종목 BEST 애널리스트 조회 API")
+    public ResponseEntity<?> getBestAnalyst(@PathVariable("stock-id") Long stockId) {
+        List<BestAnalystResponse> response = stockService.getBestAnalyst(stockId);
+
+        return ResponseEntity.status(OK).body(response);
+    }
+
+
 
 
 }

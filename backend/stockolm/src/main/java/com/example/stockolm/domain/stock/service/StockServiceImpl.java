@@ -1,5 +1,11 @@
 package com.example.stockolm.domain.stock.service;
 
+import com.example.stockolm.domain.analyst.entity.AnalystInfo;
+import com.example.stockolm.domain.analyst.repository.AnalystRepository;
+import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
+import com.example.stockolm.domain.analystBoard.repository.AnalystBoardRepository;
+import com.example.stockolm.domain.board.entity.Board;
+import com.example.stockolm.domain.board.repository.BoardRepository;
 import com.example.stockolm.domain.stock.dto.response.*;
 import com.example.stockolm.domain.stock.entity.FavoriteStock;
 import com.example.stockolm.domain.stock.entity.Stock;
@@ -13,6 +19,7 @@ import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.entity.UserSearchList;
 import com.example.stockolm.domain.user.repository.UserRepository;
 import com.example.stockolm.domain.user.repository.UserSearchListRepository;
+import com.example.stockolm.global.exception.custom.BoardNotFoundException;
 import com.example.stockolm.global.exception.custom.StockNotFoundException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +27,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -34,6 +43,8 @@ public class StockServiceImpl implements StockService {
     private final FavoriteStockRepository favoriteStockRepository;
     private final StockDataRepository stockDataRepository;
     private final StockInfoRepository stockInfoRepository;
+    private final AnalystBoardRepository analystBoardRepository;
+    private final AnalystRepository analystRepository;
 
     @Override
     public List<FollowStockResponse> getFollowStockList(Long userId) {
@@ -146,6 +157,42 @@ public class StockServiceImpl implements StockService {
     public StockInfo getStockInfo(String stockCode) {
         return stockInfoRepository.findByStockCode(stockCode);
     }
+
+    @Override
+    public List<BestAnalystResponse> getBestAnalyst(Long stockId) {
+
+            // 필요한 데이터를 미리 모두 가져오기
+            List<BestAnalystResponse> boardInfo = analystBoardRepository.findBestAnalystByStockId(stockId);
+
+            if (boardInfo.isEmpty()) {
+                throw new BoardNotFoundException();
+            }
+
+            // 스트림을 활용하여 데이터를 변환 및 업데이트
+
+        return boardInfo.stream().map(response -> {
+                AnalystBoard analystBoard = analystBoardRepository.findById(response.getAnalystBoardId())
+                        .orElseThrow(BoardNotFoundException::new);
+
+                User user = userRepository.findById(analystBoard.getUser().getUserId())
+                        .orElseThrow(UserNotFoundException::new);
+
+                AnalystInfo analystInfo = analystRepository.findByUser(user);
+
+                // 기존 데이터를 유지하면서 새로운 값을 업데이트
+                return BestAnalystResponse.builder()
+                        .analystName(user.getUserName())
+                        .userImagePath(user.getUserImagePath())
+                        .reliability((float) analystInfo.getReliability())
+                        .accuracy((float) analystInfo.getAccuracy())
+                        .analystBoardId(response.getAnalystBoardId()) // 기존 데이터 유지
+                        .goalDate(response.getGoalDate())             // 기존 데이터 유지
+                        .opinion(response.getOpinion())               // 기존 데이터 유지
+                        .goalStock(response.getGoalStock())           // 기존 데이터 유지
+                        .build();
+            }).collect(Collectors.toList());
+        }
+
 
 
 }

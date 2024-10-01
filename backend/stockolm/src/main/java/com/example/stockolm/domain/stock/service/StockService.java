@@ -21,4 +21,6 @@ public interface StockService {
     List<AnalyzedStockResponse> getAnalyzedStockList(Long userId);
 
     StockInfo getStockInfo(String stockCode);
+
+    List<BestAnalystResponse> getBestAnalyst(Long stockId);
 }
