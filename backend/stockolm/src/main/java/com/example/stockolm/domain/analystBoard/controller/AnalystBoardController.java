@@ -2,6 +2,7 @@ package com.example.stockolm.domain.analystBoard.controller;
 
 import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRequest;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
+import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.service.AnalystBoardService;
 import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
 import com.example.stockolm.domain.board.dto.response.BoardResponse;
@@ -39,7 +40,7 @@ public class AnalystBoardController {
                                                   @RequestParam(required = false) String stockName) {
         validateLogin(userId);
 
-        List<AnalystBoardResponse> likedAnalystBoardList = analystBoardService.getLikedAnalystBoard(userId, stockName);
+        List<LikedAnalystBoardResponse> likedAnalystBoardList = analystBoardService.getLikedAnalystBoard(userId, stockName);
 
         return ResponseEntity.status(OK).body(likedAnalystBoardList);
     }
