@@ -1,6 +1,6 @@
-import notion from "../../../../public/NOTION.svg";
-import ssafy from "../../../../public/SSAFY.svg";
-import github from "../../../../public/GITHUB.svg";
+import notion from "../../../assets/NOTION.svg";
+import ssafy from "../../../assets/SSAFY.svg";
+import github from "../../../assets/GITHUB.svg";
 
 const Footer = () => {
   return (
