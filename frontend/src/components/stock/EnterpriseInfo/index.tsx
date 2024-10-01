@@ -1,6 +1,11 @@
 import "./index.css";
+import { StockInfo } from "../../../types/stock";
 
-const EnterpriseInfo = () => {
+interface EnterpriseInfoProps {
+  stockInfo: StockInfo;
+}
+
+const EnterpriseInfo = ({ stockInfo }: EnterpriseInfoProps) => {
   return (
     <div>
       <div className="invest-info-title">
@@ -9,28 +14,28 @@ const EnterpriseInfo = () => {
       <div className="invest-infomations">
         <div className="invest-infomation">
           <div>회사명</div>
-          <div>종목코드</div>
           <div>대표자명</div>
-          <div>법인등록번호</div>
+          <div>종목코드</div>
+          <div>기업고유코드</div>
         </div>
         <div className="invest-infomation-right">
-          <div>1231</div>
-          <div>2123</div>
-          <div>412343</div>
-          <div>2434</div>
+          <div>{stockInfo.corpName}</div>
+          <div>{stockInfo.ceoName}</div>
+          <div>{stockInfo.stockCode}</div>
+          <div>{stockInfo.corpCode}</div>
         </div>
         <div className="invest-divider"></div>
         <div>
-          <div>사업자등록번호</div>
           <div>주소</div>
           <div>홈페이지</div>
           <div>전화번호</div>
+          <div>팩스번호</div>
         </div>
         <div className="invest-infomation-right">
-          <div>1</div>
-          <div>2</div>
-          <div>3</div>
-          <div>4</div>
+          <div>{stockInfo.address}</div>
+          <div>{stockInfo.url}</div>
+          <div>{stockInfo.phoneNumber}</div>
+          <div>{stockInfo.faxNumber}</div>
         </div>
       </div>
     </div>
