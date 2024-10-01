@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface RankingListItemProps {
   userName: string;
@@ -18,8 +19,17 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
   reliability,
   accuracy,
 }) => {
+  const nav = useNavigate();
+
+  const handleClick = () => {
+    nav(`/analyst/${userName}`);
+  };
+
   return (
-    <div className="flex justify-around items-center w-full h-[5rem]">
+    <div
+      className="flex justify-around items-center w-full h-[5rem] cursor-pointer hover:bg-slate-200"
+      onClick={handleClick}
+    >
       <span className="w-1/6 text-center">
         <span>{totalAnalystRanking}.</span>
       </span>
