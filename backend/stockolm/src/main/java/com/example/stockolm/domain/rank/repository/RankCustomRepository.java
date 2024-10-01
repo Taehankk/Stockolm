@@ -63,9 +63,6 @@ public class RankCustomRepository {
                 .select(user.countDistinct())
                 .from(analystBoard)
                 .join(user).on(user.userId.eq(analystBoard.user.userId))
-//                .from(analystInfo)
-//                .join(analystInfo.user, user)
-//                .join(analystBoard).on(analystBoard.user.userId.eq(user.userId))
                 .fetchCount();
 
         return new PageImpl<>(totalRank, pageable, total);
@@ -75,10 +72,8 @@ public class RankCustomRepository {
 
         if (rankValue != null && rankValue.equals(RELIABILITY)) {
             return analystInfo.reliability.divide(analystBoard.countDistinct()).floor();
-//            return analystInfo.reliability;
         } else if (rankValue != null && rankValue.equals(ACCURACY)) {
             return analystInfo.accuracy.divide(analystBoard.countDistinct()).floor();
-//            return analystInfo.accuracy;
         }
         return analystInfo.totalAnalystScore;
     }

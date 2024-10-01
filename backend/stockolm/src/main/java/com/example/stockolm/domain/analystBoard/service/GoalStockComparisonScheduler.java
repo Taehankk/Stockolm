@@ -61,21 +61,21 @@ public class GoalStockComparisonScheduler {
 
         // TODO: 정확도 세부 조정
         if (currentStock == goalStock) {         // 예측 성공
+            analystInfo.raiseScore();
             analystBoard.successGoalAccuracy();
         } else {                                // 예측 실패
             analystBoard.failGoalAccuracy();
         }
-        updateReliabilityBasedOnStockChange(analystBoard, analystInfo, goalStock, beforeStock, currentStock);   // 신뢰도 조정
+        updateReliabilityBasedOnStockChange(analystBoard, goalStock, beforeStock, currentStock);   // 신뢰도 조정
     }
 
     // 주가 변화에 따른 신뢰도 업데이트
-    private void updateReliabilityBasedOnStockChange(AnalystBoard analystBoard, AnalystInfo analystInfo,
+    private void updateReliabilityBasedOnStockChange(AnalystBoard analystBoard,
                                                      int goalStock, int beforeStock, int currentStock) {
 
         if (currentStock > beforeStock) {  // 주가가 상승한 경우
             if (goalStock > beforeStock) {  // 상승 예측 성공
                 analystBoard.successGoalReliability();
-                analystInfo.raiseScore();
             } else {                        // 상승 예측 실패
                 analystBoard.failGoalReliability();
             }
