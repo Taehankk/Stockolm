@@ -1,5 +1,6 @@
-package com.example.stockolm.domain.board.entity;
+package com.example.stockolm.domain.comment.entity;
 
+import com.example.stockolm.domain.board.entity.Board;
 import com.example.stockolm.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -45,6 +46,10 @@ public class Comment {
     public Comment(User user, Board board, String content) {
         this.user = user;
         this.board = board;
+        this.content = content;
+    }
+
+    public void update(String content) {
         this.content = content;
     }
 }

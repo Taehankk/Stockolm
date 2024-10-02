@@ -1,8 +1,8 @@
 package com.example.stockolm.domain.board.repository;
 
 import com.example.stockolm.domain.board.dto.response.BoardPageResponse;
-import com.example.stockolm.domain.board.dto.response.BoardResponse;
 import com.example.stockolm.domain.board.entity.*;
+import com.example.stockolm.domain.comment.entity.QComment;
 import com.example.stockolm.domain.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -12,7 +12,6 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.Comparator;
 import java.util.List;
@@ -108,16 +107,5 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
                 .where(boardLike.user.userId.eq(userId)
                         .and(boardLike.board.boardId.eq(boardId)))
                 .fetchFirst() != null;
-    }
-
-    @Override
-    public List<Comment> findCommentById(Long boardId) {
-        QComment comment = QComment.comment;
-
-        return queryFactory
-                .selectFrom(comment)
-                .where(comment.board.boardId.eq(boardId))
-                .orderBy(comment.createAt.asc())
-                .fetch();
     }
 }
