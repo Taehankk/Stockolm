@@ -5,6 +5,7 @@ const appkey = import.meta.env.VITE_STOCK_APP_KEY;
 const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
 const accessToken = import.meta.env.VITE_STOCK_ACCESS_TOKEN;
 const token = sessionStorage.getItem("access_token");
+const baseURL = "https://j11b201.p.ssafy.io/api/v1";
 
 export const getStockData = async (stockCode: string) => {
   const headers = {
@@ -52,7 +53,7 @@ export const getChartData = async (stockName: string) => {
 export const getSearchList = async () => {
   const response = await axios.get("/api/v1/stock/search-list", {
     headers: {
-      Authorization: "Bearer JWT-AccessToken",
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
@@ -64,7 +65,7 @@ export const getSearchResults = async (searchTerm: string) => {
     `/api/v1/stock/search-result/${searchTerm}`,
     {
       headers: {
-        Authorization: "Bearer JWT-AccessToken",
+        Authorization: `Bearer ${token}`,
       },
     }
   );
@@ -72,15 +73,16 @@ export const getSearchResults = async (searchTerm: string) => {
 };
 
 export const toggleFollowAPI = async (stockName: string): Promise<void> => {
-  if (!token) {
-    throw new Error("인증 토큰이 없습니다.");
-  }
   console.log(token);
-  await axios.post(`/api/v1/stock/follow/${stockName}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  await axios.post(
+    `${baseURL}/stock/follow/${stockName}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   console.log("좋아요 버튼 호출완료");
 };
 

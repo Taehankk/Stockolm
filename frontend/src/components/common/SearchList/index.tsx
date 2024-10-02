@@ -68,7 +68,7 @@ const SearchList = ({
                 <li
                   key={index}
                   onClick={() =>
-                    onKeywordClick(item.recentStockCode!, item.recentStockName!)
+                    onKeywordClick(item.recentStockName!, item.recentStockCode!)
                   }
                   className="cursor-pointer hover:bg-gray-100 p-2"
                 >
