@@ -102,7 +102,8 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                         analystInfo.reliability,
                         analystInfo.accuracy,
                         user.userName,
-                        user.userImagePath
+                        user.userImagePath,
+                        user.userNickname
                 ))
                 .from(analystBoard)
                 .join(analystInfo).on(analystBoard.user.userId.eq(analystInfo.user.userId))
