@@ -1,6 +1,11 @@
 import "./index.css";
+import { StockInfo } from "../../../types/stock";
 
-const InvestInfo = () => {
+interface InvestInfoProps {
+  stockInfo: StockInfo;
+}
+
+const InvestInfo = ({ stockInfo }: InvestInfoProps) => {
   return (
     <div>
       <div className="invest-info-title">
@@ -8,29 +13,29 @@ const InvestInfo = () => {
       </div>
       <div className="invest-infomations">
         <div className="invest-infomation">
-          <div>시가총액</div>
-          <div>시가총액순위</div>
-          <div>상장주식수</div>
-          <div>액면가 | 매매단위</div>
+          <div>EPS</div>
+          <div>BPS</div>
+          <div>ROE</div>
+          <div>영업이익률</div>
         </div>
         <div className="invest-infomation-right">
-          <div>1231</div>
-          <div>2123</div>
-          <div>412343</div>
-          <div>2434</div>
+          <div>{stockInfo.eps}</div>
+          <div>{stockInfo.bps}</div>
+          <div>{stockInfo.roeVal}</div>
+          <div>{stockInfo.bsopPrfiInrt}</div>
         </div>
         <div className="invest-divider"></div>
         <div>
-          <div>PER | EPS</div>
-          <div>추정 PER | EPS</div>
-          <div>PBR | BPS</div>
-          <div>배당수익률</div>
+          <div>매출액증가율</div>
+          <div>순이익증가율</div>
+          <div>자본금</div>
+          <div>액면가</div>
         </div>
         <div className="invest-infomation-right">
-          <div>1</div>
-          <div>2</div>
-          <div>3</div>
-          <div>4</div>
+          <div>{stockInfo.grs}</div>
+          <div>{stockInfo.ntinInrt}</div>
+          <div>{stockInfo.cpta}</div>
+          <div>{stockInfo.papr}</div>
         </div>
       </div>
     </div>

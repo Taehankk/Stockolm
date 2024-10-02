@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { getStockData } from "../../../api/stockAPI";
+import { getStockData, toggleFollowAPI } from "../../../api/stockAPI";
 
+import { RootState } from "../../../store";
+import { updateFollowStatus } from "../../../slices/stockSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import StockLikeON from "../../../assets/StockLikeON.svg";
+import StockLikeOFF from "../../../assets/StockLikeOFF.svg";
+import { useDispatch, useSelector } from "react-redux";
 
 interface SummaryProps {
   searchCode: string;
@@ -20,6 +25,9 @@ interface StockData {
 }
 
 const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
+  const dispatch = useDispatch();
+
+  const { isFollow } = useSelector((state: RootState) => state.stock);
   const [stockData, setStockData] = useState<StockData | null>(null);
 
   const fetchData = async () => {
@@ -38,6 +46,17 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
   }, [searchCode]);
 
   if (!stockData) return <div>Loading...</div>;
+
+  const toggleFollow = async () => {
+    try {
+      console.log(searchTerm);
+      await toggleFollowAPI(searchTerm);
+      dispatch(updateFollowStatus(!isFollow));
+    } catch (error) {
+      console.error("관심 종목 상태를 변경하지 못했습니다.", error);
+    }
+    console.log(isFollow);
+  };
 
   return (
     <div className="flex flex-col">
@@ -82,7 +101,12 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
             )}
           </div>
         </div>
-        <div>좋아요버튼</div>
+        <img
+          src={isFollow ? StockLikeON : StockLikeOFF}
+          alt={isFollow ? "관심 종목 설정됨" : "관심 종목 아님"}
+          onClick={toggleFollow}
+          className="cursor-pointer"
+        />
       </div>
       {/* 중단 : 구체적인 수치 */}
       <div className="flex w-4/5 flex-row gap-8 justify-between pt-3">
