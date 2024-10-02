@@ -61,6 +61,7 @@ public class GoalStockComparisonScheduler {
 
         // TODO: 정확도 세부 조정
         if (currentStock == goalStock) {         // 예측 성공
+            analystInfo.raiseScore();
             analystBoard.successGoalAccuracy();
         } else {                                // 예측 실패
             analystBoard.failGoalAccuracy();
