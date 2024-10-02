@@ -6,6 +6,8 @@ import com.example.stockolm.domain.comment.entity.QComment;
 import com.example.stockolm.domain.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -39,6 +41,16 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
             builder.and(board.title.contains(searchWord).or(board.content.contains(searchWord)));
         }
 
+        // 로그인 유저인 경우만 좋아요 여부를 판단
+        BooleanExpression likeExpression = null;
+        if (userId != null) {
+            likeExpression = JPAExpressions.selectOne()
+                    .from(boardLike)
+                    .where(boardLike.board.boardId.eq(board.boardId)
+                            .and(boardLike.user.userId.eq(userId)))
+                    .exists();
+        }
+
         List<BoardPageResponse> boardPage = queryFactory
                 .select(Projections.constructor(BoardPageResponse.class,
                         user.userNickname,
@@ -53,11 +65,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
                                 .where(comment.board.boardId.eq(board.boardId)),
                         board.createAt,
                         board.updateAt,
-                        JPAExpressions.selectOne() // 좋아요 여부
-                                .from(boardLike)
-                                .where(boardLike.board.boardId.eq(board.boardId)
-                                        .and(boardLike.user.userId.eq(userId)))
-                                .exists()
+                        likeExpression != null ? likeExpression : Expressions.asBoolean(false)  // 좋아요 여부
                 ))
                 .from(board)
                 .join(board.user, user)
