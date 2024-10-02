@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosTokenInstance";
+import axiosInstance from "./axiosInstance";
 
 export const checkNicknameDuplicateAPI = async (nickname: string) => {
   try {
