@@ -227,8 +227,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest) {
-        boolean nicknameExists = userRepository.existsByUserNickname(nicknameUpdateRequest.getUserNickname());
-        if (nicknameExists)
+        User existUser = userRepository.findByUserNickname(nicknameUpdateRequest.getUserNickname());
+
+        if(existUser != null)
             throw new NicknameConflictException();
 
         User user = userRepository.findById(userId)
