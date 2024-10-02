@@ -6,7 +6,9 @@ import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardRespons
 import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
 
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
-AnalystBoardCustomRepositoryImpl.java
+
+
+>>>>>>> backend/stockolm/src/main/java/com/example/stockolm/domain/analystBoard/repository/AnalystBoardCustomRepositoryImpl.java
 import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
