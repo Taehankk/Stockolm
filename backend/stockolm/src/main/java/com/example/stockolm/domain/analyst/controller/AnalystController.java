@@ -2,6 +2,7 @@ package com.example.stockolm.domain.analyst.controller;
 
 
 import com.example.stockolm.domain.analyst.dto.response.AnalystInfoResponse;
+import com.example.stockolm.domain.analyst.dto.response.AnalystSimpleInfoResponse;
 import com.example.stockolm.domain.analyst.service.AnalystService;
 import com.example.stockolm.domain.rank.dto.response.AnalystRankInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -32,6 +35,15 @@ public class AnalystController {
         AnalystInfoResponse analystInfoResponse = analystService.searchAnalystInfo(analystNickName);
 
         return ResponseEntity.status(OK).body(analystInfoResponse);
+    }
+
+    @GetMapping("search/{user-name}")
+    @Operation(summary = "애널리스트 검색", description = "애널리스트 검색 API")
+    public ResponseEntity<?> searchAnalystSimpleInfo(@RequestParam("user-name") String analystName) {
+
+        List<AnalystSimpleInfoResponse> analystSimpleInfoResponses = analystService.searchAnalystSimpleInfo(analystName);
+
+        return ResponseEntity.status(OK).body(analystSimpleInfoResponses);
     }
 
 }
