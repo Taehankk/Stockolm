@@ -26,7 +26,7 @@ const SearchList = ({
               searchResults.map((item, index) => (
                 <li
                   key={index}
-                  onClick={() => onKeywordClick(item.stockCode, item.stockName)}
+                  onClick={() => onKeywordClick(item.stockName, item.stockCode)}
                   className="cursor-pointer hover:bg-gray-100 p-2"
                 >
                   <div className="flex justify-between">
@@ -68,7 +68,7 @@ const SearchList = ({
                 <li
                   key={index}
                   onClick={() =>
-                    onKeywordClick(item.recentStockCode!, item.recentStockName!)
+                    onKeywordClick(item.recentStockName!, item.recentStockCode!)
                   }
                   className="cursor-pointer hover:bg-gray-100 p-2"
                 >
