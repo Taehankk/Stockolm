@@ -18,9 +18,9 @@ public class AnalystServiceImpl implements AnalystService {
     private final UserRepository userRepository;
 
     @Override
-    public AnalystInfoResponse searchAnalystInfo(String analystName) {
+    public AnalystInfoResponse searchAnalystInfo(String analystNickName) {
 
-        User analyst = userRepository.findByUserName(analystName);
+        User analyst = userRepository.findByUserNickname(analystNickName);
 
         if (analyst == null) {
             throw new AnalystNotFoundException();
