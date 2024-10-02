@@ -2,7 +2,11 @@ package com.example.stockolm.domain.analystBoard.repository;
 
 import com.example.stockolm.domain.analyst.entity.QAnalystInfo;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
+
 import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
+
+import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
+
 import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
@@ -29,7 +33,7 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
 
 
     @Override
-    public List<AnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName) {
+    public List<LikedAnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName) {
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
         QAnalystBoardLike analystBoardLike = QAnalystBoardLike.analystBoardLike;
         QStock stock = QStock.stock;
@@ -42,7 +46,7 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
         }
 
         return queryFactory
-                .select(Projections.constructor(AnalystBoardResponse.class,
+                .select(Projections.constructor(LikedAnalystBoardResponse.class,
                         analystBoard.analystBoardId, analystBoard.stock.stockName,
                         analystBoard.title, analystBoard.user.userName,
                         analystBoard.user.userNickname, analystBoard.filePath))

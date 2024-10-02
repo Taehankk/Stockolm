@@ -30,6 +30,10 @@ public class AnalystInfo {
 
     private int accuracy;
 
+    public void raiseScore() {
+        this.totalAnalystScore += 100;
+    }
+
     public void updateAccuracy(int accuracy) {
         this.accuracy = accuracy;
     }
