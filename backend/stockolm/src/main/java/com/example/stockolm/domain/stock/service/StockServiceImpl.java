@@ -116,7 +116,7 @@ public class StockServiceImpl implements StockService {
                 );
     }
 
-    @Cacheable(value = "stockDetailCache", key = "#stockName")
+    @Cacheable(value = "stockDetailCache", key = "#userId + '_' + #stockName")
     @Override
     public StockDetailResponse getStockDetail(Long userId, String stockName) {
         Stock stock = stockRepository.findByStockName(stockName);
@@ -124,14 +124,13 @@ public class StockServiceImpl implements StockService {
             throw new StockNotFoundException();
         }
 
-
         Boolean existFavoriteStockUser = false;
 
         if (userId != null) {
             User user = userRepository.findById(userId)
                     .orElseThrow(UserNotFoundException::new);
 
-            existFavoriteStockUser = favoriteStockRepository.existsByUser(user);
+            existFavoriteStockUser = favoriteStockRepository.existsByUser_UserIdAndStock_StockId(userId, stock.getStockId());
         }
 
         List<StockData> stockDataList = stockDataRepository.findByStockId(stock.getStockId());
