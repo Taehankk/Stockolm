@@ -1,4 +1,6 @@
-import axiosInstance from "./axiosTokenInstance";
+import axios from "axios";
+
+const token = sessionStorage.getItem("access_token");
 
 export interface StockItem {
   recentStockName?: string;
@@ -24,9 +26,14 @@ export const getSearchResults = async (
   keyword: string
 ): Promise<SearchResultItem[]> => {
   try {
-    const response = await axiosInstance.get<SearchResultItem[]>(
-      // `/api/v1/stock/search-result/${keyword}`
-      `/stock/search-result/${keyword}`
+    const response = await axios.get<SearchResultItem[]>(
+      `/api/v1/stock/search-result/${keyword}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // 실제 JWT 토큰으로 대체하세요.
+        },
+      }
+      // `/stock/search-result/${keyword}`
     );
     return response.data;
   } catch (error) {
@@ -37,14 +44,14 @@ export const getSearchResults = async (
 
 export const getSearchList = async (): Promise<SearchListResponse> => {
   try {
-    const response = await axiosInstance.get<SearchListResponse>(
-      "/stock/search-list"
-      // "/api/v1/stock/search-list"
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${}`, // 실제 JWT 토큰으로 대체하세요.
-      //     },
-      //   }
+    const response = await axios.get<SearchListResponse>(
+      // "/stock/search-list"
+      "/api/v1/stock/search-list",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // 실제 JWT 토큰으로 대체하세요.
+        },
+      }
     );
     return response.data;
   } catch (error) {
