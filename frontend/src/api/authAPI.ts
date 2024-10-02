@@ -1,18 +1,10 @@
-import axiosInstance from "./axiosInstance";
-import { CustomAxiosRequestConfig } from "./axiosInstance";
+import axiosInstance from "./axiosTokenInstance";
 
 export const checkNicknameDuplicateAPI = async (nickname: string) => {
   try {
-    await axiosInstance.post(
-      "/user/nickname",
-      {
-        userNickname: nickname,
-      },
-      {
-        headers: {},
-        authRequired: false,
-      } as CustomAxiosRequestConfig
-    );
+    await axiosInstance.post("/user/nickname", {
+      userNickname: nickname,
+    });
   } catch (e: any) {
     if (e.response && e.response.status === 409) {
       return e.response.data;
@@ -22,16 +14,9 @@ export const checkNicknameDuplicateAPI = async (nickname: string) => {
 
 export const sendEmailAPI = async (email: string) => {
   try {
-    const res = await axiosInstance.post(
-      "/user/send-mail",
-      {
-        userEmail: email,
-      },
-      {
-        headers: {},
-        authRequired: false,
-      } as CustomAxiosRequestConfig
-    );
+    const res = await axiosInstance.post("/user/send-mail", {
+      userEmail: email,
+    });
 
     alert("이메일에서 인증코드를 확인해주세요.");
     return res.data.emailAuthId;
@@ -48,17 +33,10 @@ export const checkValidateAPI = async (
   validateNum: string
 ) => {
   try {
-    await axiosInstance.post(
-      "/user/send-mail/validation",
-      {
-        emailAuthId: emailAuthId,
-        randomKey: validateNum,
-      },
-      {
-        headers: {},
-        authRequired: false,
-      } as CustomAxiosRequestConfig
-    );
+    await axiosInstance.post("/user/send-mail/validation", {
+      emailAuthId: emailAuthId,
+      randomKey: validateNum,
+    });
 
     alert("이메일 인증 성공");
 
@@ -74,16 +52,9 @@ export const checkValidateAPI = async (
 
 export const checkAnalystCodeAPI = async (code: string) => {
   try {
-    await axiosInstance.post(
-      "/user/auth-code",
-      {
-        codeNumber: code,
-      },
-      {
-        headers: {},
-        authRequired: false,
-      } as CustomAxiosRequestConfig
-    );
+    await axiosInstance.post("/user/auth-code", {
+      codeNumber: code,
+    });
 
     return true;
   } catch (e: any) {
@@ -103,21 +74,14 @@ export const signUpAPI = async (
   emailAuthId: number
 ) => {
   try {
-    await axiosInstance.post(
-      "/user/sign-up",
-      {
-        userEmail: email, //유저 이메일
-        userPassword: password, //유저 패스워드
-        userName: name, //애널리스트 실명
-        userNickname: nickname, //일반 유저 닉네임
-        roleType: role, //역할 [유저, 애널리스트, 구독자]
-        emailAuthId: emailAuthId,
-      },
-      {
-        headers: {},
-        authRequired: false,
-      } as CustomAxiosRequestConfig
-    );
+    await axiosInstance.post("/user/sign-up", {
+      userEmail: email, //유저 이메일
+      userPassword: password, //유저 패스워드
+      userName: name, //애널리스트 실명
+      userNickname: nickname, //일반 유저 닉네임
+      roleType: role, //역할 [유저, 애널리스트, 구독자]
+      emailAuthId: emailAuthId,
+    });
 
     alert("회원가입이 정상적으로 완료되었습니다.");
     return 0;

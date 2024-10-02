@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
-import axiosInstance from "../../../api/axiosInstance";
+import axiosInstance from "../../../api/axiosTokenInstance";
 
 interface Props {
   handleImgLocation: (value: number) => void;
