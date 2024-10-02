@@ -4,9 +4,6 @@ import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRe
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.service.AnalystBoardService;
-import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
-import com.example.stockolm.domain.board.dto.response.BoardResponse;
-import com.example.stockolm.domain.follow.dto.response.FollowAnalystResponse;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
 import io.swagger.v3.oas.annotations.Operation;
