@@ -1,5 +1,11 @@
 package com.example.stockolm.domain.stock.service;
 
+import com.example.stockolm.domain.analyst.entity.AnalystInfo;
+import com.example.stockolm.domain.analyst.repository.AnalystRepository;
+import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
+import com.example.stockolm.domain.analystBoard.repository.AnalystBoardRepository;
+import com.example.stockolm.domain.board.entity.Board;
+import com.example.stockolm.domain.board.repository.BoardRepository;
 import com.example.stockolm.domain.stock.dto.response.*;
 import com.example.stockolm.domain.stock.entity.FavoriteStock;
 import com.example.stockolm.domain.stock.entity.Stock;
@@ -13,6 +19,7 @@ import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.entity.UserSearchList;
 import com.example.stockolm.domain.user.repository.UserRepository;
 import com.example.stockolm.domain.user.repository.UserSearchListRepository;
+import com.example.stockolm.global.exception.custom.BoardNotFoundException;
 import com.example.stockolm.global.exception.custom.StockNotFoundException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +27,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -34,6 +43,8 @@ public class StockServiceImpl implements StockService {
     private final FavoriteStockRepository favoriteStockRepository;
     private final StockDataRepository stockDataRepository;
     private final StockInfoRepository stockInfoRepository;
+    private final AnalystBoardRepository analystBoardRepository;
+    private final AnalystRepository analystRepository;
 
     @Override
     public List<FollowStockResponse> getFollowStockList(Long userId) {
@@ -115,7 +126,7 @@ public class StockServiceImpl implements StockService {
 
         Boolean existFavoriteStockUser = false;
 
-        if(userId != null){
+        if (userId != null) {
             User user = userRepository.findById(userId)
                     .orElseThrow(UserNotFoundException::new);
 
@@ -145,6 +156,12 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockInfo getStockInfo(String stockCode) {
         return stockInfoRepository.findByStockCode(stockCode);
+    }
+
+    @Override
+    public List<BestAnalystResponse> getBestAnalyst(Long stockId) {
+
+        return analystBoardRepository.findBestAnalystByStockId(stockId);
     }
 
 
