@@ -9,6 +9,8 @@ import java.time.LocalDate;
 public class BestAnalystResponse {
     private String analystName;
 
+    private String analystNickname;
+
     private String userImagePath;
 
     private Integer reliability;
@@ -24,7 +26,7 @@ public class BestAnalystResponse {
     private Integer goalStock;
 
 
-    public BestAnalystResponse(Long analystBoardId, LocalDate goalDate, String opinion, Integer goalStock, Integer reliability, Integer accuracy, String analystName, String userImagePath) {
+    public BestAnalystResponse(Long analystBoardId, LocalDate goalDate, String opinion, Integer goalStock, Integer reliability, Integer accuracy, String analystName, String userImagePath, String analystNickname) {
         this.analystBoardId = analystBoardId;
         this.goalDate = goalDate;
         this.opinion = opinion;
@@ -33,5 +35,6 @@ public class BestAnalystResponse {
         this.accuracy = accuracy;
         this.analystName = analystName;
         this.userImagePath = userImagePath;
+        this.analystNickname = analystNickname;
     }
 }
