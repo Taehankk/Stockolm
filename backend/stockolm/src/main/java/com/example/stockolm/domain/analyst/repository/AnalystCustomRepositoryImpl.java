@@ -4,11 +4,13 @@ import com.example.stockolm.domain.analyst.dto.AnalystGoalInfoDTO;
 import com.example.stockolm.domain.analyst.dto.IndustryDTO;
 import com.example.stockolm.domain.analyst.dto.StockInfoDTO;
 import com.example.stockolm.domain.analyst.dto.response.AnalystInfoResponse;
+import com.example.stockolm.domain.analyst.dto.response.AnalystSimpleInfoResponse;
 import com.example.stockolm.domain.analyst.entity.QAnalystInfo;
 import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.follow.entity.QFollow;
 import com.example.stockolm.domain.stock.entity.QStock;
+import com.example.stockolm.domain.user.entity.QUser;
 import com.example.stockolm.domain.user.entity.User;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -49,6 +51,23 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                 .accuracyStock(topAccuracyStocks)
                 .industry(industryInfo)
                 .build();
+    }
+
+    @Override
+    public List<AnalystSimpleInfoResponse> searchAnalystSimpleInfo(String analystName) {
+        QUser user = QUser.user;
+        QAnalystInfo analystInfo = QAnalystInfo.analystInfo;
+
+        return queryFactory
+                .select(Projections.constructor(
+                        AnalystSimpleInfoResponse.class,
+                        user.userName,
+                        user.userNickname
+                ))
+                .from(user)
+                .join(analystInfo).on(user.userId.eq(analystInfo.user.userId))
+                .where(user.userName.contains(analystName))
+                .fetch();
     }
 
 
