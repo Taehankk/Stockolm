@@ -42,12 +42,11 @@ public class StockController {
 
     @PostMapping("/search/{stock-name}")
     @Operation(summary = "종목 검색기록 생성", description = "종목 검색기록 생성 API")
-    public ResponseEntity<Void> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
+    public ResponseEntity<SearchStockResponse> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
                                             @PathVariable("stock-name") String stockName) {
 
-        stockService.createStockSearchLog(userId, stockName);
-
-        return ResponseEntity.status(NO_CONTENT).build();
+        SearchStockResponse searchStockResponse = stockService.createStockSearchLog(userId, stockName);
+        return ResponseEntity.status(CREATED).body(searchStockResponse);
     }
 
     @GetMapping("/search-result/{search-keyword}")
