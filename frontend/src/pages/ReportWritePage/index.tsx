@@ -1,16 +1,20 @@
-import { useState } from "react";
+// import { GoogleAuth } from "google-auth-library";
 
+import { pdfFormAPI, pdfSummaryAPI } from "../../api/communityAPI";
 import WriteForm from "../../components/boardWrite/WriteForm";
 import Button from "../../components/elements/Button";
 import Input from "../../components/elements/Input";
 import BasicLayout from "../../layouts/BasicLayout";
+import { useState } from "react";
 
 const ReportWritePage = () => {
-  const [file, setFile] = useState<File>();
-
   const ALLOW_FILW_EXTENSION = "pdf";
 
+  const [text, setText] = useState("");
+  const [form, setForm] = useState("");
+
   const fileUploadValidHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("fileUploadValidHandler IN");
     const target = e.currentTarget;
     const files = (target.files as FileList)[0];
 
@@ -23,20 +27,38 @@ const ReportWritePage = () => {
         return;
       }
 
-      setFile(files);
-      fileUploadHandler();
+      fileUploadHandler(files);
     }
   };
 
-  const fileUploadHandler = () => {
+  const fileUploadHandler = async (file: File) => {
+    console.log("fileUploadHandler IN");
     if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
+      console.log("file upload success");
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64File = reader.result?.toString().split(",")[1]; // Base64 데이터 추출
 
-      // OCR API 연결
-      //
+        try {
+          // GoogleAuth로 인증 처리
+          // const auth = new GoogleAuth({
+          //   scopes: "https://www.googleapis.com/auth/cloud-platform",
+          // });
 
-      // 결과물(요약본) 리턴 받아서 에디터에 뿌리기
+          // const client = await auth.getClient();
+          // const token = await client.getAccessToken();
+
+          // console.log(token);
+          // OCR API 연결
+          setText(await pdfSummaryAPI(base64File));
+          setForm(await pdfFormAPI(base64File));
+        } catch (e) {
+          console.log(e);
+        }
+
+        // 결과물(요약본) 리턴 받아서 에디터에 뿌리기
+      };
     }
   };
 
@@ -55,7 +77,6 @@ const ReportWritePage = () => {
               onChange={fileUploadValidHandler}
               className="w-96"
             />
-            <span>{file?.name}</span>
           </div>
         </div>
         <Input placeholder="제목을 입력해주세요" className="border-none" />
@@ -64,6 +85,8 @@ const ReportWritePage = () => {
         <div className="h-40 mb-20">
           <WriteForm />
         </div>
+        {text}
+        {form}
 
         <div className="flex justify-end">
           <Button
