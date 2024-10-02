@@ -1,6 +1,5 @@
 package com.example.stockolm.domain.board.dto.response;
 
-import com.example.stockolm.domain.board.entity.Comment;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,11 +19,10 @@ public class BoardResponse {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private boolean isLike;
-    private List<Comment> commentList;
 
     @Builder
     public BoardResponse(String userNickname, String userImagePath, String title, String content, String category,
-                                 List<String> imagePathList, int viewCnt, int likeCnt, LocalDateTime createAt, LocalDateTime updateAt, boolean isLike, List<Comment> commentList) {
+                                 List<String> imagePathList, int viewCnt, int likeCnt, LocalDateTime createAt, LocalDateTime updateAt, boolean isLike) {
         this.userNickname = userNickname;
         this.userImagePath = userImagePath;
         this.title = title;
@@ -36,6 +34,5 @@ public class BoardResponse {
         this.createAt = createAt;
         this.updateAt = updateAt;
         this.isLike = isLike;
-        this.commentList = commentList;
     }
 }
