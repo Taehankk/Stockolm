@@ -86,7 +86,10 @@ public class BoardServiceImpl implements BoardService {
 
         List<String> imagePathList = boardRepository.findImagePathById(boardId);
 
-        boolean isLike = boardRepository.isLike(boardId, userId);
+        boolean isLike = false;
+        if (userId != null) { // 비로그인 유저의 경우, 좋아요 여부 판단 X
+            isLike = boardRepository.isLike(boardId, userId);
+        }
 
         board.incrementViewCnt(); // 조회수 증가 -> 영속성 컨텍스트가 자동으로 DB 업데이트
 

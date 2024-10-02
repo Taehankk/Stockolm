@@ -76,4 +76,5 @@ public class AnalystBoardController {
         analystBoardService.likeAnalystBoard(analystBoardId, userId);
         return ResponseEntity.status(NO_CONTENT).build();
     }
+
 }
