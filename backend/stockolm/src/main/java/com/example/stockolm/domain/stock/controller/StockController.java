@@ -43,7 +43,7 @@ public class StockController {
     @PostMapping("/search/{stock-name}")
     @Operation(summary = "종목 검색기록 생성", description = "종목 검색기록 생성 API")
     public ResponseEntity<SearchStockResponse> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
-                                            @PathVariable("stock-name") String stockName) {
+                                                           @PathVariable("stock-name") String stockName) {
 
         SearchStockResponse searchStockResponse = stockService.createStockSearchLog(userId, stockName);
         return ResponseEntity.status(CREATED).body(searchStockResponse);
@@ -85,6 +85,7 @@ public class StockController {
     public ResponseEntity<StockDetailResponse> getStockDetail(@AuthPrincipal @Parameter(hidden = true) Long userId,
                                                               @PathVariable("stock-name") String stockName) {
 
+
         StockDetailResponse stockDetailResponse = stockService.getStockDetail(userId, stockName);
 
         return ResponseEntity.status(OK).body(stockDetailResponse);
@@ -119,8 +120,6 @@ public class StockController {
 
         return ResponseEntity.status(OK).body(response);
     }
-
-
 
 
 }

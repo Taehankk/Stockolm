@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface FavoriteStockRepository extends JpaRepository<FavoriteStock,Long> {
-    Boolean existsByUser(User user);
+    Boolean existsByUser_UserIdAndStock_StockId(Long userId, Long stockId);
 
     Optional<FavoriteStock> findByStockAndUser(Stock stock, User user);
 }
