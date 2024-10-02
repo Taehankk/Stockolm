@@ -1,8 +1,10 @@
 import axios from "axios";
+// import axiosInstance from "./axiosInstance";
 
 const appkey = import.meta.env.VITE_STOCK_APP_KEY;
 const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
 const accessToken = import.meta.env.VITE_STOCK_ACCESS_TOKEN;
+const token = sessionStorage.getItem("access_token");
 
 export const getStockData = async (stockCode: string) => {
   const headers = {
@@ -32,15 +34,12 @@ export const getStockData = async (stockCode: string) => {
 };
 
 export const getChartData = async (stockName: string) => {
-  // const token = "YOUR_JWT_ACCESS_TOKEN";
-
   try {
     const response = await axios.get(`/api/v1/stock/${stockName}`, {
-      // headers: {
-      //   Authorization: `Bearer ${token}`,
-      // },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-    console.log(stockName);
     console.log("chart정보 요청 : ", response.data);
     return response.data;
   } catch (error) {
@@ -70,4 +69,28 @@ export const getSearchResults = async (searchTerm: string) => {
     }
   );
   return response.data;
+};
+
+export const toggleFollowAPI = async (stockName: string): Promise<void> => {
+  if (!token) {
+    throw new Error("인증 토큰이 없습니다.");
+  }
+  console.log(token);
+  await axios.post(`/api/v1/stock/follow/${stockName}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  console.log("좋아요 버튼 호출완료");
+};
+
+export const getStockInfo = async (stockCode: string) => {
+  try {
+    const response = await axios.get(`/api/v1/stock/stock-info/${stockCode}`);
+    console.log("주식정보 getStockInfo", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock info:", error);
+    throw error;
+  }
 };
