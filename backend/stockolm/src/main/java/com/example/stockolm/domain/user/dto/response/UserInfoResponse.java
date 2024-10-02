@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserInfoResponse {
 
+    private String userName;
     private String userNickName;
     private String userImagePath;
 
