@@ -67,6 +67,8 @@ public class User {
 
     public void updateNickname(String nickname) { this.userNickname = nickname; }
 
+    public void updateImagePath(String filePath) { this.userImagePath = filePath; }
+
     public void deleteRefreshToken() {
         this.refreshToken = null;
     }
