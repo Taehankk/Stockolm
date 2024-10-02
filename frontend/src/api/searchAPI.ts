@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosInstance";
+import axiosInstance from "./axiosTokenInstance";
 
 export interface StockItem {
   recentStockName?: string;
