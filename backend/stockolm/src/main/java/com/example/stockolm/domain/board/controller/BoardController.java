@@ -1,7 +1,6 @@
 package com.example.stockolm.domain.board.controller;
 
 import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
-import com.example.stockolm.domain.board.dto.request.CreateCommentRequest;
 import com.example.stockolm.domain.board.dto.request.ModifyBoardRequest;
 import com.example.stockolm.domain.board.dto.response.BoardPageResponse;
 import com.example.stockolm.domain.board.dto.response.BoardResponse;
@@ -18,8 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -85,14 +82,6 @@ public class BoardController {
         validateLogin(userId);
         boardService.likeBoard(boardId, userId);
         return ResponseEntity.status(NO_CONTENT).build();
-    }
-
-    @PostMapping("/comment/{boardId}")
-    @Operation(summary = "댓글 생성", description = "자유게시판 글에 댓글 작성하는 API")
-    public ResponseEntity<Void> createComment(@PathVariable Long boardId, @AuthPrincipal @Parameter(hidden = true) Long userId, @RequestBody CreateCommentRequest createCommentRequest) {
-        validateLogin(userId);
-        boardService.createComment(boardId, userId, createCommentRequest);
-        return ResponseEntity.status(CREATED).build();
     }
 
 }

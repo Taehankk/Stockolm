@@ -1,17 +1,14 @@
 package com.example.stockolm.domain.board.service;
 
 import com.example.stockolm.domain.board.dto.request.CreateBoardRequest;
-import com.example.stockolm.domain.board.dto.request.CreateCommentRequest;
 import com.example.stockolm.domain.board.dto.request.ModifyBoardRequest;
 import com.example.stockolm.domain.board.dto.response.BoardPageResponse;
 import com.example.stockolm.domain.board.dto.response.BoardResponse;
 import com.example.stockolm.domain.board.entity.Board;
 import com.example.stockolm.domain.board.entity.BoardLike;
 import com.example.stockolm.domain.board.entity.Category;
-import com.example.stockolm.domain.board.entity.Comment;
 import com.example.stockolm.domain.board.repository.BoardLikeRepository;
 import com.example.stockolm.domain.board.repository.BoardRepository;
-import com.example.stockolm.domain.board.repository.CommentRepository;
 import com.example.stockolm.domain.user.entity.User;
 import com.example.stockolm.domain.user.repository.UserRepository;
 import com.example.stockolm.global.exception.custom.BoardNotFoundException;
@@ -33,7 +30,6 @@ public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
-    private final CommentRepository commentRepository;
 
     @Override
     public Page<BoardPageResponse> getBoardPage(String searchWord, Pageable pageable, Long userId) {
@@ -92,8 +88,6 @@ public class BoardServiceImpl implements BoardService {
 
         boolean isLike = boardRepository.isLike(boardId, userId);
 
-        List<Comment> commentList = boardRepository.findCommentById(boardId);
-
         board.incrementViewCnt(); // 조회수 증가 -> 영속성 컨텍스트가 자동으로 DB 업데이트
 
         return BoardResponse.builder()
@@ -108,7 +102,6 @@ public class BoardServiceImpl implements BoardService {
                 .createAt(board.getCreateAt())
                 .updateAt(board.getUpdateAt())
                 .isLike(isLike)
-                .commentList(commentList)
                 .build();
     }
 
@@ -136,19 +129,4 @@ public class BoardServiceImpl implements BoardService {
                         }
                 );
     }
-
-    @Override
-    public void createComment(Long boardId, Long userId, CreateCommentRequest createCommentRequest) {
-        Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
-        Comment comment = Comment.builder()
-                .board(board)
-                .user(user)
-                .content(createCommentRequest.getContent())
-                .build();
-
-        commentRepository.save(comment);
-    }
-
 }
