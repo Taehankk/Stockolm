@@ -25,7 +25,7 @@ public class AnalystController {
 
     private final AnalystService analystService;
 
-    @GetMapping("analyst/{user-nickname}")
+    @GetMapping("/{user-nickname}")
     @Operation(summary = "애널리스트 정보 조회", description = "애널리스트 정보 조회 API")
     public ResponseEntity<?> searchAnalystInfo(@RequestParam("user-nickname") String analystNickName) {
 

@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 public class HotStock {
    private String hotStockCode;
    private String hotStockName;
+   private Long hotStockId;
 
    @Builder
-    public HotStock(String hotStockCode, String hotStockName) {
+    public HotStock(String hotStockCode, String hotStockName, Long hotStockId) {
        this.hotStockCode = hotStockCode;
        this.hotStockName = hotStockName;
+       this.hotStockId = hotStockId;
    }
 }

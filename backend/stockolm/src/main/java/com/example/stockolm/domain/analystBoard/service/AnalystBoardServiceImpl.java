@@ -2,6 +2,7 @@ package com.example.stockolm.domain.analystBoard.service;
 
 import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRequest;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
+import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.AnalystBoardLike;
 import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
@@ -31,7 +32,7 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
     private final AnalystBoardLikeRepository analystBoardLikeRepository;
 
     @Override
-    public List<AnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName) {
+    public List<LikedAnalystBoardResponse> getLikedAnalystBoard(Long userId, String stockName) {
 
         return analystBoardRepository.getLikedAnalystBoard(userId, stockName);
     }
@@ -73,7 +74,7 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
     }
 
     @Override
-    public AnalystBoardResponse retrieveAnalystBoard(Long analystBoardId, Long userId) {
+    public AnalystBoardResponse getAnalystBoard(Long analystBoardId, Long userId) {
         AnalystBoard analystBoard = analystBoardRepository.findById(analystBoardId).orElseThrow(BoardNotFoundException::new);
 
         boolean isLike = analystBoardRepository.isLike(analystBoardId, userId);
