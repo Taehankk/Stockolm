@@ -1,4 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
+import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 // 1. InternalAxiosRequestConfig 타입을 확장하여 authRequired 속성을 추가
@@ -41,7 +42,7 @@ axiosInstance.interceptors.response.use(
 
     if (
       error.response &&
-      error.response.status === 401 &&
+      error.response.status === 500 &&
       originalRequest.authRequired &&
       !originalRequest._retry
     ) {
@@ -60,9 +61,15 @@ axiosInstance.interceptors.response.use(
         // 새로 발급된 토큰으로 다시 요청
         originalRequest.headers["Authorization"] = `${newAccessToken}`;
         return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        console.error("Token refresh failed:", refreshError);
-        return Promise.reject(refreshError);
+      } catch (refreshError: any) {
+        const navigate = useNavigate();
+
+        if (refreshError.response && refreshError.response.status === 401) {
+          alert("다시 로그인 해주세요.");
+          navigate("/auth");
+          console.error("Token refresh failed:", refreshError);
+          return Promise.reject(refreshError);
+        }
       }
     }
 
