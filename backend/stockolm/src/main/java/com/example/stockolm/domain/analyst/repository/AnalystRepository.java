@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AnalystRepository extends JpaRepository<AnalystInfo, Long> {
+public interface AnalystRepository extends JpaRepository<AnalystInfo, Long>, AnalystCustomRepository {
     AnalystInfo findByUser(User user);
 
 }
