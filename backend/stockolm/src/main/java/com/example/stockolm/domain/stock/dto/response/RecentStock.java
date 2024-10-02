@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 public class RecentStock {
     private String recentStockName;
     private String recentStockCode;
+    private Long recentStockId;
 
     @Builder
-    public RecentStock(String recentStockName, String recentStockCode) {
+    public RecentStock(String recentStockName, String recentStockCode, Long recentStockId) {
         this.recentStockName = recentStockName;
         this.recentStockCode = recentStockCode;
+        this.recentStockId = recentStockId;
     }
 }
