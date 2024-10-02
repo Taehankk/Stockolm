@@ -27,6 +27,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +76,7 @@ public class StockServiceImpl implements StockService {
                         .stockSearchContent(stockName)
                         .user(user)
                         .build();
+                newSearchList.updateTimestamp();
                 userSearchListRepository.save(newSearchList);
             }
         }
