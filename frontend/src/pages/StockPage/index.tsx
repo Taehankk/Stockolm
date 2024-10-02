@@ -55,11 +55,11 @@ const StockPage = () => {
       <div className="bottom">
         {stockInfo && (
           <>
-            <div className="infos">
+            <div className="invest-infos">
               <InvestInfo stockInfo={stockInfo}></InvestInfo>
             </div>
             <div className="divider">|</div>
-            <div className="infos">
+            <div className="enterprise-infos">
               <EnterpriseInfo stockInfo={stockInfo}></EnterpriseInfo>
             </div>
           </>
