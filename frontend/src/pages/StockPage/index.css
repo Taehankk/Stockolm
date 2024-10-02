@@ -32,8 +32,13 @@
   width: 1%;
   margin: 0 auto;
 }
-.infos {
-  width: 49%;
+.invest-infos {
+  width: 41%;
+  /* border: 1px solid skyblue; */
+}
+
+.enterprise-infos {
+  width: 58%;
   /* border: 1px solid skyblue; */
 }
 
