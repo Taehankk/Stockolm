@@ -1,11 +1,11 @@
 import axios from "axios";
-// import axiosInstance from "./axiosInstance";
 
 const appkey = import.meta.env.VITE_STOCK_APP_KEY;
 const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
 const accessToken = import.meta.env.VITE_STOCK_ACCESS_TOKEN;
-const token = sessionStorage.getItem("access_token");
 const baseURL = "https://j11b201.p.ssafy.io/api/v1";
+
+const getToken = () => sessionStorage.getItem("access_token");
 
 export const getStockData = async (stockCode: string) => {
   const headers = {
@@ -35,11 +35,11 @@ export const getStockData = async (stockCode: string) => {
 };
 
 export const getChartData = async (stockName: string) => {
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   try {
-    const response = await axios.get(`/api/v1/stock/${stockName}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const response = await axios.get(`${baseURL}/stock/${stockName}`, {
+      headers,
     });
     console.log("chart정보 요청 : ", response.data);
     return response.data;
@@ -51,36 +51,35 @@ export const getChartData = async (stockName: string) => {
 
 // 검색 리스트(최근 검색어/인기 검색어) 가져오는 API
 export const getSearchList = async () => {
-  const response = await axios.get("/api/v1/stock/search-list", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const response = await axios.get(`${baseURL}/stock/search-list`, {
+    headers,
   });
   return response.data;
 };
 
 // 검색어 입력 시 결과를 가져오는 API
 export const getSearchResults = async (searchTerm: string) => {
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const response = await axios.get(
-    `/api/v1/stock/search-result/${searchTerm}`,
+    `${baseURL}/stock/search-result/${searchTerm}`,
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     }
   );
   return response.data;
 };
 
 export const toggleFollowAPI = async (stockName: string): Promise<void> => {
-  console.log(token);
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   await axios.post(
     `${baseURL}/stock/follow/${stockName}`,
     {},
     {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
     }
   );
   console.log("좋아요 버튼 호출완료");
@@ -88,7 +87,9 @@ export const toggleFollowAPI = async (stockName: string): Promise<void> => {
 
 export const getStockInfo = async (stockCode: string) => {
   try {
-    const response = await axios.get(`/api/v1/stock/stock-info/${stockCode}`);
+    const response = await axios.get(
+      `${baseURL}/stock/stock-info/${stockCode}`
+    );
     console.log("주식정보 getStockInfo", response.data);
     return response.data;
   } catch (error) {
