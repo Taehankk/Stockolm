@@ -14,6 +14,6 @@ export const fetchRankings = async (
   };
 
   const response = await axios.get("/api/v1/rank", { params });
-  console.log("랭킹api요청 respobse", response);
+  console.log("랭킹api요청 response", response);
   return response.data;
 };
