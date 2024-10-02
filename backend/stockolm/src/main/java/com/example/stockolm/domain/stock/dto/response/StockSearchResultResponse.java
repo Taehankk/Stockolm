@@ -12,9 +12,12 @@ public class StockSearchResultResponse {
 
     private String stockCode;
 
+    private Long stockId;
+
     @Builder
-    public StockSearchResultResponse(String stockName, String stockCode) {
+    public StockSearchResultResponse(String stockName, String stockCode, Long stockId) {
         this.stockName = stockName;
         this.stockCode = stockCode;
+        this.stockId = stockId;
     }
 }
