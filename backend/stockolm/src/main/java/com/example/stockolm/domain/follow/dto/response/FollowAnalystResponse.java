@@ -10,10 +10,11 @@ public class FollowAnalystResponse {
     private String userImagePath;
     private Double reliability;
     private Double accuracy;
-    private int totalAnalystRanking;
+    private Integer totalAnalystRanking;
 
     @Builder
-    public FollowAnalystResponse(String userName, String userNickName, String userImagePath, Double reliability, Double accuracy, int totalAnalystRanking) {
+    public FollowAnalystResponse(String userName, String userNickName, String userImagePath,
+                                 Double reliability, Double accuracy, Integer totalAnalystRanking) {
         this.userName = userName;
         this.userNickName = userNickName;
         this.userImagePath = userImagePath;
