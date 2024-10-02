@@ -227,8 +227,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void modifyUserNickname(Long userId, NicknameUpdateRequest nicknameUpdateRequest) {
-        boolean nicknameExists = userRepository.existsByUserNickname(nicknameUpdateRequest.getUserNickname());
-        if (nicknameExists)
+        User existUser = userRepository.findByUserNickname(nicknameUpdateRequest.getUserNickname());
+
+        if(existUser != null)
             throw new NicknameConflictException();
 
         User user = userRepository.findById(userId)
@@ -298,6 +299,14 @@ public class UserServiceImpl implements UserService {
                 .build());
 
         return new FindPasswordResponse(emailAuth.getEmailAuthId());
+    }
+
+    @Override
+    public void modifyUserImagePath(String filePath, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFoundException::new);
+
+        user.updateImagePath(filePath);
     }
 
 }

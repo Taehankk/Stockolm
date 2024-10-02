@@ -15,6 +15,9 @@ import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
+import static com.example.stockolm.domain.analyst.entity.QAnalystInfo.analystInfo;
+import static com.example.stockolm.domain.analystBoard.entity.QAnalystBoard.analystBoard;
+
 public class FollowCustomRepositoryImpl implements FollowCustomRepository {
 
     private final JPAQueryFactory queryFactory;

@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface AnalystRepository extends JpaRepository<AnalystInfo, Long>, AnalystCustomRepository {
     AnalystInfo findByUser(User user);
+
 }

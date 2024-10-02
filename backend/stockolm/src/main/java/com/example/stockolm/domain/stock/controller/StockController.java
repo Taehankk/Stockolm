@@ -42,12 +42,11 @@ public class StockController {
 
     @PostMapping("/search/{stock-name}")
     @Operation(summary = "종목 검색기록 생성", description = "종목 검색기록 생성 API")
-    public ResponseEntity<Void> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
-                                            @PathVariable("stock-name") String stockName) {
+    public ResponseEntity<SearchStockResponse> searchStock(@AuthPrincipal @Parameter(hidden = true) Long userId,
+                                                           @PathVariable("stock-name") String stockName) {
 
-        stockService.createStockSearchLog(userId, stockName);
-
-        return ResponseEntity.status(NO_CONTENT).build();
+        SearchStockResponse searchStockResponse = stockService.createStockSearchLog(userId, stockName);
+        return ResponseEntity.status(CREATED).body(searchStockResponse);
     }
 
     @GetMapping("/search-result/{search-keyword}")
@@ -86,6 +85,7 @@ public class StockController {
     public ResponseEntity<StockDetailResponse> getStockDetail(@AuthPrincipal @Parameter(hidden = true) Long userId,
                                                               @PathVariable("stock-name") String stockName) {
 
+
         StockDetailResponse stockDetailResponse = stockService.getStockDetail(userId, stockName);
 
         return ResponseEntity.status(OK).body(stockDetailResponse);
@@ -113,6 +113,13 @@ public class StockController {
         return ResponseEntity.status(OK).body(stockInfoResponse);
     }
 
+    @GetMapping("/rank/{stock-id}")
+    @Operation(summary = "해당 종목 BEST 애널리스트 조회", description = "해당 종목 BEST 애널리스트 조회 API")
+    public ResponseEntity<?> getBestAnalyst(@PathVariable("stock-id") Long stockId) {
+        List<BestAnalystResponse> response = stockService.getBestAnalyst(stockId);
+
+        return ResponseEntity.status(OK).body(response);
+    }
 
 
 }
