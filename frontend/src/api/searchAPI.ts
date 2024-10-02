@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const token = sessionStorage.getItem("access_token");
+const baseURL = "https://j11b201.p.ssafy.io/api/v1";
+const getToken = () => sessionStorage.getItem("access_token");
 
 export interface StockItem {
   recentStockName?: string;
@@ -25,13 +26,13 @@ export interface SearchResultItem {
 export const getSearchResults = async (
   keyword: string
 ): Promise<SearchResultItem[]> => {
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   try {
     const response = await axios.get<SearchResultItem[]>(
-      `/api/v1/stock/search-result/${keyword}`,
+      `${baseURL}/stock/search-result/${keyword}`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`, // 실제 JWT 토큰으로 대체하세요.
-        },
+        headers,
       }
       // `/stock/search-result/${keyword}`
     );
@@ -43,14 +44,13 @@ export const getSearchResults = async (
 };
 
 export const getSearchList = async (): Promise<SearchListResponse> => {
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   try {
     const response = await axios.get<SearchListResponse>(
-      // "/stock/search-list"
-      "/api/v1/stock/search-list",
+      `${baseURL}/stock/search-list`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`, // 실제 JWT 토큰으로 대체하세요.
-        },
+        headers,
       }
     );
     return response.data;
