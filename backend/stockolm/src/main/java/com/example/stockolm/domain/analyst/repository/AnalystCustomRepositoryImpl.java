@@ -10,7 +10,9 @@ import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.follow.entity.QFollow;
 import com.example.stockolm.domain.stock.entity.QStock;
 import com.example.stockolm.domain.user.entity.User;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -74,11 +76,15 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         QAnalystInfo analystInfo = QAnalystInfo.analystInfo;
 
         // 현재 분석가의 점수
-        int targetScore = queryFactory
+        Integer targetScore = queryFactory
                 .select(analystInfo.totalAnalystScore)
                 .from(analystInfo)
                 .where(analystInfo.user.userId.eq(analystId))
                 .fetchOne();
+
+        if (targetScore == null) {
+            targetScore = 0;
+        }
 
         // 랭킹 추출
         return queryFactory
@@ -105,7 +111,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                 .where(analystInfo.user.userId.eq(analystId))
                 .fetchOne();
 
-        if (analystGoalInfoDTO.reliability == null || analystGoalInfoDTO.accuracy == null) {
+        if (analystGoalInfoDTO == null || analystGoalInfoDTO.reliability == null || analystGoalInfoDTO.accuracy == null) {
             return AnalystGoalInfoDTO.builder()
                     .accuracy(0.0)
                     .reliability(0.0)
@@ -121,7 +127,26 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
         QStock stock = QStock.stock;
 
-        return null;
+        return queryFactory
+                .select(Projections.constructor(
+                        StockInfoDTO.class,
+                        stock.stockName,            // 종목 이름
+                        analystBoard.analystBoardId.count(),    // 종목에 대해 작성한 총 게시글 수
+                        new CaseBuilder()
+                                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum(), // 신뢰성 있는 글을 쓴 게시글 수
+                        new CaseBuilder()
+                                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
+                                .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
+                ))
+                .from(analystBoard)
+                .join(stock).on(analystBoard.stock.stockId.eq(analystBoard.stock.stockId)).fetchJoin()
+                .where(analystBoard.user.userId.eq(analystId))
+                .groupBy(stock.stockName)
+                .orderBy(new CaseBuilder()
+                        .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
+                        .divide(analystBoard.analystBoardId.count()).multiply(100).desc())
+                .limit(3)
+                .fetch();
     }
 
     // 정확도가 높은 상위 3개의 종목을 반환하는 함수
@@ -129,7 +154,26 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
         QStock stock = QStock.stock;
 
-        return null;
+        return queryFactory
+                .select(Projections.constructor(
+                        StockInfoDTO.class,
+                        stock.stockName,
+                        analystBoard.analystBoardId.count(),    // 종목에 대해 작성한 총 게시글 수
+                        new CaseBuilder()
+                                .when(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum(), // 신뢰성 있는 글을 쓴 게시글 수
+                        new CaseBuilder()
+                                .when(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
+                                .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
+                ))
+                .from(analystBoard)
+                .join(stock).on(analystBoard.stock.stockId.eq(analystBoard.stock.stockId)).fetchJoin()
+                .where(analystBoard.user.userId.eq(analystId))
+                .groupBy(stock.stockName)
+                .orderBy(new CaseBuilder()
+                        .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
+                        .divide(analystBoard.analystBoardId.count()).multiply(100).desc())
+                .limit(3)
+                .fetch();
     }
 
     // 가장 신뢰도 높은 산업군 상위 3개를 반환하는 함수
@@ -137,7 +181,24 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
         QStock stock = QStock.stock;
 
-        return null;
+        return queryFactory
+                .select(Projections.constructor(
+                        IndustryDTO.class,
+                        stock.industryName,            // 종목 이름
+                        new CaseBuilder()
+                                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
+                                .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
+                ))
+                .from(analystBoard)
+                .join(stock).on(analystBoard.stock.stockId.eq(analystBoard.stock.stockId)).fetchJoin()
+                .where(analystBoard.user.userId.eq(analystId))
+                .groupBy(stock.industryName)
+                .orderBy(new CaseBuilder()
+                        .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
+                        .divide(analystBoard.analystBoardId.count()).multiply(100).desc())
+                .limit(3)
+                .fetch();
+
     }
 
 }
