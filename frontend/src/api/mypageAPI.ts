@@ -1,5 +1,5 @@
 import axios from "axios";
-import axiosInstance from "./axiosInstance";
+import axiosTokenInstance from "./axiosTokenInstance";
 
 const appkey = import.meta.env.VITE_STOCK_APP_KEY;
 const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
@@ -48,7 +48,7 @@ export const getStockData = async (stockCode: string) => {
 
 export const fetchUser = async () => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosTokenInstance.get(
         '/user/info'
       );
 
@@ -64,7 +64,7 @@ export const fetchUser = async () => {
 
 export const fetchFavoriteAnalysts = async (): Promise<Analyst[]> => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosTokenInstance.get(
         '/follow/analysts'
       );
 
@@ -80,7 +80,7 @@ export const fetchFavoriteAnalysts = async (): Promise<Analyst[]> => {
 
 export const fetchFavoriteStock = async (): Promise<Stock[]> => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosTokenInstance.get(
         '/stock/follow-stocks'
       );
 
@@ -96,7 +96,7 @@ export const fetchFavoriteStock = async (): Promise<Stock[]> => {
 
 export const fetchAnalyzeStock = async () => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosTokenInstance.get(
         '/stock/analyzed-stock'
       );
 
@@ -112,7 +112,7 @@ export const fetchAnalyzeStock = async () => {
 
 export const fetchFavoriteBoard = async () => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosTokenInstance.get(
         '/analyst-board/like/11'
       );
 
@@ -128,7 +128,7 @@ export const fetchFavoriteBoard = async () => {
 
 export const patchPassword = async (newPassword: string) => {
     try {
-      const response = await axiosInstance.patch(
+      const response = await axiosTokenInstance.patch(
         '/user/update-password',
         {
           newPassword,
@@ -147,7 +147,7 @@ export const patchPassword = async (newPassword: string) => {
 export const patchNickname = async (newNickname: string) => {
     try {
         console.log(newNickname)
-      const response = await axiosInstance.patch(
+      const response = await axiosTokenInstance.patch(
         '/user/nickname',
         {
           userNickname: newNickname,
