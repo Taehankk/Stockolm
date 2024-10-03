@@ -4,7 +4,11 @@ interface SearchListProps {
   searchResults: SearchResultItem[];
   popularKeywords: StockItem[];
   recentKeywords: StockItem[];
-  onKeywordClick: (stockName: string, stockCode: string) => void;
+  onKeywordClick: (
+    stockName: string,
+    stockCode: string,
+    stockId: string
+  ) => void;
   loading: boolean;
   error: string | null;
   hasInput: boolean;
@@ -26,7 +30,9 @@ const SearchList = ({
               searchResults.map((item, index) => (
                 <li
                   key={index}
-                  onClick={() => onKeywordClick(item.stockName, item.stockCode)}
+                  onClick={() =>
+                    onKeywordClick(item.stockName, item.stockCode, item.stockId)
+                  }
                   className="cursor-pointer hover:bg-gray-100 p-2"
                 >
                   <div className="flex justify-between">
@@ -49,7 +55,11 @@ const SearchList = ({
                 <li
                   key={index}
                   onClick={() =>
-                    onKeywordClick(item.hotStockName!, item.hotStockCode!)
+                    onKeywordClick(
+                      item.hotStockName!,
+                      item.hotStockCode!,
+                      item.hotStockId!
+                    )
                   }
                   className="cursor-pointer hover:bg-gray-100 p-2"
                 >
@@ -68,7 +78,11 @@ const SearchList = ({
                 <li
                   key={index}
                   onClick={() =>
-                    onKeywordClick(item.recentStockName!, item.recentStockCode!)
+                    onKeywordClick(
+                      item.recentStockName!,
+                      item.recentStockCode!,
+                      item.recentStockId!
+                    )
                   }
                   className="cursor-pointer hover:bg-gray-100 p-2"
                 >
