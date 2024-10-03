@@ -7,6 +7,7 @@ import com.example.stockolm.domain.stock.service.StockService;
 import com.example.stockolm.global.auth.AuthPrincipal;
 import com.example.stockolm.global.exception.custom.LoginRequiredException;
 import com.example.stockolm.global.exception.custom.StockNotFoundException;
+import com.example.stockolm.global.util.webclient.KoreaInvestWebClientUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ import static org.springframework.http.HttpStatus.*;
 public class StockController {
 
     private final StockService stockService;
+    private final KoreaInvestWebClientUtil koreaInvestWebClientUtil;
 
     @GetMapping("/follow-stocks")
     @Operation(summary = "관심 종목 조회", description = "관심 종목 조회 API")
@@ -119,6 +122,12 @@ public class StockController {
         List<BestAnalystResponse> response = stockService.getBestAnalyst(stockId);
 
         return ResponseEntity.status(OK).body(response);
+    }
+
+    @GetMapping("/time-chart/{stock-code}")
+    @Operation(summary = "분봉 차트 조회", description = "분봉 차트 조회 API")
+    public Flux<List<GetChartResponse>> getChart(@PathVariable("stock-code") String stockCode) {
+        return koreaInvestWebClientUtil.getChart(stockCode);
     }
 
 
