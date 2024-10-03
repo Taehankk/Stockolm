@@ -7,31 +7,91 @@ import memo from "/src/assets/memo.svg"
 import plusPerson from "/src/assets/plusPerson.svg"
 import ranking from "/src/assets/rank.svg"
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store";
+import { getUserInfo } from "../../slices/userSlice";
+import NicknameModal from "../../components/mypage/NicknameModal";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAnalystInfo } from "../../api/analystAPI";
 
-const MyPage = () => {
-  const [analyst, setAnalyst] = useState("장원영");
-  
-  const [write, setWrite] = useState(0);
-  const [subscribe, setSubscribe] = useState(0);
-  const [rank, setRank] = useState(0);
+interface AnalystInfo {
+  boardSize: number,
+  follower: number,
+  totalAnalystRank: number,
+  reliability: number,
+  reliabilityStock: [
+    {
+      stockName: string,
+      stockSize: number,
+      stockReliabilitySize: number
+      stockReliabilityValue: number
+    },
+  ],
+  accuracy: number
+  accuracyStock: [
+    {
+      stockName: string,
+      stockSize: number,
+      stockAccuracySize: number
+      stockAccuracyValue: number 
+    },
+  ],	
+  industry: [
+    {
+      industryName: string,
+      industryValue: number
+    },
+  ]
+}
+
+const MyPage: React.FC = () => {
+
+  const dispatch: AppDispatch = useDispatch(); 
+  const { userName, userNickName, userImagePath, loading, error } = useSelector((state: RootState) => state.user);
+
+  const [nickName, setNickName] = useState("");
+  const [isModal, setIsModal] = useState(false);
+  const [role, setRole] = useState("");
+
+  const { data: analystInfo, error: analystInfoError, isLoading: analystInfoIsLoading } = useQuery<AnalystInfo, Error>({
+    queryKey: ["analystInfo", userNickName], 
+    queryFn: ({ queryKey }) => fetchAnalystInfo(queryKey[1] as string)
+  });
 
   useEffect(() => {
-    setAnalyst("장원영");
-    setWrite(0);
-    setSubscribe(0);
-    setRank(0);
+    setRole(sessionStorage.getItem("ROLE") || "USER");
   },[])
 
-  const role: string = "USE";
+  useEffect(() => {
+    dispatch(getUserInfo());
+  }, [dispatch]);
+
+  useEffect(() => {
+    setNickName(userNickName);
+  },[userNickName])
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  const handleClickPencil = () => {
+    setIsModal(true);
+  }
+
   return(
     <BasicLayout>
       <div className="flex flex-col">
         <div className="flex relative self-end w-[80%] h-[110px] mt-[3rem] border-b-black border-b-2">
           <img className="absolute left-[-7rem] w-[9rem] h-[9rem] rounded-full" src={profile}></img>
-          <div className="pl-[3rem] h-full flex items-end text-[2.25rem]">{analyst}님, 안녕하세요!</div>
+          <div className="pl-[3rem] h-full flex items-end text-[2.25rem]">{role === "USER" ? nickName : userName}님, 안녕하세요!</div>
           <div className="flex h-full">
-            <img className="w-[1.6rem] h-[1.6rem] ml-[1rem] mb-[1rem] self-end" src={pencil}></img>
+            <img className="w-[1.6rem] h-[1.6rem] ml-[1rem] mb-[1rem] self-end cursor-pointer" src={pencil} onClick={handleClickPencil}></img>
+            {isModal && <NicknameModal setIsModal={setIsModal} context="변경할 닉네임을 입력하세요."></NicknameModal>}
           </div>
           {role !== "USER" ? <div className="flex flex-1 w-[20rem] justify-end items-end gap-[2rem] ">
             <div>
@@ -39,7 +99,7 @@ const MyPage = () => {
                 <img src={memo} className="w-[1.5rem] h-[1.5rem]"></img>
                 <span>작성글</span>
               </div>
-              <span className="flex justify-end pr-[0.7rem]">{write}</span>
+              <span className="flex justify-end pr-[1rem]">{analystInfo?.boardSize}</span>
             </div>
             
             <div>
@@ -47,7 +107,7 @@ const MyPage = () => {
                 <img src={plusPerson} className="w-[1.5rem] h-[1.5rem]"></img>
                 <span>구독자</span>
               </div>
-              <span className="flex justify-end pr-[0.7rem]">{subscribe}</span>
+              <span className="flex justify-end pr-[1rem]">{analystInfo?.follower}</span>
             </div>
 
             <div>
@@ -55,7 +115,7 @@ const MyPage = () => {
                 <img src={ranking} className="w-[1.5rem] h-[1.5rem]"></img>
                 <span>순위</span>
               </div>
-              <span className="flex justify-end pr-[0.7rem]">{rank}</span>
+              <span className="flex justify-end pr-[0.7rem]">{analystInfo?.totalAnalystRank}</span>
             </div>
           </div> :
           <></>}
@@ -77,13 +137,8 @@ const MyPage = () => {
           <div className="w-full mt-[6rem]">
             <Outlet />
           </div>
-
+        </div>
       </div>
-       
-      </div>
-      
-      
-      
     </BasicLayout>
   );
 };
