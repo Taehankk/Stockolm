@@ -16,7 +16,7 @@ axiosTokenInstance.interceptors.request.use(
   async (config: CustomAxiosRequestConfig) => {
     const token = sessionStorage.getItem("access_token");
     config.headers["Authorization"] = "Bearer " + token;
-
+    config.headers["withCredentials"] = true;
     return config;
   },
   (error) => {
@@ -42,9 +42,17 @@ axiosTokenInstance.interceptors.response.use(
       originalRequest.retry = true;
 
       try {
-        const { data } = await axios.post(`${baseURL}/user/refresh-token`, {
-          refreshToken: cookies.get("refresh_token"),
-        });
+        const { data } = await axios.post(
+          `${baseURL}/user/refresh-token`,
+          {
+            refreshToken: cookies.get("refresh_token"),
+          },
+          {
+            headers: {
+              withCredentials: true,
+            },
+          }
+        );
 
         const newAccessToken = data.headers.authorization;
         sessionStorage.setItem("access_token", newAccessToken);
