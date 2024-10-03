@@ -2,6 +2,7 @@ package com.example.stockolm.domain.stock.service;
 
 import com.example.stockolm.domain.stock.dto.response.*;
 import com.example.stockolm.domain.stock.entity.StockInfo;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -23,4 +24,5 @@ public interface StockService {
     StockInfo getStockInfo(String stockCode);
 
     List<BestAnalystResponse> getBestAnalyst(Long stockId);
+
 }
