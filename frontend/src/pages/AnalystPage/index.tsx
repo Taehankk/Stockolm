@@ -91,6 +91,9 @@ const Analyst: React.FC = () => {
   const handleClickFollow = async (nickname: string) => {
     try {
       await postAnalystFollow(nickname);
+
+      setIsFollow(!isFollow);
+
       if (nickname) {
         queryClient.invalidateQueries({
           queryKey: ["analystInfo", nickname],
