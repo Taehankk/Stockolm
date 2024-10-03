@@ -1,7 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import BasicLayout from "../../layouts/BasicLayout";
 
-import profile from "/src/assets/winter.jpg"
+// import profile from "/src/assets/winter.jpg"
 import pencil from "/src/assets/pencil.svg"
 import memo from "/src/assets/memo.svg"
 import plusPerson from "/src/assets/plusPerson.svg"
@@ -71,11 +71,11 @@ const MyPage: React.FC = () => {
     setNickName(userNickName);
   },[userNickName])
 
-  if (loading) {
+  if (loading || analystInfoIsLoading) {
     return <p>Loading...</p>;
   }
 
-  if (error) {
+  if (error || analystInfoError) {
     return <p>Error: {error}</p>;
   }
 
@@ -87,7 +87,7 @@ const MyPage: React.FC = () => {
     <BasicLayout>
       <div className="flex flex-col">
         <div className="flex relative self-end w-[80%] h-[110px] mt-[3rem] border-b-black border-b-2">
-          <img className="absolute left-[-7rem] w-[9rem] h-[9rem] rounded-full" src={profile}></img>
+          <img className="absolute left-[-7rem] w-[9rem] h-[9rem] rounded-full" src={userImagePath}></img>
           <div className="pl-[3rem] h-full flex items-end text-[2.25rem]">{role === "USER" ? nickName : userName}님, 안녕하세요!</div>
           <div className="flex h-full">
             <img className="w-[1.6rem] h-[1.6rem] ml-[1rem] mb-[1rem] self-end cursor-pointer" src={pencil} onClick={handleClickPencil}></img>

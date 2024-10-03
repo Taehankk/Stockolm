@@ -1,6 +1,6 @@
 import BasicLayout from "../../layouts/BasicLayout";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import { Link, useParams } from "react-router-dom";
 import { Outlet } from "react-router-dom";
@@ -91,11 +91,24 @@ const Analyst: React.FC = () => {
   const handleClickFollow = async (nickname: string) => {
     try {
       await postAnalystFollow(nickname);
-      queryClient.invalidateQueries(["analystInfo", nickname]);
+      if (nickname) {
+        queryClient.invalidateQueries({
+          queryKey: ["analystInfo", nickname],
+          exact: true,
+        });
+      }
     } catch (error) {
        console.error("팔로우 처리 중 오류 발생:", error);
     }
   };
+
+  if (analystInfoIsLoading || analystIsLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (analystError || analystInfoError) {
+    return <p>Error</p>;
+  }
 
   return (
     <BasicLayout>

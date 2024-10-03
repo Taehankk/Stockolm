@@ -11,18 +11,18 @@
 
   interface StockInfo {
     stockName: string,
-    currentPrice: string,
-    priceChange: string,
-    fluctuationRate: string,
-    tradingVolume: string,
-    tradingAmount: string,
+    stck_prpr: string;
+    prdy_vrss: string;
+    prdy_ctrt: string;
+    acml_vol: string;
+    acml_tr_pbmn: string;
   }
 
   const StockInfoList = ({
     dataProps, 
   }: StockInfoListProps) => {
 
-    const [dataList, setDataList] = useState<any>([]);
+    const [dataList, setDataList] = useState<StockInfo[]>([]);
 
     const fetchData = async (dataProps: Stock[]) => {
       try {
