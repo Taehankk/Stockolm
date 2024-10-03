@@ -111,8 +111,6 @@ public class KoreaInvestWebClientUtil {
         try {
             List<GetChartResponse> responseDataList = new ArrayList<>();
             JsonNode rootNode = objectMapper.readTree(response);
-            System.out.println("API response received");
-            System.out.println(rootNode.toString());
 
             // output2 필드가 있는지 확인 (상세 데이터)
             if (rootNode.has("output2")) {
@@ -140,7 +138,6 @@ public class KoreaInvestWebClientUtil {
 
                         // 데이터를 시간순으로 정렬 (stck_cntg_hour 기준)
                         responseDataList.sort(Comparator.comparing(GetChartResponse::getStck_cntg_hour));
-                        System.out.println("Data sorted by stck_cntg_hour");
                     }
                 } else {
                     throw new IllegalStateException("'output2' 필드는 배열이 아닙니다.");
