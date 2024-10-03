@@ -258,7 +258,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        User analyst = Optional.ofNullable(userRepository.findByUserName(followRequest.getUserName()))
+        if(user.getUserNickname().equals(followRequest.getUserNickname()))
+            throw new FollowingException();
+
+        User analyst = Optional.ofNullable(userRepository.findByUserNickname(followRequest.getUserNickname()))
                 .filter(a -> "ANALYST".equals(a.getRoleType().name()))
                 .orElseThrow(AnalystNotFoundException::new);
 
