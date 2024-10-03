@@ -214,7 +214,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        return new UserInfoResponse(user.getUserNickname(), user.getUserImagePath());
+        return new UserInfoResponse(user.getUserName(), user.getUserNickname(), user.getUserImagePath());
     }
 
     @Override
