@@ -18,7 +18,7 @@ import java.io.IOException;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/api/v1/upload")
 @RequiredArgsConstructor
 public class UploadController {
 
