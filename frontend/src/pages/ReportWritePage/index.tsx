@@ -1,6 +1,7 @@
 // import { GoogleAuth } from "google-auth-library";
 
-import { pdfFormAPI, pdfSummaryAPI } from "../../api/communityAPI";
+// import { pdfFormAPI, pdfOCRAPI, pdfSummaryAPI } from "../../api/communityAPI";
+import { pdfSummaryAPI } from "../../api/communityAPI";
 import WriteForm from "../../components/boardWrite/WriteForm";
 import Button from "../../components/elements/Button";
 import Input from "../../components/elements/Input";
@@ -11,7 +12,8 @@ const ReportWritePage = () => {
   const ALLOW_FILW_EXTENSION = "pdf";
 
   const [text, setText] = useState("");
-  const [form, setForm] = useState("");
+  // const [form, setForm] = useState("");
+  // const [ocr, setOcr] = useState("");
 
   const fileUploadValidHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("fileUploadValidHandler IN");
@@ -52,7 +54,8 @@ const ReportWritePage = () => {
           // console.log(token);
           // OCR API 연결
           setText(await pdfSummaryAPI(base64File));
-          setForm(await pdfFormAPI(base64File));
+          // setForm(await pdfFormAPI(base64File));
+          // setOcr(await pdfOCRAPI(base64File));
         } catch (e) {
           console.log(e);
         }
@@ -86,7 +89,7 @@ const ReportWritePage = () => {
           <WriteForm />
         </div>
         {text}
-        {form}
+        {/* {form} */}
 
         <div className="flex justify-end">
           <Button
