@@ -13,6 +13,7 @@ interface RankingListItemProps {
 
 const RankingListItem: React.FC<RankingListItemProps> = ({
   userName,
+  userNickname,
   userImagePath,
   totalAnalystRanking,
   totalBoardSize,
@@ -22,7 +23,7 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
   const nav = useNavigate();
 
   const handleClick = () => {
-    nav(`/analyst/${userName}`);
+    nav(`/analyst/${userNickname}`);
   };
 
   return (

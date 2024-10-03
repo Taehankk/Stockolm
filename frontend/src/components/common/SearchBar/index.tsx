@@ -2,7 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../../store";
-import { setSearchTerm, setSearchCode } from "../../../slices/stockSlice";
+import { searchCountAPI } from "../../../api/searchAPI";
+import {
+  setSearchTerm,
+  setSearchCode,
+  setStockId,
+} from "../../../slices/stockSlice";
 import {
   fetchSearchList,
   fetchSearchResults,
@@ -84,9 +89,15 @@ const SearchBar = () => {
           searchResults={searchResults}
           popularKeywords={hotStockList}
           recentKeywords={recentStockList}
-          onKeywordClick={(stockName: string, stockCode: string) => {
+          onKeywordClick={(
+            stockName: string,
+            stockCode: string,
+            stockId: string
+          ) => {
             dispatch(setSearchTerm(stockName));
             dispatch(setSearchCode(stockCode));
+            dispatch(setStockId(stockId));
+            searchCountAPI(stockName);
             navigate(`/stock`);
             setIsFocused(false);
             setValue("");
