@@ -16,8 +16,9 @@ const Header = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem("access_token");
-    navigate(0);
+    sessionStorage.removeItem("role");
     navigate("/");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -53,10 +54,13 @@ const Header = () => {
           />
           {isMenuOpen && (
             <div className="absolute flex flex-col gap-2 justify-center top-[100%] right-0 mt-2 border border-black rounded-lg w-[8rem] h-[6rem] bg-white">
-              <Link to="/mypage" className="ml-4">
+              <Link to="/mypage" className="ml-1 p-1 cursor-pointer z-10">
                 마이페이지
               </Link>
-              <div onClick={handleLogout} className="ml-4">
+              <div
+                onClick={handleLogout}
+                className="ml-1 p-1 cursor-pointer z-10"
+              >
                 로그아웃
               </div>
             </div>
