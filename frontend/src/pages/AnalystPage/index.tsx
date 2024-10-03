@@ -1,28 +1,101 @@
 import BasicLayout from "../../layouts/BasicLayout";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 
 import Button from "../../components/elements/Button";
 
-import profile from "/src/assets/winter.jpg"
-import follow from "/src/assets/follow.svg"
+import profile from "/src/assets/winter.jpg";
+import follow from "/src/assets/follow.svg";
+import unfollow from "/src/assets/unfollow.svg";
 
-const Analyst = () => {
-  const [analyst, setAnalyst] = useState("장원영");
-  const [write, setWrite] = useState(0);
-  const [subscribe, setSubscribe] = useState(0);
-  const [rank, setRank] = useState(0);
+import { fetchAnalystInfo, postAnalystFollow } from "../../api/analystAPI";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchFavoriteAnalysts } from "../../api/mypageAPI";
+
+interface Analyst {
+  userName: string;
+  userNickName: string;
+  userImagePath: string;
+  accuracy: number;
+  reliability: number;
+  totalAnalystRanking: number;
+}
+
+interface AnalystInfo {
+  boardSize: number,
+  follower: number,
+  totalAnalystRank: number,
+  reliability: number,
+  reliabilityStock: [
+    {
+      stockName: string,
+      stockSize: number,
+      stockReliabilitySize: number
+      stockReliabilityValue: number
+    },
+  ],
+  accuracy: number
+  accuracyStock: [
+    {
+      stockName: string,
+      stockSize: number,
+      stockAccuracySize: number
+      stockAccuracyValue: number 
+    },
+  ],	
+  industry: [
+    {
+      industryName: string,
+      industryValue: number
+    },
+  ]
+}
+
+const Analyst: React.FC = () => {
+
+  const { nickname } = useParams<{ nickname: string }>();
+  const [ isFollow, setIsFollow ] = useState(false);
+  const queryClient = useQueryClient();
+
+  const { data: analystInfo, error: analystInfoError, isLoading: analystInfoIsLoading } = useQuery<AnalystInfo, Error>({
+    queryKey: ["analystInfo", nickname], 
+    queryFn: ({ queryKey }) => fetchAnalystInfo(queryKey[1] as string)
+  });
+
+  const { data: favoriteAnalysts, error: analystError, isLoading: analystIsLoading } = useQuery<Analyst[], Error>({
+    queryKey: ["favoriteAnalysts"],
+    queryFn: fetchFavoriteAnalysts,
+  });
 
   useEffect(() => {
-    setAnalyst("장원영");
-    setWrite(0);
-    setSubscribe(0);
-    setRank(0);
-  },[])
+    let flag = false;
+    favoriteAnalysts?.map((analyst) => {
+      if (analyst.userNickName === nickname) {
+        setIsFollow(true);
+        flag = true;
+      }
 
+      if (!flag) {
+        setIsFollow(false);
+      }
+
+    })
+  },[favoriteAnalysts])
+
+  useEffect(() => {
+  }, [nickname]);
+
+  const handleClickFollow = async (nickname: string) => {
+    try {
+      await postAnalystFollow(nickname);
+      queryClient.invalidateQueries(["analystInfo", nickname]);
+    } catch (error) {
+       console.error("팔로우 처리 중 오류 발생:", error);
+    }
+  };
 
   return (
     <BasicLayout>
@@ -32,25 +105,29 @@ const Analyst = () => {
             <div>
               <img className="w-[6rem] h-[6rem] rounded-full" src={profile}></img>
             </div>
-            <span className="self-end ml-[4rem] text-[1.625rem]">{analyst}</span>
+            <span className="self-end ml-[4rem] text-[1.625rem]">{nickname}</span>
           </div>
           <div className="flex justify-center gap-[2.2rem] my-[1.3rem] text-[1.25rem]">
             <div className="flex flex-col items-center">
               <span>작성글</span>
-              <span>{write}</span>
+              <span>{analystInfo?.boardSize}</span>
             </div>
             <div className="flex flex-col items-center">
               <span>구독자</span>
-              <span>{subscribe}</span>
+              <span>{analystInfo?.follower}</span>
             </div>
             <div className="flex flex-col items-center">
               <span>순위</span>
-              <span>{rank}</span>
+              <span>{analystInfo?.totalAnalystRank}</span>
             </div>
           </div>
-          <Button className="w-[13.8125rem] h-[3rem] flex justify-center items-center mx-auto">
+          {isFollow ?
+          <Button className="w-[13.8125rem] h-[3rem] flex justify-center items-center mx-auto bg-white rounded-lg border-[1px]" border="black" onClick={() => handleClickFollow(nickname!)}>
+            <img className="w-[1.875rem] h-[1.75rem]" src={unfollow} />
+          </Button>:
+          <Button className="w-[13.8125rem] h-[3rem] flex justify-center items-center mx-auto" onClick={() => handleClickFollow(nickname!)}>
             <img className="w-[1.875rem] h-[1.75rem]" src={follow} />
-          </Button>
+          </Button>}
           <div className="flex flex-col items-center gap-[1.5rem] mx-auto w-[7rem] mt-[5rem] border-[#B4B4B4] border-y-[1px] py-[1.3rem] text-[1.25rem]">
             <div>
               <Link to={"statistic"} className="cursor-pointer">통계보기</Link>
