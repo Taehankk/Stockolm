@@ -25,7 +25,6 @@ const StockChart = ({ stockData }: StockChartProps) => {
   >("real-time");
 
   useEffect(() => {
-    console.log("주식정보 전달 된 값 (차트컴포넌트)", stockData);
     if (stockData && stockData.length > 0) {
       let transformedData: ChartDataItem[] = [];
 
