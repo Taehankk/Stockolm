@@ -6,10 +6,13 @@ const getToken = () => sessionStorage.getItem("access_token");
 export interface StockItem {
   recentStockName?: string;
   recentStockCode?: string;
+  recentStockId?: string;
   hotStockName?: string;
   hotStockCode?: string;
+  hotStockId?: string;
   stockName?: string;
   stockCode?: string;
+  stockId?: string;
 }
 
 export interface SearchListResponse {
@@ -20,6 +23,7 @@ export interface SearchListResponse {
 export interface SearchResultItem {
   stockName: string;
   stockCode: string;
+  stockId: string;
 }
 
 // 검색시 검색어 관련 호출
@@ -34,7 +38,6 @@ export const getSearchResults = async (
       {
         headers,
       }
-      // `/stock/search-result/${keyword}`
     );
     return response.data;
   } catch (error) {
@@ -58,4 +61,16 @@ export const getSearchList = async (): Promise<SearchListResponse> => {
     console.error("Error fetching search list:", error);
     throw error;
   }
+};
+
+export const searchCountAPI = async (stockName: string): Promise<void> => {
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  await axios.post(
+    `${baseURL}/stock/search/${stockName}`,
+    {},
+    {
+      headers,
+    }
+  );
 };

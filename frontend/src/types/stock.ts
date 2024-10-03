@@ -16,3 +16,15 @@ export interface StockInfo {
   bsopPrfiInrt: string;
   grs: string;
 }
+
+export interface Analyst {
+  analystName: string;
+  analystNickname: string;
+  userImagePath: string;
+  reliability: number;
+  accuracy: number;
+  analystBoardId: number;
+  goalDate: string;
+  opinion: string;
+  goalStock: string;
+}

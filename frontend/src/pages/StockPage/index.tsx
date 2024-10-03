@@ -10,16 +10,24 @@ import StockChart from "../../components/stock/StockChart";
 import { useEffect } from "react";
 import { RootState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
-import { fetchStockData, fetchStockInfo } from "../../slices/stockSlice";
+import { useNavigate } from "react-router-dom";
+import {
+  fetchStockData,
+  fetchStockInfo,
+  fetchBestAnalysts,
+} from "../../slices/stockSlice";
 
 const StockPage = () => {
   const dispatch = useAppDispatch();
   const searchTerm = useSelector((state: RootState) => state.stock.searchTerm);
   const searchCode = useSelector((state: RootState) => state.stock.searchCode);
+  const stockId = useSelector((state: RootState) => state.stock.stockId);
   const stockData = useSelector((state: RootState) => state.stock.stockData);
   const stockInfo = useSelector((state: RootState) => state.stock.stockInfo);
   const isLoading = useSelector((state: RootState) => state.stock.loading);
   const error = useSelector((state: RootState) => state.stock.error);
+
+  const nav = useNavigate();
 
   useEffect(() => {
     if (searchTerm) {
@@ -28,10 +36,19 @@ const StockPage = () => {
     if (searchCode) {
       dispatch(fetchStockInfo(searchCode));
     }
-  }, [dispatch, searchTerm, searchCode]);
+    if (stockId) {
+      dispatch(fetchBestAnalysts(stockId));
+    }
+  }, [dispatch, searchTerm, searchCode, stockId]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching stock data</div>;
+
+  const handleCommunityButtonClick = () => {
+    if (searchTerm) {
+      nav(`/community/report?stockName=${encodeURIComponent(searchTerm)}`);
+    }
+  };
 
   return (
     <BasicLayout>
@@ -40,7 +57,9 @@ const StockPage = () => {
           <Summary searchCode={searchCode} searchTerm={searchTerm}></Summary>
         </div>
         <div className="navigator">
-          <Button size="medium">종목게시판</Button>
+          <Button size="medium" onClick={handleCommunityButtonClick}>
+            종목게시판
+          </Button>
           <Button size="medium">종목채팅방</Button>
         </div>
       </div>

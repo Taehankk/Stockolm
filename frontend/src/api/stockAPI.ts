@@ -72,6 +72,21 @@ export const getSearchResults = async (searchTerm: string) => {
   return response.data;
 };
 
+export const getBestAnalysts = async (stockId: string) => {
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  try {
+    const response = await axios.get(`${baseURL}/stock/rank/${stockId}`, {
+      headers,
+    });
+    console.log("BestAnalyst정보", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching best analysts:", error);
+    throw error;
+  }
+};
+
 export const toggleFollowAPI = async (stockName: string): Promise<void> => {
   const token = getToken();
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -90,7 +105,6 @@ export const getStockInfo = async (stockCode: string) => {
     const response = await axios.get(
       `${baseURL}/stock/stock-info/${stockCode}`
     );
-    console.log("주식정보 getStockInfo", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching stock info:", error);
