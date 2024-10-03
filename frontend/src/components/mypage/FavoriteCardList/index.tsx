@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import FavoriteCard from "../../elements/FavoriteCard";
 
 import CardArrow from "/src/assets/cardArrow.svg"

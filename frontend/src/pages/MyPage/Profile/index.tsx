@@ -1,4 +1,4 @@
-  import { fetchAnalyzeStock, fetchFavoriteAnalysts, fetchFavoriteBoard, fetchFavoriteStock } from "../../../api/mypageAPI";
+  import { fetchFavoriteAnalysts, fetchFavoriteStock } from "../../../api/mypageAPI";
   import { useQuery } from "@tanstack/react-query";
 
   import person from "/src/assets/person.svg"
@@ -85,8 +85,12 @@ import { RootState } from "../../../store";
       console.log(favoriteAnalysts);
     },[favoriteStock, favoriteAnalysts])
 
-    if (analystInfoIsLoading || !analystInfo) {
-      return <p>Loading analyst information...</p>;
+    if (stockIsLoading || analystInfoIsLoading || analystIsLoading) {
+      return <p>Loading...</p>;
+    }
+  
+    if (analystError || analystInfoError || stockError) {
+      return <p>Error</p>;
     }
 
     return (
@@ -106,11 +110,11 @@ import { RootState } from "../../../store";
           <div className="flex w-full gap-[4rem]">
               <div className="flex flex-col justify-center items-center gap-[1rem]">
                 <span className="text-[1.3rem]">신뢰도</span>
-                <DonutChart color="#FFD2D2" value={analystInfo.reliability}></DonutChart>
+                <DonutChart color="#FFD2D2" value={analystInfo?.reliability}></DonutChart>
               </div>
               <div className="flex flex-col justify-center items-center gap-[1rem]">
                 <span className="text-[1.3rem] text-center ">정확도</span>
-                <DonutChart color="#FFF3CB" value={analystInfo.accuracy}></DonutChart>
+                <DonutChart color="#FFF3CB" value={analystInfo?.accuracy}></DonutChart>
               </div>
               <div className="flex flex-col items-center gap-[0.4rem] ml-[1rem]">
                 <span className="text-[1.3rem]">산업군</span>

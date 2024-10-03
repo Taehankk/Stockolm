@@ -1,8 +1,8 @@
-import axiosInstance from "./axiosInstance";
+import axiosTokenInstance from "./axiosTokenInstance";
 
 export const fetchAnalystInfo = async (userNickName: string) => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosTokenInstance.get(
         `/analyst/${userNickName}`,
         {
             params: { "user-nickname": userNickName },
@@ -20,7 +20,7 @@ export const fetchAnalystInfo = async (userNickName: string) => {
 
 export const postAnalystFollow = async (nickname: string) => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosTokenInstance .post(
         '/user/follow',
         {
           userNickname: nickname, 
