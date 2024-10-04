@@ -112,7 +112,7 @@ public class KoreaInvestWebClientUtil {
         try {
             List<GetChartResponse> responseDataList = new ArrayList<>();
             JsonNode rootNode = objectMapper.readTree(response);
-            LocalTime currentTime = LocalTime.now();  // 현재 시각을 저장
+            LocalTime currentTime = LocalTime.now().minusMinutes(1);  // 현재 시각을 저장
 
             // output2 필드가 있는지 확인 (상세 데이터)
             if (rootNode.has("output2")) {
