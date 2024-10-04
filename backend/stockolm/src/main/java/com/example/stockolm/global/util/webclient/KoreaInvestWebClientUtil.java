@@ -168,7 +168,7 @@ public class KoreaInvestWebClientUtil {
     private int getCurrent30MinuteRange() {
         LocalTime currentTime = LocalTime.now().plusMinutes(30);
         LocalTime startTime = LocalTime.of(9, 30);  // 9시 시작
-        LocalTime endTime = LocalTime.of(16, 30);  // 16시 종료
+        LocalTime endTime = LocalTime.of(15, 30);  // 16시 종료
 
         // 현재 시간이 16시 이후라면 16시까지만 계산
         if (currentTime.isAfter(endTime)) {
