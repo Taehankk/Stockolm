@@ -31,7 +31,9 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
     }
 
     @Override
-    public AnalystInfoResponse searchAnalystInfo(Long analystId) {
+    public AnalystInfoResponse searchAnalystInfo(User analyst) {
+
+        Long analystId = analyst.getUserId();
 
         AnalystGoalInfoDTO reliabilityAndAccuracy = getReliabilityAndAccuracy(analystId);
         int boardSize = getBoardSize(analystId).intValue();
@@ -42,6 +44,8 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         List<IndustryDTO> industryInfo = getTop3Industries(analystId);
 
         return AnalystInfoResponse.builder()
+                .userName(analyst.getUserName())
+                .userNickName(analyst.getUserNickname())
                 .boardSize(boardSize)
                 .follower(followerCount)
                 .totalAnalystRank(analystRank)
