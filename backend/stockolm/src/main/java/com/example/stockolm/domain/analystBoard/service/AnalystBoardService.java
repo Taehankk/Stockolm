@@ -3,6 +3,8 @@ package com.example.stockolm.domain.analystBoard.service;
 import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRequest;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface AnalystBoardService {
     AnalystBoardResponse getAnalystBoard(Long analystBoardId, Long userId);
 
     void likeAnalystBoard(Long analystBoardId, Long userId);
+
+    Page<AnalystBoardResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId);
 }

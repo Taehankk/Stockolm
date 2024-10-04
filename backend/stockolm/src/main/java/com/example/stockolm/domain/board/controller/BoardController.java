@@ -37,7 +37,7 @@ public class BoardController {
     @GetMapping
     @Operation(summary = "글 목록 조회", description = "자유게시판 글 목록 조회 API")
     public ResponseEntity<Page<BoardPageResponse>> getBoardPage(@RequestParam(required = false) String searchWord,
-                                                                @PageableDefault(sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                Pageable pageable,
                                                                 @AuthPrincipal @Parameter(hidden = true) Long userId) {
         // 로그인 없이 글 목록 조회 가능
         Page<BoardPageResponse> boardPage = boardService.getBoardPage(searchWord, pageable, userId);
