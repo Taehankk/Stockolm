@@ -1,12 +1,24 @@
-import { useState, useRef, useMemo } from "react";
+import { useRef, useMemo } from "react";
+
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { RootState, useAppDispatch } from "../../../store";
+import { setReportContent } from "../../../slices/reportSlice";
+import { setBoardContent } from "../../../slices/boardSlice";
+
 import ReactQuill from "react-quill-new";
 // import { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+
 import axiosTokenInstance from "../../../api/axiosTokenInstance";
 
 const WriteForm = () => {
+  const location = useLocation();
   const quillRef = useRef<ReactQuill | null>(null);
-  const [value, setValue] = useState("");
+
+  const dispatch = useAppDispatch();
+  const boardContent = useSelector((state: RootState) => state.board.content);
+  const reportContent = useSelector((state: RootState) => state.report.content);
 
   const toolbarOptions = [
     [{ header: [1, 2, 3, false] }],
@@ -26,7 +38,6 @@ const WriteForm = () => {
   ];
 
   const imageInsert = (imageUrl: string) => {
-    console.log(imageUrl);
     // 이미지 태그를 에디터에 써주기 - 여러 방법이 있다.
     const editor = quillRef.current?.getEditor(); // 1. 에디터 객체 가져오기
 
@@ -84,7 +95,11 @@ const WriteForm = () => {
   }, []);
 
   const handleChange = (html: string) => {
-    setValue(html);
+    if (location.pathname === "/community/report/write") {
+      dispatch(setReportContent(html));
+    } else if (location.pathname === "/community/board/write") {
+      dispatch(setBoardContent(html));
+    }
   };
 
   return (
@@ -92,7 +107,16 @@ const WriteForm = () => {
       <ReactQuill
         theme="snow"
         modules={modules}
-        value={value}
+        placeholder={
+          location.pathname === "/community/report/write"
+            ? "PDF 파일을 업로드 하면 내용이 자동으로 작성됩니다."
+            : ""
+        }
+        value={
+          location.pathname === "/community/report/write"
+            ? reportContent
+            : boardContent
+        }
         onChange={handleChange}
         ref={quillRef}
         className="h-40"
