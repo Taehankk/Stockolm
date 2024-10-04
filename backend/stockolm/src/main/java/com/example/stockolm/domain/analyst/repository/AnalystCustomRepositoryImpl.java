@@ -162,7 +162,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                                 .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
                 ))
                 .from(analystBoard)
-                .join(stock).on(analystBoard.stock.stockId.eq(analystBoard.stock.stockId)).fetchJoin()
+                .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
                 .where(analystBoard.user.userId.eq(analystId))
                 .groupBy(stock.stockName)
                 .orderBy(new CaseBuilder()
@@ -189,7 +189,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                                 .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
                 ))
                 .from(analystBoard)
-                .join(stock).on(analystBoard.stock.stockId.eq(analystBoard.stock.stockId)).fetchJoin()
+                .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
                 .where(analystBoard.user.userId.eq(analystId))
                 .groupBy(stock.stockName)
                 .orderBy(new CaseBuilder()
@@ -213,7 +213,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                                 .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
                 ))
                 .from(analystBoard)
-                .join(stock).on(analystBoard.stock.stockId.eq(analystBoard.stock.stockId)).fetchJoin()
+                .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
                 .where(analystBoard.user.userId.eq(analystId))
                 .groupBy(stock.industryName)
                 .orderBy(new CaseBuilder()
