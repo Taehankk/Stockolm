@@ -76,13 +76,13 @@ public class KoreaInvestWebClientUtil {
 
     public Flux<List<GetChartResponse>> getChart(String stockCode) {
         HttpHeaders headers = createHeader();
+        int range = getCurrent30MinuteRange();
 
         // 30분 간격으로 9시부터 현재 시각까지 호출
-        return Flux.range(0, getCurrent30MinuteRange())  // 30분 단위로 범위 계산
+        return Flux.range(0, range + 1)
                 .concatMap(index -> {
-                    // 각 30분 간격을 계산하여 요청
-                    LocalTime queryStartTime = LocalTime.of(9, 30).plusMinutes(index * 30);  // 30분 전 시작 시간
-                    LocalTime queryEndTime = queryStartTime.plusMinutes(30);  // 종료 시간
+                    LocalTime queryStartTime = LocalTime.of(9, 30).plusMinutes(index * 30);
+                    LocalTime queryEndTime = queryStartTime.plusMinutes(30);
 
                     String formattedStartTime = queryStartTime.format(DateTimeFormatter.ofPattern("HHmmss"));
                     String formattedEndTime = queryEndTime.format(DateTimeFormatter.ofPattern("HHmmss"));
@@ -91,7 +91,8 @@ public class KoreaInvestWebClientUtil {
                             .uri(uriBuilder -> uriBuilder.path("/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice")
                                     .queryParam("FID_COND_MRKT_DIV_CODE", "J")
                                     .queryParam("FID_INPUT_ISCD", stockCode)
-                                    .queryParam("FID_INPUT_HOUR_1", formattedStartTime)  // 30분 전의 시작 시간
+                                    .queryParam("FID_INPUT_HOUR_1", formattedStartTime)  // 시작 시간
+                                    .queryParam("FID_INPUT_HOUR_2", formattedEndTime)    // 종료 시간
                                     .queryParam("FID_PW_DATA_INCU_YN", "Y")
                                     .queryParam("FID_ETC_CLS_CODE", "")
                                     .build())
@@ -103,14 +104,15 @@ public class KoreaInvestWebClientUtil {
                                 System.out.println("Error occurred: " + e.getMessage());
                                 return Mono.empty();
                             });
-                })
-                .delayElements(Duration.ofMillis(50));  // 50ms 대기
+                });
     }
+
 
     private Mono<List<GetChartResponse>> parseGetChart(String response) {
         try {
             List<GetChartResponse> responseDataList = new ArrayList<>();
             JsonNode rootNode = objectMapper.readTree(response);
+            LocalTime currentTime = LocalTime.now();  // 현재 시각을 저장
 
             // output2 필드가 있는지 확인 (상세 데이터)
             if (rootNode.has("output2")) {
@@ -122,22 +124,31 @@ public class KoreaInvestWebClientUtil {
                     // output2가 배열이므로 각 배열 요소를 처리
                     if (outputArray.isArray()) {
                         for (JsonNode outputNode : outputArray) {
+
+
                             // 새로운 객체 생성
                             GetChartResponse responseData = GetChartResponse.builder()
-                                    .stck_bsop_date(getJsonNodeValue(outputNode, "stck_bsop_date"))
-                                    .stck_cntg_hour(getJsonNodeValue(outputNode, "stck_cntg_hour"))
-                                    .acml_tr_pbmn(getJsonNodeValue(outputNode, "acml_tr_pbmn"))
-                                    .stck_prpr(getJsonNodeValue(outputNode, "stck_prpr"))
-                                    .stck_oprc(getJsonNodeValue(outputNode, "stck_oprc"))
-                                    .stck_hgpr(getJsonNodeValue(outputNode, "stck_hgpr"))
-                                    .stck_lwpr(getJsonNodeValue(outputNode, "stck_lwpr"))
+                                    .stckBsopDate(getJsonNodeValue(outputNode, "stck_bsop_date"))
+                                    .stckCntgHour(getJsonNodeValue(outputNode, "stck_cntg_hour"))
+                                    .acmlTrPbmn(getJsonNodeValue(outputNode, "acml_tr_pbmn"))
+                                    .stckPrpr(getJsonNodeValue(outputNode, "stck_prpr"))
+                                    .stckOprc(getJsonNodeValue(outputNode, "stck_oprc"))
+                                    .stckHgpr(getJsonNodeValue(outputNode, "stck_hgpr"))
+                                    .stckLwpr(getJsonNodeValue(outputNode, "stck_lwpr"))
                                     .build();
+                            String stckCntgHourStr = responseData.getStckCntgHour();
+                            LocalTime stckCntgHour = LocalTime.parse(stckCntgHourStr, DateTimeFormatter.ofPattern("HHmmss"));
+
+                            // stck_cntg_hour가 현재 시각보다 크면 데이터 추가 중단
+                            if (stckCntgHour.isAfter(currentTime)) {
+                                continue;
+                            }
 
                             responseDataList.add(responseData);
                         }
 
                         // 데이터를 시간순으로 정렬 (stck_cntg_hour 기준)
-                        responseDataList.sort(Comparator.comparing(GetChartResponse::getStck_cntg_hour));
+                        responseDataList.sort(Comparator.comparing(GetChartResponse::getStckCntgHour));
                     }
                 } else {
                     throw new IllegalStateException("'output2' 필드는 배열이 아닙니다.");
@@ -155,7 +166,7 @@ public class KoreaInvestWebClientUtil {
 
     // 9시부터 현재 시각까지 30분 단위 범위를 계산하는 함수
     private int getCurrent30MinuteRange() {
-        LocalTime currentTime = LocalTime.now();
+        LocalTime currentTime = LocalTime.now().plusMinutes(30);
         LocalTime startTime = LocalTime.of(9, 30);  // 9시 시작
         LocalTime endTime = LocalTime.of(16, 30);  // 16시 종료
 
@@ -171,7 +182,6 @@ public class KoreaInvestWebClientUtil {
         JsonNode valueNode = node.get(key);
         return valueNode != null ? valueNode.asText(null) : null;
     }
-
 
 
 }
