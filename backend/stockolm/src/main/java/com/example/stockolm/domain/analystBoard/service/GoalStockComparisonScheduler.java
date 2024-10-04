@@ -59,8 +59,10 @@ public class GoalStockComparisonScheduler {
     private void processStockComparison(AnalystBoard analystBoard, AnalystInfo analystInfo,
                                         int goalStock, int beforeStock, int currentStock) {
 
-        // TODO: 정확도 세부 조정
-        if (currentStock == goalStock) {         // 예측 성공
+        // 5% 범위 내에 들어올 경우 예측 성공
+        int minRangeCurrentStock = (int) (currentStock - (currentStock * 0.05));
+        int maxRangeCurrentStock = (int) (currentStock + (currentStock * 0.05));
+        if (minRangeCurrentStock <= goalStock && maxRangeCurrentStock >= goalStock) {         // 예측 성공
             analystInfo.raiseScore();
             analystBoard.successGoalAccuracy();
         } else {                                // 예측 실패
