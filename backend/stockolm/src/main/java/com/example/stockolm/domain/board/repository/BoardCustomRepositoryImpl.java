@@ -76,6 +76,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
 
         // 정렬 조건 처리
         Map<String, Function<BoardPageResponse, Comparable>> sortMap = Map.of(
+                "latest", BoardPageResponse::getCreateAt,
                 "like", BoardPageResponse::getLikeCnt,
                 "view", BoardPageResponse::getViewCnt,
                 "comment", BoardPageResponse::getCommentCnt
