@@ -16,6 +16,8 @@ import com.example.stockolm.global.exception.custom.BoardNotFoundException;
 import com.example.stockolm.global.exception.custom.StockNotFoundException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -124,5 +126,10 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
                             analystBoard.incrementLikeCnt();
                         }
                 );
+    }
+
+    @Override
+    public Page<AnalystBoardResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId) {
+        return analystBoardRepository.getAnalystBoardPage(searchWord, pageable, userId);
     }
 }
