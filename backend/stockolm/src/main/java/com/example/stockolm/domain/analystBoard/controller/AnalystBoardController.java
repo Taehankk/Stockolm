@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,4 +80,13 @@ public class AnalystBoardController {
         return ResponseEntity.status(NO_CONTENT).build();
     }
 
+    @GetMapping
+    @Operation(summary = "글 목록 조회", description = "종목게시판 글 목록 조회 API")
+    public ResponseEntity<Page<AnalystBoardResponse>> getAnalystBoardPage(@RequestParam(required = false) String searchWord,
+                                                                Pageable pageable,
+                                                                @AuthPrincipal @Parameter(hidden = true) Long userId) {
+        validateLogin(userId); // 자유게시판과 달리, 종목게시판은 로그인 해야 목록 조회 가능
+        Page<AnalystBoardResponse> analystBoardPage = analystBoardService.getAnalystBoardPage(searchWord, pageable, userId);
+        return ResponseEntity.status(OK).body(analystBoardPage);
+    }
 }

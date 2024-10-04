@@ -1,11 +1,11 @@
 package com.example.stockolm.domain.analystBoard.repository;
 
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
-
-import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
 import com.example.stockolm.domain.stock.dto.response.BestAnalystResponse;
 
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 import java.util.List;
@@ -18,4 +18,6 @@ public interface AnalystBoardCustomRepository {
     boolean isLike(Long analystBoardId, Long userId);
 
     List<BestAnalystResponse> findBestAnalystByStockId(Long stockId);
+
+    Page<AnalystBoardResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId);
 }
