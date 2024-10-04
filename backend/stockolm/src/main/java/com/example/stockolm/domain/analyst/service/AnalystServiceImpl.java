@@ -29,7 +29,7 @@ public class AnalystServiceImpl implements AnalystService {
             throw new AnalystNotFoundException();
         }
 
-        return analystRepository.searchAnalystInfo(analyst.getUserId());
+        return analystRepository.searchAnalystInfo(analyst);
     }
 
     @Override

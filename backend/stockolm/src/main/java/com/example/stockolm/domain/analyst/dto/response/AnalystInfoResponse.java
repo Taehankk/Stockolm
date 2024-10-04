@@ -9,6 +9,8 @@ import java.util.List;
 
 @Getter
 public class AnalystInfoResponse {
+    private String userName;
+    private String userNickName;
     private int boardSize;
     private int follower;
     private int totalAnalystRank;
@@ -19,17 +21,19 @@ public class AnalystInfoResponse {
     private List<IndustryDTO> industry;
 
     @Builder
-
-    public AnalystInfoResponse(int boardSize, int follower, int totalAnalystRank,
-                               Double reliability, List<StockInfoDTO> reliabilityStock, Double accuracy,
-                               List<StockInfoDTO> accuracyStock, List<IndustryDTO> industry) {
-        this.boardSize = boardSize;
-        this.follower = follower;
-        this.totalAnalystRank = totalAnalystRank;
-        this.reliability = reliability;
-        this.reliabilityStock = reliabilityStock;
-        this.accuracy = accuracy;
-        this.accuracyStock = accuracyStock;
+    public AnalystInfoResponse(List<IndustryDTO> industry, List<StockInfoDTO> accuracyStock,
+                               Double accuracy, List<StockInfoDTO> reliabilityStock,
+                               Double reliability, int totalAnalystRank, int follower,
+                               int boardSize, String userNickName, String userName) {
         this.industry = industry;
+        this.accuracyStock = accuracyStock;
+        this.accuracy = accuracy;
+        this.reliabilityStock = reliabilityStock;
+        this.reliability = reliability;
+        this.totalAnalystRank = totalAnalystRank;
+        this.follower = follower;
+        this.boardSize = boardSize;
+        this.userNickName = userNickName;
+        this.userName = userName;
     }
 }
