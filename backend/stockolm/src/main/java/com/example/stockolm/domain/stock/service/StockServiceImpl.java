@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -118,7 +119,7 @@ public class StockServiceImpl implements StockService {
                 );
     }
 
-    @Cacheable(value = "stockDetailCache", key = "#userId + '_' + #stockName")
+    @Cacheable(value = "stockDetailCache", key = "(#userId != null ? #userId : 'anonymous') + '_' + #stockName")
     @Override
     public StockDetailResponse getStockDetail(Long userId, String stockName) {
         Stock stock = stockRepository.findByStockName(stockName);
@@ -165,6 +166,5 @@ public class StockServiceImpl implements StockService {
 
         return analystBoardRepository.findBestAnalystByStockId(stockId);
     }
-
 
 }
