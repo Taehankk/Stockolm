@@ -85,7 +85,7 @@ public class AnalystBoardController {
     public ResponseEntity<Page<AnalystBoardResponse>> getAnalystBoardPage(@RequestParam(required = false) String searchWord,
                                                                 Pageable pageable,
                                                                 @AuthPrincipal @Parameter(hidden = true) Long userId) {
-        validateLogin(userId); // 자유게시판과 달리, 종목게시판은 로그인 해야 목록 조회 가능
+        // 글 상세조회와 달리, 종목게시판 "목록 조회"까지는 비로그인 상태에서도 가능
         Page<AnalystBoardResponse> analystBoardPage = analystBoardService.getAnalystBoardPage(searchWord, pageable, userId);
         return ResponseEntity.status(OK).body(analystBoardPage);
     }
