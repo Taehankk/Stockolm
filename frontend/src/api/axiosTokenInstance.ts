@@ -1,7 +1,6 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import Cookies from "universal-cookie";
 
-// 1. InternalAxiosRequestConfig 타입을 확장하여 authRequired 속성을 추가
 export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   retry?: boolean;
 }
@@ -33,8 +32,7 @@ axiosTokenInstance.interceptors.response.use(
 
     if (
       error.response &&
-      error.response.status === 401 &&
-      originalRequest.authRequired &&
+      error.response.status === 500 &&
       !originalRequest.retry
     ) {
       const cookies = new Cookies();
@@ -45,7 +43,7 @@ axiosTokenInstance.interceptors.response.use(
         const { data } = await axios.post(
           `${baseURL}/user/refresh-token`,
           {
-            refreshToken: cookies.get("refresh_token"),
+            refreshToken: cookies.get("refreshToken"),
           },
           {
             headers: {

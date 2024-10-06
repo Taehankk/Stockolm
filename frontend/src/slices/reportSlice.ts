@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { getReport } from "../api/communityAPI";
+import { getReportAPI } from "../api/communityAPI";
 
 // 분석글 작성
 // interface Report {
@@ -15,6 +15,7 @@ import { getReport } from "../api/communityAPI";
 
 // 분석글 데이터
 interface ReportState {
+  currentPage: number;
   analystBoardId: number;
   stockName: string;
   title: string;
@@ -38,6 +39,7 @@ interface ReportState {
 }
 
 const initialState: ReportState = {
+  currentPage: 1,
   analystBoardId: 0,
   stockName: "PDF 파일을 업로드 해주세요.",
   title: "",
@@ -62,8 +64,8 @@ const initialState: ReportState = {
 
 export const getReportData = createAsyncThunk(
   "board/getReportData",
-  async (reportId: number) => {
-    const response = await getReport(reportId);
+  async () => {
+    const response = await getReportAPI();
     return response;
   }
 );
@@ -72,6 +74,9 @@ const reportSlice = createSlice({
   name: "board",
   initialState,
   reducers: {
+    setCurrentPage: (state, action: PayloadAction<number>) => {
+      state.currentPage = action.payload;
+    },
     setStockName: (state, action: PayloadAction<string>) => {
       state.stockName = action.payload;
     },
@@ -84,14 +89,14 @@ const reportSlice = createSlice({
     setOpinion: (state, action: PayloadAction<string>) => {
       state.opinion = action.payload;
     },
-    setGoalStock: (state, action: PayloadAction<string>) => {
-      state.goalStock = Number(action.payload);
+    setGoalStock: (state, action: PayloadAction<number>) => {
+      state.goalStock = action.payload;
     },
-    setCurrentStock: (state, action: PayloadAction<string>) => {
-      state.currentStock = Number(action.payload);
+    setCurrentStock: (state, action: PayloadAction<number>) => {
+      state.currentStock = action.payload;
     },
-    setMarketCapitalization: (state, action: PayloadAction<string>) => {
-      state.marketCapitalization = Number(action.payload);
+    setMarketCapitalization: (state, action: PayloadAction<number>) => {
+      state.marketCapitalization = action.payload;
     },
     setGoalDate: (state, action: PayloadAction<string>) => {
       state.goalDate = action.payload;
@@ -131,6 +136,7 @@ const reportSlice = createSlice({
 });
 
 export const {
+  setCurrentPage,
   setStockName,
   setReportTitle,
   setReportContent,

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+
 import {
   pdfFormAPI,
   pdfSummaryAPI,
@@ -23,7 +24,9 @@ import {
   setMarketCapitalization,
 } from "../../slices/reportSlice";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface Report {
   title: string;
@@ -59,6 +62,10 @@ const ReportWritePage = () => {
   const reportContent = useSelector((state: RootState) => state.report.content);
 
   const [predictDate, setPredictDate] = useState("");
+
+  const backToBoardList = () => {
+    navigate("/community/board");
+  };
 
   const summaryPdfFile = async (file: string) => {
     try {
@@ -124,21 +131,21 @@ const ReportWritePage = () => {
 
       await writeReportAPI(report);
 
+      dispatch(setReportTitle(""));
+      dispatch(setStockName(""));
+      dispatch(setGoalDate(""));
+      dispatch(setCurrentStock(0));
+      dispatch(setGoalStock(0));
+      dispatch(setOpinion(""));
+      dispatch(setMarketCapitalization(0));
+
       navigate("/community/report");
     } catch {
       console.log("게시글 등록 실패");
     }
   };
 
-  useEffect(() => {
-    dispatch(setReportTitle(""));
-    dispatch(setStockName(""));
-    dispatch(setGoalDate(""));
-    dispatch(setCurrentStock(""));
-    dispatch(setGoalStock(""));
-    dispatch(setOpinion(""));
-    dispatch(setMarketCapitalization(""));
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (base64File) {
@@ -190,42 +197,53 @@ const ReportWritePage = () => {
 
   return (
     <BasicLayout>
-      <div className="flex flex-col w-full">
-        <div>
-          <span>주식종목</span>
-          <span>{stockName}</span>
-        </div>
-        <div className="flex">
-          <span>파일</span>
-          <div>
-            <Input
-              type="file"
-              onChange={fileUploadValidHandler}
-              className="w-96"
-            />
+      <div className="flex justify-center mt-10">
+        <div className="flex flex-col">
+          <div
+            onClick={backToBoardList}
+            className="cursor-pointer text-3xl mb-10"
+          >
+            <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
+            자유게시판
           </div>
-        </div>
-        <Input
-          value={reportTitle}
-          onChange={handleReportTitle}
-          placeholder="제목을 입력해주세요"
-          className="border-none"
-        />
-
-        {/* 글 작성 라이브러리 칸 */}
-        <div className="h-40 mb-20">
-          <WriteForm />
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            size="small"
-            color="black"
-            border="black"
-            children="취소"
-            className="bg-white"
+          <div className="w-full">
+            <span className="mr-2">주식종목</span>
+            <span className="rounded-full border border-black">
+              {stockName}
+            </span>
+          </div>
+          <div className="flex">
+            <span>파일</span>
+            <div>
+              <Input
+                type="file"
+                onChange={fileUploadValidHandler}
+                className="w-96"
+              />
+            </div>
+          </div>
+          <Input
+            value={reportTitle}
+            onChange={handleReportTitle}
+            placeholder="제목을 입력해주세요"
+            className="border-none"
           />
-          <Button size="small" children="등록" onClick={writeReport} />
+
+          {/* 글 작성 라이브러리 칸 */}
+          <div className="h-40 mb-20">
+            <WriteForm />
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              size="small"
+              color="black"
+              border="black"
+              children="취소"
+              className="bg-white"
+            />
+            <Button size="small" children="등록" onClick={writeReport} />
+          </div>
         </div>
       </div>
     </BasicLayout>
