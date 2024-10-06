@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosInstance from "./axiosInstance";
 import axiosTokenInstance from "./axiosTokenInstance";
 
 const ACCESS_TOKEN = import.meta.env.VITE_SUMMARY_ACCESS_TOKEN;
@@ -113,18 +114,89 @@ export const translateAPI = async (text: string) => {
   return res.data.data.translations[0].translatedText;
 };
 
-export const getBoard = async (id: number) => {
+export const getBoardListAPI = async (
+  token: string | null,
+  currentPage: number,
+  itemsPerPage: number,
+  sort: string,
+  searchWord: string
+) => {
+  const axiosReq = token ? axiosTokenInstance : axiosInstance;
+
+  const res = await axiosReq.get("/board", {
+    params: {
+      page: currentPage - 1,
+      size: itemsPerPage,
+      sort: sort,
+      searchWord: searchWord,
+    },
+  });
+
+  return res.data;
+};
+
+export const changeLikeStateAPI = async (boardID: string) => {
+  await axiosTokenInstance.post(`/board/like/${boardID}`);
+};
+
+export const getBoardAPI = async (id: number) => {
   const res = await axios.get(`/temp/${id}`);
   return res.data;
 };
 
-export const writeBoard = async (board: Board) => {
-  const res = await axios.post("/temp", { board: board });
-
-  console.log(res);
+export const writeBoardAPI = async (board: Board) => {
+  try {
+    await axiosTokenInstance.post("/board", board);
+  } catch (e) {
+    console.log(e);
+    alert("작성 양식을 확인해주세요");
+  }
 };
 
-export const getReport = async (id: number) => {
+export const deleteBoardAPI = async (boardID: string) => {
+  await axiosTokenInstance.delete(`/board/${boardID}`);
+};
+
+export const writeCommentAPI = async (boardID: string, comment: string) => {
+  try {
+    await axiosTokenInstance.post(`/comment/${boardID}`, {
+      content: comment,
+    });
+  } catch (e) {
+    console.log(e);
+    console.log("댓글 등록 실패");
+  }
+};
+
+export const deleteCommentAPI = async (commentID: number) => {
+  try {
+    await axiosTokenInstance.delete(`/comment/${commentID}`);
+  } catch {
+    alert("댓글 삭제 실패");
+  }
+};
+
+export const getReportListAPI = async (
+  token: string | null,
+  currentPage: number,
+  itemsPerPage: number,
+  sort: string,
+  searchWord: string
+) => {
+  const axiosReq = token ? axiosTokenInstance : axiosInstance;
+
+  const res = await axiosReq.get("/analyst-board", {
+    params: {
+      page: currentPage - 1,
+      size: itemsPerPage,
+      sort: sort,
+      searchWord: searchWord,
+    },
+  });
+
+  return res.data;
+};
+export const getReportAPI = async () => {
   const res = await axios.get(`/analyst-board`);
   return res.data;
 };
@@ -146,16 +218,5 @@ export const writeReportAPI = async (report: Report) => {
     return res.data;
   } catch {
     alert("PDF 형식이나 미입력값을 확인하세요.");
-  }
-};
-
-export const writeComment = async (boardId: string, comment: string) => {
-  try {
-    await axiosTokenInstance.post(`/comment/${boardId}`, {
-      content: comment,
-    });
-  } catch (e) {
-    console.log(e);
-    console.log("댓글 등록 실패");
   }
 };

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
-import { getBoard, writeBoard } from "../api/communityAPI";
+import { getBoardAPI, writeBoardAPI } from "../api/communityAPI";
 
 // 자유글 작성
 interface Board {
@@ -11,6 +11,7 @@ interface Board {
 
 // 게시글 데이터
 interface BoardState {
+  currentPage: number;
   userNickname: string;
   userImagePath: string;
   title: string;
@@ -26,6 +27,7 @@ interface BoardState {
 }
 
 const initialState: BoardState = {
+  currentPage: 1,
   userNickname: "",
   userImagePath: "",
   title: "",
@@ -43,7 +45,7 @@ const initialState: BoardState = {
 export const postBoardData = createAsyncThunk(
   "board/postBoardData",
   async (board: Board) => {
-    const response = await writeBoard(board);
+    const response = await writeBoardAPI(board);
     return response;
   }
 );
@@ -51,7 +53,7 @@ export const postBoardData = createAsyncThunk(
 export const getBoardData = createAsyncThunk(
   "board/getBoardData",
   async (boardId: number) => {
-    const response = await getBoard(boardId);
+    const response = await getBoardAPI(boardId);
     return response;
   }
 );
@@ -60,6 +62,9 @@ const boardSlice = createSlice({
   name: "board",
   initialState,
   reducers: {
+    setCurrentPage: (state, action: PayloadAction<number>) => {
+      state.currentPage = action.payload;
+    },
     setBoardTitle: (state, action: PayloadAction<string>) => {
       state.title = action.payload;
     },
@@ -104,5 +109,6 @@ const boardSlice = createSlice({
   },
 });
 
-export const { setBoardTitle, setBoardContent } = boardSlice.actions;
+export const { setCurrentPage, setBoardTitle, setBoardContent } =
+  boardSlice.actions;
 export default boardSlice.reducer;
