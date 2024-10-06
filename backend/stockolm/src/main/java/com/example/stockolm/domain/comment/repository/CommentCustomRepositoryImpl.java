@@ -24,6 +24,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
         return queryFactory
                 .select(Projections.constructor(CommentResponse.class,
+                        comment.commentId,
                         comment.user.userId,
                         comment.user.userImagePath,
                         comment.user.userNickname,

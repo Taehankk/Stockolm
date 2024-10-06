@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class CommentResponse {
+    private Long commentId;
     private Long userId;
     private String userImagePath;
     private String userNickname;
@@ -14,7 +15,8 @@ public class CommentResponse {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
-    public CommentResponse(Long userId, String userImagePath, String userNickname, String content, LocalDateTime createAt, LocalDateTime updateAt) {
+    public CommentResponse(Long commentId, Long userId, String userImagePath, String userNickname, String content, LocalDateTime createAt, LocalDateTime updateAt) {
+        this.commentId = commentId;
         this.userId = userId;
         this.userImagePath = userImagePath;
         this.userNickname = userNickname;
