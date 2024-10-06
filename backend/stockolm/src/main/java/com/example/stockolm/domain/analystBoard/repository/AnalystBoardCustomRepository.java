@@ -1,6 +1,6 @@
 package com.example.stockolm.domain.analystBoard.repository;
 
-import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
+import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardPageResponse;
 import com.example.stockolm.domain.stock.dto.response.BestAnalystResponse;
 
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
@@ -19,5 +19,5 @@ public interface AnalystBoardCustomRepository {
 
     List<BestAnalystResponse> findBestAnalystByStockId(Long stockId);
 
-    Page<AnalystBoardResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId);
+    Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId);
 }

@@ -1,11 +1,9 @@
 package com.example.stockolm.domain.stock.repository;
 
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
-import com.example.stockolm.domain.follow.entity.QFollow;
 import com.example.stockolm.domain.stock.dto.response.*;
 import com.example.stockolm.domain.stock.entity.QFavoriteStock;
 import com.example.stockolm.domain.stock.entity.QStock;
-import com.example.stockolm.domain.stock.entity.Stock;
 import com.example.stockolm.domain.user.entity.QUserSearchList;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;

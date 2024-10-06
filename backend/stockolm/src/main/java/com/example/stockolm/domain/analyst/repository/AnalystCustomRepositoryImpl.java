@@ -12,13 +12,10 @@ import com.example.stockolm.domain.follow.entity.QFollow;
 import com.example.stockolm.domain.stock.entity.QStock;
 import com.example.stockolm.domain.user.entity.QUser;
 import com.example.stockolm.domain.user.entity.User;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
 package com.example.stockolm.domain.analystBoard.controller;
 
 import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRequest;
+import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardPageResponse;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.service.AnalystBoardService;
@@ -82,11 +83,11 @@ public class AnalystBoardController {
 
     @GetMapping
     @Operation(summary = "글 목록 조회", description = "종목게시판 글 목록 조회 API")
-    public ResponseEntity<Page<AnalystBoardResponse>> getAnalystBoardPage(@RequestParam(required = false) String searchWord,
+    public ResponseEntity<Page<AnalystBoardPageResponse>> getAnalystBoardPage(@RequestParam(required = false) String searchWord,
                                                                 Pageable pageable,
                                                                 @AuthPrincipal @Parameter(hidden = true) Long userId) {
         // 글 상세조회와 달리, 종목게시판 "목록 조회"까지는 비로그인 상태에서도 가능
-        Page<AnalystBoardResponse> analystBoardPage = analystBoardService.getAnalystBoardPage(searchWord, pageable, userId);
+        Page<AnalystBoardPageResponse> analystBoardPage = analystBoardService.getAnalystBoardPage(searchWord, pageable, userId);
         return ResponseEntity.status(OK).body(analystBoardPage);
     }
 }
