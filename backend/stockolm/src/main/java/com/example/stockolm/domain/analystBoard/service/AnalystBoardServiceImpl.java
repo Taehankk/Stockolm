@@ -1,6 +1,7 @@
 package com.example.stockolm.domain.analystBoard.service;
 
 import com.example.stockolm.domain.analystBoard.dto.request.CreateAnalystBoardRequest;
+import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardPageResponse;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
 import com.example.stockolm.domain.analystBoard.entity.AnalystBoard;
@@ -129,7 +130,7 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
     }
 
     @Override
-    public Page<AnalystBoardResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId) {
+    public Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId) {
         return analystBoardRepository.getAnalystBoardPage(searchWord, pageable, userId);
     }
 }
