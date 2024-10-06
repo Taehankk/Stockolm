@@ -1,64 +1,79 @@
-// import { GoogleAuth } from "google-auth-library";
-
-import { pdfFormAPI, pdfSummaryAPI } from "../../api/communityAPI";
-// import { pdfSummaryAPI } from "../../api/communityAPI";
-
-// import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  pdfFormAPI,
+  pdfSummaryAPI,
+  writeReportAPI,
+} from "../../api/communityAPI";
 
 import WriteForm from "../../components/boardWrite/WriteForm";
 import Button from "../../components/elements/Button";
 import Input from "../../components/elements/Input";
 import BasicLayout from "../../layouts/BasicLayout";
-// import { RootState, useAppDispatch } from "../../store";
-import { useAppDispatch } from "../../store";
-import { setReportContent } from "../../slices/reportSlice";
-// import { useSelector } from "react-redux";
+
+import { RootState, useAppDispatch } from "../../store";
+import {
+  setStockName,
+  setCurrentStock,
+  setGoalDate,
+  setGoalStock,
+  setReportContent,
+  setReportTitle,
+  setOpinion,
+  setMarketCapitalization,
+} from "../../slices/reportSlice";
+import { useSelector } from "react-redux";
+import { useState } from "react";
+
+interface Report {
+  title: string;
+  content: string;
+  stockName: string;
+  opinion: string;
+  goalStock: number;
+  currentStock: number;
+  marketCapitalization: number;
+  goalDate: Date;
+}
 
 const ReportWritePage = () => {
   const ALLOW_FILW_EXTENSION = "pdf";
 
+  const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
 
-  // const [summary, setSummary] = useState("");
-  // const [form, setForm] = useState([]);
+  const [base64File, setBase64File] = useState("");
 
-  // const [goalDate, setGoalDate] = useState("");
+  const stockName = useSelector((state: RootState) => state.report.stockName);
+  const reportTitle = useSelector((state: RootState) => state.report.title);
+  const goalDate = useSelector((state: RootState) => state.report.goalDate);
+  const currentStock = useSelector(
+    (state: RootState) => state.report.currentStock
+  );
+  const goalStock = useSelector((state: RootState) => state.report.goalStock);
+  const opinion = useSelector((state: RootState) => state.report.opinion);
+  const marketCapitalization = useSelector(
+    (state: RootState) => state.report.marketCapitalization
+  );
+  const reportContent = useSelector((state: RootState) => state.report.content);
 
-  // const currentStock = useSelector(
-  //   (state: RootState) => state.report.currentStock
-  // );
-  // const goalStock = useSelector((state: RootState) => state.report.goalStock);
-  // const createAt = useSelector((state: RootState) => state.report.createAt);
+  const [predictDate, setPredictDate] = useState("");
 
   const summaryPdfFile = async (file: string) => {
-    const form = await pdfFormAPI(file);
-    const value3 = form[3]?.mentionText.replace(/,/g, "") || "0"; // 기본값 0 설정
-    const value4 = form[4]?.mentionText.replace(/,/g, "") || "0";
+    try {
+      const form = await pdfFormAPI(file);
 
-    const percent = (Number(value4) - Number(value3)) / Number(value3);
-
-    // Document AI API 연결
-    // dispatch(setReportContent("<p>" + (await pdfSummaryAPI(file)) + "</p>"));
-    // console.log(Number(form[4].mentionText));
-
-    dispatch(
-      setReportContent(
-        "<h2><u>📈" +
-          form[5].mentionText +
-          "주가 예측</h2></u><h3>현재 주가 : " +
-          form[3].mentionText +
-          " 원</h3><h3>목표 주가 : " +
-          form[4].mentionText +
-          " 원			[" +
-          form[0].mentionText +
-          " 대비 <span style='color: rgb(230, 0, 0);'>" +
-          Number(percent.toPrecision(3)) * 100 +
-          "%</span> 주가 상승 예상]</h3><p><br></p><p><br></p><h2><u>🔍 주가 예측 근거 요약</u></h2><h3>" +
-          (await pdfSummaryAPI(file)) +
-          "</h3>"
-      )
-    );
-    await pdfSummaryAPI(file);
+      dispatch(setStockName(form[1].mentionText));
+      dispatch(setGoalDate(form[5].mentionText));
+      dispatch(setCurrentStock(form[3]?.mentionText.replace(/,/g, "")));
+      dispatch(setGoalStock(form[4]?.mentionText.replace(/,/g, "")));
+      dispatch(setOpinion(form[6].mentionText));
+      dispatch(setMarketCapitalization(form[2]?.mentionText.replace(/,/g, "")));
+      setPredictDate(form[0].mentionText);
+    } catch {
+      alert("STOCKOLM 제공 파일 양식인지 확인해주세요");
+    }
   };
 
   const fileUploadHandler = async (file: File) => {
@@ -66,15 +81,8 @@ const ReportWritePage = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
-        const base64File = reader.result?.toString().split(",")[1]; // Base64 데이터 추출
-
-        try {
-          if (base64File) {
-            summaryPdfFile(base64File);
-          }
-        } catch (e) {
-          console.log(e);
-        }
+        const result = reader.result?.toString().split(",")[1] || "";
+        setBase64File(result);
       };
     }
   };
@@ -96,12 +104,96 @@ const ReportWritePage = () => {
     }
   };
 
+  const handleReportTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    dispatch(setReportTitle(value));
+  };
+
+  const writeReport = async () => {
+    try {
+      const report: Report = {
+        title: reportTitle,
+        content: reportContent,
+        stockName: stockName,
+        opinion: opinion,
+        goalStock: goalStock,
+        currentStock: currentStock,
+        marketCapitalization: marketCapitalization,
+        goalDate: new Date("20" + goalDate.replace(/\./g, "-")),
+      };
+
+      await writeReportAPI(report);
+
+      navigate("/community/report");
+    } catch {
+      console.log("게시글 등록 실패");
+    }
+  };
+
+  useEffect(() => {
+    dispatch(setReportTitle(""));
+    dispatch(setStockName(""));
+    dispatch(setGoalDate(""));
+    dispatch(setCurrentStock(""));
+    dispatch(setGoalStock(""));
+    dispatch(setOpinion(""));
+    dispatch(setMarketCapitalization(""));
+  }, []);
+
+  useEffect(() => {
+    if (base64File) {
+      summaryPdfFile(base64File); // base64File이 업데이트된 후 실행
+    }
+  }, [base64File]);
+
+  // 상태가 업데이트된 후에 추가 작업 수행
+  useEffect(() => {
+    // 비동기 함수를 useEffect 내부에서 선언
+    const fetchSummaryContent = async () => {
+      if (goalStock !== 0 && currentStock !== 0) {
+        // goalStock과 currentStock이 업데이트된 후에만 실행
+        const percentValue =
+          (Number(goalStock) - Number(currentStock)) / Number(currentStock);
+        const percentStyle =
+          percentValue < 0 ? "rgb(0, 0, 255)" : "rgb(230, 0, 0)";
+
+        try {
+          const summaryContent = await pdfSummaryAPI(base64File); // 비동기 호출
+
+          const content =
+            "<h2><u>📈" +
+            goalDate +
+            "주가 예측</u></h2><h3>현재 주가 : " +
+            currentStock +
+            " 원</h3><h3>목표 주가 : " +
+            goalStock +
+            " 원 [" +
+            predictDate +
+            " 대비 <span style='color: " +
+            percentStyle +
+            ";'>" +
+            Number(percentValue.toPrecision(3)) * 100 +
+            "%</span> 주가 상승 예상]</h3><p><br></p><p><br></p><h2><u>🔍 주가 예측 근거 요약</u></h2><h3>" +
+            summaryContent +
+            "</h3>";
+
+          dispatch(setReportContent(content)); // 상태 업데이트
+        } catch (error) {
+          console.log("에러 발생:", error);
+        }
+      }
+    };
+
+    // 선언된 비동기 함수 호출
+    fetchSummaryContent();
+  }, [goalStock, currentStock]); // 상태가 변경될 때만 실행
+
   return (
     <BasicLayout>
       <div className="flex flex-col w-full">
         <div>
           <span>주식종목</span>
-          <span>삼성전자</span>
+          <span>{stockName}</span>
         </div>
         <div className="flex">
           <span>파일</span>
@@ -113,7 +205,12 @@ const ReportWritePage = () => {
             />
           </div>
         </div>
-        <Input placeholder="제목을 입력해주세요" className="border-none" />
+        <Input
+          value={reportTitle}
+          onChange={handleReportTitle}
+          placeholder="제목을 입력해주세요"
+          className="border-none"
+        />
 
         {/* 글 작성 라이브러리 칸 */}
         <div className="h-40 mb-20">
@@ -128,7 +225,7 @@ const ReportWritePage = () => {
             children="취소"
             className="bg-white"
           />
-          <Button size="small" children="등록" />
+          <Button size="small" children="등록" onClick={writeReport} />
         </div>
       </div>
     </BasicLayout>

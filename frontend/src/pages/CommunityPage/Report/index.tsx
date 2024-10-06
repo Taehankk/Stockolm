@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Input from "../../../components/elements/Input";
 import CommunityCard from "../../../components/common/CommunityCard";
 
-// import Samsung from "../../../assets/samsung.jpg";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../api/axiosInstance";
 import Pagination from "../../../components/common/Pagination";
@@ -17,87 +16,114 @@ interface Report {
   isLike: boolean;
   title: string;
   stockName: string;
-  createTime: string;
+  createAt: string;
 }
 
 const Report = () => {
   const token = sessionStorage.getItem("access_token");
 
-  // const [reportList, setReportList] = useState<Report[]>([]);
+  const [reportList, setReportList] = useState<Report[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(10);
   const onPageChange = (page: number) => {
     setCurrentPage(page);
   };
-  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const itemsPerPage = 6;
 
-  const cards = [
-    { id: 1, represent: true },
-    { id: 2, represent: false },
-    { id: 3, represent: false },
-    { id: 4, represent: false },
-    { id: 5, represent: false },
-    { id: 6, represent: false },
-  ];
+  const [sort, setSort] = useState("latest");
+  const [searchWord, setSearchWord] = useState("");
+
+  const handleSort = (value: string) => {
+    setSort(value);
+  };
+
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchWord(value);
+  };
 
   const getReportList = async () => {
     if (token) {
       const res = await axiosTokenInstance.get("/analyst-board", {
         params: {
-          page: 0,
-          size: 3,
-          category: "",
-          sortBy: "",
-          stockName: "",
-          searchWord: "",
+          page: currentPage,
+          size: itemsPerPage,
+          sort: sort,
+          searchWord: searchWord,
         },
       });
       console.log(res.data);
+      setTotalItems(res.data.totalElements);
+      setReportList(res.data.content);
     } else {
       const res = await axiosInstance.get("/analyst-board", {
         params: {
-          page: 0,
-          size: 3,
-          category: "",
-          sortBy: "",
-          stockName: "",
+          page: currentPage,
+          size: itemsPerPage,
+          sort: "latest",
           searchWord: "",
         },
       });
       console.log(res.data);
+      setTotalItems(res.data.totalElements);
+      setReportList(res.data.content);
     }
   };
 
   useEffect(() => {
     getReportList();
-    setItemsPerPage(6);
-  }, []);
+    console.log(reportList);
+  }, [currentPage, sort]);
 
   return (
     <>
       <div className="">
         <span>종목분석게시판</span>
         <div className="flex justify-between items-center">
-          <div className="text-[0.7rem] opacity-50">
-            <span className="mr-1">최신순</span>
-            <span className="mr-1">조회순</span>
-            <span>인기순</span>
+          <div className="text-[0.7rem]">
+            <span
+              key="latest"
+              onClick={() => handleSort("latest")}
+              className={`cursor-pointer mr-1 ${sort === "latest" ? "" : "opacity-50"}`}
+            >
+              최신순
+            </span>
+            <span
+              key="view"
+              onClick={() => handleSort("view")}
+              className={`cursor-pointer mr-1 ${sort === "view" ? "" : "opacity-50"}`}
+            >
+              조회순
+            </span>
+            <span
+              key="like"
+              onClick={() => handleSort("like")}
+              className={`cursor-pointer ${sort === "like" ? "" : "opacity-50"}`}
+            >
+              인기순
+            </span>
           </div>
-          <Input size="medium" className="h-[1.2rem]" />
+          <Input
+            value={searchWord}
+            onChange={handleSearchValue}
+            size="medium"
+            className="h-[1.2rem]"
+          />
         </div>
         <hr />
         <div className="grid grid-cols-3">
           {/* <div className="flex justify-center items-center gap-[4rem] flex-wrap mt-[3rem]"> */}
-          {cards[0] ? (
-            cards.map((card) => (
+          {reportList[0] ? (
+            reportList.map((report, index) => (
               <CommunityCard
-                id={1}
-                stock=""
-                title=""
-                key={card.id}
-                writer=""
-                writeTime=""
-                represent={card.represent}
+                id={index}
+                stock={report.stockName}
+                title={report.title}
+                key={index}
+                writer={report.userName}
+                writeTime={report.createAt}
+                represent={false}
               />
             ))
           ) : (
@@ -105,31 +131,11 @@ const Report = () => {
               등록된 글이 없습니다.
             </span>
           )}
-          {/* </div>   */}
-          {/* <Link to={`/analyst/${nickname}/report/${id}`} className="m-5">
-            <div className="w-48 h-40 shadow-sm shadow-gray-400 rounded-lg">
-              <img
-                src={Samsung}
-                alt="로고 사진"
-                className="rounded-t-lg object-cover w-full h-[60%]"
-              />
-              <hr />
-              <div className="h-[40%] flex flex-col justify-center ml-4">
-                <div className="bg-[#51E8B3] rounded-lg text-center w-14 text-[0.6rem]">
-                  삼성전자
-                </div>
-                <div className="text-[0.8rem]">9월 월간 분석</div>
-                <div className="flex justify-end mr-2 text-[0.5rem] opacity-50">
-                  <span className="mr-2">장원영</span>
-                  <span>20분 전</span>
-                </div>
-              </div>
-            </div>
-          </Link> */}
         </div>
 
         <Pagination
           currentPage={currentPage}
+          totalItems={totalItems}
           onPageChange={onPageChange}
           itemsPerPage={itemsPerPage}
         />

@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosTokenInstance from "./axiosTokenInstance";
 
 const ACCESS_TOKEN = import.meta.env.VITE_SUMMARY_ACCESS_TOKEN;
 
@@ -6,6 +7,17 @@ interface Board {
   title: string;
   content: string;
   category: string;
+}
+
+interface Report {
+  title: string;
+  content: string;
+  stockName: string;
+  opinion: string;
+  goalStock: number;
+  currentStock: number;
+  marketCapitalization: number;
+  goalDate: Date;
 }
 
 export const pdfSummaryAPI = async (file: string | undefined) => {
@@ -27,8 +39,6 @@ export const pdfSummaryAPI = async (file: string | undefined) => {
       }
     );
 
-    // console.log(res);
-    // return res.data.document.entities[0].mentionText;
     return translateAPI(res.data.document.entities[0].mentionText);
   } catch (e) {
     console.log(e);
@@ -54,14 +64,6 @@ export const pdfFormAPI = async (file: string | undefined) => {
       }
     );
 
-    // form parser 데이터 콘솔 찍기
-    // const formFields = res.data.document.entities;
-
-    // formFields.forEach((field: any) => {
-    //   console.log(`Field name: ${field.type}`);
-    //   console.log(`Field value: ${field.mentionText}`);
-    // });\
-    console.log(res.data.document.entities[0].properties[1].mentionText);
     return res.data.document.entities[0].properties;
   } catch (e) {
     console.log(e);
@@ -87,13 +89,6 @@ export const pdfOCRAPI = async (file: string | undefined) => {
       }
     );
 
-    // form parser 데이터 콘솔 찍기
-    // const formFields = res.data.document.entities;
-
-    // formFields.forEach((field: any) => {
-    //   console.log(`Field name: ${field.type}`);
-    //   console.log(`Field value: ${field.mentionText}`);
-    // });\
     console.log(res);
     return res.data.document;
   } catch (e) {
@@ -111,7 +106,6 @@ export const translateAPI = async (text: string) => {
     {
       headers: {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
-        // "Content-Type": "application/json",
       },
     }
   );
@@ -131,6 +125,37 @@ export const writeBoard = async (board: Board) => {
 };
 
 export const getReport = async (id: number) => {
-  const res = await axios.get(`/temp/${id}`);
+  const res = await axios.get(`/analyst-board`);
   return res.data;
+};
+
+export const writeReportAPI = async (report: Report) => {
+  try {
+    const res = await axiosTokenInstance.post("/analyst-board", {
+      title: report.title,
+      content: report.content,
+      stockName: report.stockName,
+      opinion: report.opinion,
+      goalStock: report.goalStock,
+      currentStock: report.currentStock,
+      marketCapitalization: report.marketCapitalization * 1000000,
+      goalDate: report.goalDate,
+    });
+
+    console.log(res.data);
+    return res.data;
+  } catch {
+    alert("PDF 형식이나 미입력값을 확인하세요.");
+  }
+};
+
+export const writeComment = async (boardId: string, comment: string) => {
+  try {
+    await axiosTokenInstance.post(`/comment/${boardId}`, {
+      content: comment,
+    });
+  } catch (e) {
+    console.log(e);
+    console.log("댓글 등록 실패");
+  }
 };
