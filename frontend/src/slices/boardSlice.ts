@@ -52,8 +52,9 @@ export const postBoardData = createAsyncThunk(
 
 export const getBoardData = createAsyncThunk(
   "board/getBoardData",
-  async (boardId: number) => {
-    const response = await getBoardAPI(boardId);
+  async (boardId: string) => {
+    const token = sessionStorage.getItem("access_token");
+    const response = await getBoardAPI(token, boardId);
     return response;
   }
 );

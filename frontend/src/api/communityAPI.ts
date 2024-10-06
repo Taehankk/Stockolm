@@ -139,8 +139,10 @@ export const changeLikeStateAPI = async (boardID: string) => {
   await axiosTokenInstance.post(`/board/like/${boardID}`);
 };
 
-export const getBoardAPI = async (id: number) => {
-  const res = await axios.get(`/temp/${id}`);
+export const getBoardAPI = async (token: string | null, boardID: string) => {
+  const axiosReq = token ? axiosTokenInstance : axiosInstance;
+
+  const res = await axiosReq.get(`/board/${boardID}`);
   return res.data;
 };
 
@@ -155,6 +157,16 @@ export const writeBoardAPI = async (board: Board) => {
 
 export const deleteBoardAPI = async (boardID: string) => {
   await axiosTokenInstance.delete(`/board/${boardID}`);
+};
+
+export const getCommentListAPI = async (
+  token: string | null,
+  boardID: string
+) => {
+  const axiosReq = token ? axiosTokenInstance : axiosInstance;
+
+  const res = await axiosReq.get(`/comment/${boardID}`);
+  return res.data;
 };
 
 export const writeCommentAPI = async (boardID: string, comment: string) => {
