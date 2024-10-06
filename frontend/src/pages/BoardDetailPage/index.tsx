@@ -12,10 +12,10 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 // import { faHeart as like } from "@fortawesome/free-solid-svg-icons";
 
-import Winter from "../../assets/winter.jpg";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import axiosTokenInstance from "../../api/axiosTokenInstance";
+import { writeComment } from "../../api/communityAPI";
 
 interface BoardData {
   userNickname: string;
@@ -30,10 +30,23 @@ interface BoardData {
   isLike: boolean;
 }
 
+interface Comment {
+  commentId: number;
+  userId: number; // 댓글 작성자의 id -> 이걸 활용해 사용자 = 댓글 작성자인 경우만 "수정/삭제" 버튼을 보여주기
+  userNickname: string;
+  userImagePath: string;
+  content: string;
+  createAt: string;
+  updateAt: string;
+}
+
 const BoardDetailPage = () => {
   const token = sessionStorage.getItem("access_token");
 
   const [boardData, setBoardData] = useState<BoardData>();
+  const [commentData, setCommentData] = useState<Comment[]>([]);
+
+  const [commentValue, setCommentValue] = useState("");
 
   const { id: boardID } = useParams();
 
@@ -52,12 +65,31 @@ const BoardDetailPage = () => {
     if (token) {
       const res = await axiosTokenInstance.get(`/comment/${boardID}`);
       console.log(res.data);
+      setCommentData(res.data);
     } else {
       const res = await axiosInstance.get(`/comment/${boardID}`);
       console.log(res.data);
+      setCommentData(res.data);
     }
   };
 
+  const handleCommentValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCommentValue(value);
+  };
+
+  const registComment = () => {
+    if (commentValue !== "") {
+      writeComment(boardID!, commentValue);
+      window.location.reload();
+    } else {
+      alert("댓글을 입력하세요");
+    }
+  };
+
+  const setUpdateInput = () => {};
+
+  const handleDeleteComment = () => {};
   useEffect(() => {
     getBoard();
     getComment();
@@ -127,95 +159,60 @@ const BoardDetailPage = () => {
             <div className="text-lg p-4 min-h-64">{boardData?.content}</div>
             <hr />
             <div className="flex flex-col p-4">
-              <div className="flex">
-                <Input className="w-72 mr-2" />
-                <Button size="small" children="등록" />
-              </div>
-              <div className="flex flex-col mt-4">
-                {/* 댓글 하나 */}
-                <div className="flex border-t-2 w-full p-4">
-                  <div className="flex w-[20%] mr-4 items-center">
-                    <img
-                      className="h-[6rem] w-[6rem] object-cover rounded-full border border-black"
-                      src={Winter}
-                    />
-                  </div>
-                  <div className="flex w-[80%] flex-col text-base justify-between">
-                    <span className="mb-4">작성자</span>
-                    <span>
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다{" "}
-                    </span>
-                  </div>
+              {token ? (
+                <div className="flex">
+                  <Input
+                    value={commentValue}
+                    onChange={handleCommentValue}
+                    className="w-72 mr-2"
+                  />
+                  <Button
+                    size="small"
+                    onClick={registComment}
+                    children="등록"
+                  />
                 </div>
-                {/* 댓글 하나 */}
-                <div className="flex border-t-2 w-full p-4">
-                  <div className="flex w-[20%] mr-4 items-center">
-                    <img
-                      className="h-[6rem] w-[6rem] object-cover rounded-full border border-black"
-                      src={Winter}
-                    />
-                  </div>
-                  <div className="flex w-[80%] flex-col text-base justify-between">
-                    <span className="mb-4">작성자</span>
-                    <span>
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다{" "}
-                    </span>
-                  </div>
-                </div>
-                {/* 댓글 하나 */}
-                <div className="flex border-t-2 w-full p-4">
-                  <div className="flex w-[20%] mr-4 items-center">
-                    <img
-                      className="h-[6rem] w-[6rem] object-cover rounded-full border border-black"
-                      src={Winter}
-                    />
-                  </div>
-                  <div className="flex w-[80%] flex-col text-base justify-between">
-                    <span className="mb-4">작성자</span>
-                    <span>
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다
-                      댓글 내용을 여기다 띄울겁니다 댓글 내용을 여기다
-                      띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글 내용을
-                      여기다 띄울겁니다 댓글 내용을 여기다 띄울겁니다 댓글
-                      내용을 여기다 띄울겁니다{" "}
-                    </span>
-                  </div>
-                </div>
+              ) : (
+                ""
+              )}
+
+              <div className="flex flex-col mt-4 items-center">
+                {commentData[0] ? (
+                  commentData.map((comment, index) => (
+                    <div key={index} className="flex border-t-2 w-full p-4">
+                      <div className="flex w-[20%] mr-4 items-center">
+                        <img
+                          className="h-[6rem] w-[6rem] object-cover rounded-full border border-black"
+                          src={comment.userImagePath}
+                        />
+                      </div>
+                      <div className="flex w-[80%] flex-col text-base justify-between">
+                        <div className="flex justify-between items-center ">
+                          <span className="">{comment.userNickname}</span>
+                          <span className="opacity-50">{comment.createAt}</span>
+                        </div>
+                        <div className="flex justify-between items-center ">
+                          <span>{comment.content}</span>
+                          {/* {comment.userNickname === } */}
+                          <div className="flex opacity-50">
+                            <span
+                              onClick={setUpdateInput}
+                              children="수정"
+                              className="bg-white text-sm w-10"
+                            />
+                            <span
+                              onClick={handleDeleteComment}
+                              children="삭제"
+                              className="bg-white text-sm w-10"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-2xl mt-10">등록된 댓글이 없습니다.</div>
+                )}
               </div>
             </div>
           </div>

@@ -26,6 +26,7 @@ interface ReportState {
   currentStock: number; // 현재주가
   marketCapitalization: number; // 시가총액
   content: string; // 요약 내용
+  goalDate: string;
   filePath: string; // S3 서버 내 리포트 파일 경로
   likeCnt: number;
   viewCnt: number;
@@ -48,6 +49,7 @@ const initialState: ReportState = {
   currentStock: 0, // 현재주가
   marketCapitalization: 0, // 시가총액
   content: "", // 요약 내용
+  goalDate: "",
   filePath: "", // S3 서버 내 리포트 파일 경로
   likeCnt: 0,
   viewCnt: 0,
@@ -92,7 +94,7 @@ const reportSlice = createSlice({
       state.marketCapitalization = Number(action.payload);
     },
     setGoalDate: (state, action: PayloadAction<string>) => {
-      state.marketCapitalization = Number(action.payload);
+      state.goalDate = action.payload;
     },
   },
   extraReducers: (builder) => {

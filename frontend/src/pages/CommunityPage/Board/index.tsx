@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import Input from "../../../components/elements/Input";
 import Pagination from "../../../components/common/Pagination";
@@ -31,6 +31,8 @@ interface Board {
 const Board = () => {
   const token = sessionStorage.getItem("access_token");
 
+  const navigate = useNavigate();
+
   const [boardList, setBoardList] = useState<Board[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,6 +42,14 @@ const Board = () => {
   };
   const itemsPerPage = 3;
 
+  const [sort, setSort] = useState("latest");
+  const [searchWord, setSearchWord] = useState("");
+
+  const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchWord(value);
+  };
+
   const getBoardList = async () => {
     if (token) {
       const res = await axiosTokenInstance.get("/board", {
@@ -47,7 +57,7 @@ const Board = () => {
           searchWord: "",
           page: currentPage,
           size: itemsPerPage,
-          sort: "latest",
+          sort: sort,
         },
       });
       setBoardList(res.data.content);
@@ -57,31 +67,61 @@ const Board = () => {
           searchWord: "",
           page: currentPage,
           size: itemsPerPage,
-          sort: "latest",
+          sort: sort,
         },
       });
       setBoardList(res.data.content);
     }
   };
 
+  const toBoardWrite = () => {
+    if (token) {
+      navigate("/community/board/write");
+    } else {
+      alert("로그인 후 이용가능합니다.");
+    }
+  };
+
   useEffect(() => {
     getBoardList();
-
-    console.log(boardList);
-    // setTotalItems();
   }, [currentPage]);
 
   return (
     <>
       <span>자유게시판</span>
       <div className="flex justify-between items-center">
-        <div className="text-[0.7rem] opacity-50">
-          <span className="mr-1">최신순</span>
-          <span className="mr-1">인기순</span>
-          <span className="mr-1">조회순</span>
-          <span>댓글순</span>
+        <div className="text-[0.7rem]">
+          <span
+            key="latest"
+            className={`cursor-pointer mr-1 ${sort === "latest" ? "" : "opacity-50"}`}
+          >
+            최신순
+          </span>
+          <span
+            key="like"
+            className={`cursor-pointer mr-1 ${sort === "like" ? "" : "opacity-50"}`}
+          >
+            인기순
+          </span>
+          <span
+            key="view"
+            className={`cursor-pointer mr-1 ${sort === "view" ? "" : "opacity-50"}`}
+          >
+            조회순
+          </span>
+          <span
+            key="comment"
+            className={`cursor-pointer ${sort === "comment" ? "" : "opacity-50"}`}
+          >
+            댓글순
+          </span>
         </div>
-        <Input size="medium" className="h-[1.2rem]" />
+        <Input
+          value={searchWord}
+          onChange={handleSearchValue}
+          size="medium"
+          className="h-[1.2rem]"
+        />
       </div>
       {boardList.map((board, index) => (
         <div key={index} className="w-full border-t border-t-black-50">
@@ -135,12 +175,12 @@ const Board = () => {
         itemsPerPage={itemsPerPage}
       />
       <div className="flex justify-end mt-6">
-        <Link
-          to={"/community/board/write"}
+        <div
+          onClick={toBoardWrite}
           className="w-16 h-6 text-center content-center text-xs border border-black rounded-md"
         >
           글쓰기
-        </Link>
+        </div>
       </div>
     </>
   );
