@@ -68,7 +68,8 @@ const OneBoard = ({ board }: Props) => {
                 {board.viewCnt}
               </span>
               <span className="opacity-50 flex gap-2">
-                <FontAwesomeIcon icon={faMessage} />3
+                <FontAwesomeIcon icon={faMessage} />
+                {board.commentCnt}
               </span>
             </div>
           </div>

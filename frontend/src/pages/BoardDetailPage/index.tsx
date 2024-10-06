@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import dompurify from "dompurify";
 
 import BasicLayout from "../../layouts/BasicLayout";
@@ -11,21 +12,23 @@ import {
   faEye,
   faMessage,
 } from "@fortawesome/free-regular-svg-icons";
-import { faHeart as like } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faHeart as like,
+} from "@fortawesome/free-solid-svg-icons";
 
-import { useEffect, useState } from "react";
-import axiosInstance from "../../api/axiosInstance";
-import axiosTokenInstance from "../../api/axiosTokenInstance";
 import {
   changeLikeStateAPI,
   deleteBoardAPI,
   deleteCommentAPI,
+  getBoardAPI,
+  getCommentListAPI,
   writeCommentAPI,
 } from "../../api/communityAPI";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { getUserInfo } from "../../slices/userSlice";
+
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../store";
+import { getUserInfo } from "../../slices/userSlice";
 
 interface BoardData {
   userNickname: string;
@@ -76,27 +79,27 @@ const BoardDetailPage = () => {
   };
 
   const handleLike = async () => {
-    try {
-      setLike(!isLike);
-      await changeLikeStateAPI(boardID!);
-    } catch {
-      alert("좋아요 변경 실패");
+    if (boardData?.userNickname !== nickName) {
+      try {
+        setLike(!isLike);
+        await changeLikeStateAPI(boardID!);
+      } catch {
+        alert("좋아요 변경 실패");
+      }
     }
   };
 
   const getBoard = async () => {
-    if (token) {
-      const res = await axiosTokenInstance.get(`/board/${boardID}`);
-
-      setBoardData(res.data);
-      setLike(res.data.like);
-    } else {
-      const res = await axiosInstance.get(`/board/${boardID}`);
-
-      setBoardData(res.data);
-      setLike(res.data.like);
+    try {
+      const res = await getBoardAPI(token, boardID!);
+      setBoardData(res);
+      setLike(res.like);
+    } catch {
+      alert("게시판 상세 조회 실패");
     }
   };
+
+  const openBoardUpdate = () => {};
 
   const handleBoardDelete = async (id: string) => {
     try {
@@ -108,15 +111,13 @@ const BoardDetailPage = () => {
     }
   };
 
-  const getComment = async () => {
-    if (token) {
-      const res = await axiosTokenInstance.get(`/comment/${boardID}`);
-      console.log(res);
-      setCommentData(res.data);
-    } else {
-      const res = await axiosInstance.get(`/comment/${boardID}`);
-      console.log(res);
-      setCommentData(res.data);
+  const getCommentList = async () => {
+    try {
+      const res = await getCommentListAPI(token, boardID!);
+
+      setCommentData(res);
+    } catch {
+      alert("댓글 조회 실패");
     }
   };
 
@@ -149,8 +150,10 @@ const BoardDetailPage = () => {
 
   useEffect(() => {
     getBoard();
-    getComment();
-    dispatch(getUserInfo());
+    getCommentList();
+    if (token) {
+      dispatch(getUserInfo());
+    }
   }, []);
 
   return (
@@ -168,9 +171,9 @@ const BoardDetailPage = () => {
           <div className="text-4xl">{boardData?.title}</div>
           {/* 제목 밑 파트 */}
           {/* 시간, 좋아요, 조회수 */}
-          <div className="text-xs w-full">
+          <div className="w-full">
             <div className="flex text-sm mt-3">
-              <span className="text-xs mr-12">
+              <span className="mr-12">
                 #
                 {boardData?.category === "CHAT"
                   ? "잡담"
@@ -203,7 +206,7 @@ const BoardDetailPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center my-2 w-full">
+            <div className="flex items-center my-2 w-full h-fit">
               <div className="flex items-center w-full">
                 <img
                   src={boardData?.userImagePath}
@@ -229,6 +232,7 @@ const BoardDetailPage = () => {
               {boardData?.userNickname === nickName ? (
                 <div className="flex justify-end w-full">
                   <span
+                    onClick={openBoardUpdate}
                     children="수정"
                     className="cursor-pointer bg-white text-sm w-10"
                   />
@@ -239,7 +243,13 @@ const BoardDetailPage = () => {
                   />
                 </div>
               ) : (
-                ""
+                <div onClick={handleLike} className="flex mb-1 text-2xl">
+                  {isLike ? (
+                    <FontAwesomeIcon icon={like} className="text-PrimaryRed" />
+                  ) : (
+                    <FontAwesomeIcon icon={unlike} className="text-2xl" />
+                  )}
+                </div>
               )}
             </div>
 
