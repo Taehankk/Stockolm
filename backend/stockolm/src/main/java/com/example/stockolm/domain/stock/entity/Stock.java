@@ -22,6 +22,8 @@ public class Stock {
 
     private int stockSearchCnt;
 
+    private String companyImagePath;
+
     public void plusStockSearchCnt(){
         stockSearchCnt++;
     }
