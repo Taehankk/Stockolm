@@ -34,6 +34,8 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final String DEFAULT_USER_IMAGE_PATH = "https://stockolm.s3.ap-northeast-2.amazonaws.com/user-image/1728275338835_basic-profile.png";
+
     private final JavaMailSender mailSender;
 
     private final UserRepository userRepository;
@@ -138,6 +140,8 @@ public class UserServiceImpl implements UserService {
             throw new AnalystSignUpException();
 
         user.encryptPassword(encryptHelper);
+
+        user.setDefaultUserImagePath(DEFAULT_USER_IMAGE_PATH);
 
         userRepository.save(user);
 
