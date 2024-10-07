@@ -68,6 +68,10 @@ const SignUp = ({ handleImgLocation }: Props) => {
     }
   };
 
+  const backToLogin = () => {
+    handleImgLocation(0);
+  };
+
   return (
     <div className="flex flex-col items-center w-full">
       <div className="mb-10 text-[2.4rem]">회원가입</div>
@@ -77,6 +81,10 @@ const SignUp = ({ handleImgLocation }: Props) => {
         <AnalystSignUp />
       </div>
       <Button onClick={signUp} children="회원가입" className="mt-8" />
+      <div className="mt-2 opacity-50">
+        <span className="mr-4">회원이신가요?</span>
+        <span onClick={backToLogin}>로그인 </span>
+      </div>
     </div>
   );
 };

@@ -25,15 +25,8 @@ const AuthPage = () => {
   return (
     <div className="flex justify-center items-center h-[95vh] w-[95vw]">
       <div className="absolute border border-[#D9D9D9] flex justify-center h-[80%] w-[70%]">
-        {/* <img
-        src={StockOlm}
-        alt=""
-        className={`h-[90vh] w-1/2 object-cover aspect-auto transition-transform duration-300 ${
-          imgLocation === 0 ? "translate-x-0" : "translate-x-full"
-        }`}
-      /> */}
         <div
-          className={`bg-[url('/src/assets/STOCKOLM.jpg')] bg-center bg-cover h-full w-1/2 object-cover transition-transform duration-300 z-10 ${
+          className={`bg-[url('/src/assets/RedUp.webp')] bg-center bg-cover h-full w-1/2 object-cover transition-transform duration-300 z-10 ${
             imgLocation === 0 ? "translate-x-0" : "translate-x-full"
           }`}
         ></div>
@@ -48,7 +41,9 @@ const AuthPage = () => {
               <SignUp handleImgLocation={handleImgLocation} />
             )}
             {imgLocation === 2 && (
-              <ChangePassword handleImgLocation={handleImgLocation} />
+              <div className="w-[35vw]">
+                <ChangePassword handleImgLocation={handleImgLocation} />
+              </div>
             )}
           </AuthContextProvider>
         </div>
