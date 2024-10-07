@@ -164,7 +164,8 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                         analystBoard.viewCnt,
                         analystBoard.createAt,
                         analystBoard.updateAt,
-                        likeExpression != null ? likeExpression : Expressions.asBoolean(false)  // 좋아요 여부
+                        likeExpression != null ? likeExpression : Expressions.asBoolean(false),  // 좋아요 여부
+                        analystBoard.filePath
                 ))
                 .from(analystBoard)
                 .join(analystBoard.user, user)
