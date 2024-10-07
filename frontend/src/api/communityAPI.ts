@@ -19,6 +19,7 @@ interface Report {
   currentStock: number;
   marketCapitalization: number;
   goalDate: Date;
+  filePath: string;
 }
 
 export const pdfSummaryAPI = async (file: string | undefined) => {
@@ -114,6 +115,20 @@ export const translateAPI = async (text: string) => {
   return res.data.data.translations[0].translatedText;
 };
 
+export const uploadPdfAPI = async (file: File) => {
+  const res = await axiosTokenInstance.post(
+    `/upload/report-pdf`,
+    { file: file },
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  console.log(res.data);
+  return res.data;
+};
+
 export const getBoardListAPI = async (
   token: string | null,
   currentPage: number,
@@ -198,6 +213,10 @@ export const deleteCommentAPI = async (commentID: number) => {
   }
 };
 
+export const changeReportLikeStateAPI = async (reportID: string) => {
+  await axiosTokenInstance.post(`analyst-board/like/${reportID}`);
+};
+
 export const getReportListAPI = async (
   token: string | null,
   currentPage: number,
@@ -218,8 +237,10 @@ export const getReportListAPI = async (
 
   return res.data;
 };
-export const getReportAPI = async () => {
-  const res = await axios.get(`/analyst-board`);
+
+export const getReportAPI = async (reportID: string) => {
+  const res = await axiosTokenInstance.get(`/analyst-board/${reportID}`);
+  console.log(res.data);
   return res.data;
 };
 
@@ -234,6 +255,7 @@ export const writeReportAPI = async (report: Report) => {
       currentStock: report.currentStock,
       marketCapitalization: report.marketCapitalization * 1000000,
       goalDate: report.goalDate,
+      filePath: report.filePath,
     });
 
     console.log(res.data);
