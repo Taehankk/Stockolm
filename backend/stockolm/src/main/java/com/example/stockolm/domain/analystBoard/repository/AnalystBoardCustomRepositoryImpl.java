@@ -118,7 +118,7 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
     }
 
     @Override
-    public Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId) {
+    public Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, Boolean myBoard) {
         QStock stock = QStock.stock;
         QUser user = QUser.user;
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
@@ -128,6 +128,11 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
         BooleanBuilder builder = new BooleanBuilder();
         if(searchWord != null && !searchWord.isEmpty()) {
             builder.and(analystBoard.title.contains(searchWord).or(analystBoard.content.contains(searchWord)).or(stock.stockName.contains(searchWord)));
+        }
+
+        // 애널리스트가 본인 작성 글만 조회하는 경우를 처리
+        if(userId != null && Boolean.TRUE.equals(myBoard)) {
+            builder.and(analystBoard.user.userId.eq(userId));
         }
 
         // 로그인 유저인 경우만 좋아요 여부를 판단
