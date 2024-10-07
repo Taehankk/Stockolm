@@ -19,5 +19,5 @@ public interface AnalystBoardCustomRepository {
 
     List<BestAnalystResponse> findBestAnalystByStockId(Long stockId);
 
-    Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, Boolean myBoard);
+    Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, String searchAnalyst);
 }

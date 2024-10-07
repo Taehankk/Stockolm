@@ -86,9 +86,9 @@ public class AnalystBoardController {
     public ResponseEntity<Page<AnalystBoardPageResponse>> getAnalystBoardPage(@RequestParam(required = false) String searchWord,
                                                                 Pageable pageable,
                                                                 @AuthPrincipal @Parameter(hidden = true) Long userId,
-                                                                @RequestParam(required = false, defaultValue = "false") Boolean myBoard) {
+                                                                @RequestParam(required = false) String searchAnalyst) {
         // 글 상세조회와 달리, 종목게시판 "목록 조회"까지는 비로그인 상태에서도 가능
-        Page<AnalystBoardPageResponse> analystBoardPage = analystBoardService.getAnalystBoardPage(searchWord, pageable, userId, myBoard);
+        Page<AnalystBoardPageResponse> analystBoardPage = analystBoardService.getAnalystBoardPage(searchWord, pageable, userId, searchAnalyst);
         return ResponseEntity.status(OK).body(analystBoardPage);
     }
 }
