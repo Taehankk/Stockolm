@@ -60,7 +60,6 @@ const StockPage = () => {
           <Button size="medium" onClick={handleCommunityButtonClick}>
             종목게시판
           </Button>
-          <Button size="medium">종목채팅방</Button>
         </div>
       </div>
       <div className="middle">

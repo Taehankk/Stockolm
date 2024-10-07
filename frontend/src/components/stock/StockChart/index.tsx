@@ -24,6 +24,7 @@ interface StockChartProps {
 }
 
 const StockChart = ({ stockData }: StockChartProps) => {
+  const stockCode = useSelector((state: RootState) => state.stock.searchCode);
   const [chartType, setChartType] = useState<"basic" | "analysis">("basic");
   const analystData: AnalystDataItem[] = useSelector((state: RootState) =>
     state.stock.bestAnalysts.map((analyst) => ({
@@ -53,7 +54,7 @@ const StockChart = ({ stockData }: StockChartProps) => {
       </div>
 
       {chartType === "basic" ? (
-        <BasicStockChart stockData={stockData} />
+        <BasicStockChart stockData={stockData} stockCode={stockCode} />
       ) : (
         <AnalystStockChart stockData={stockData} analystData={analystData} />
       )}
