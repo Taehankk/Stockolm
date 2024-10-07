@@ -10,6 +10,7 @@ import {
 
 import EmailVerification from "../../../components/auth/common/EmailVerification";
 import { AuthContext } from "../../../components/auth/AuthContext";
+import { changePasswordAPI } from "../../../api/authAPI";
 
 interface Props {
   handleImgLocation: (value: number) => void;
@@ -19,7 +20,15 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
   const [passwordInput, setPasswordInput] = useState("");
   const [pwCheckInput, setPwCheckInput] = useState("");
 
-  const { isValidateNumValid, setValidateNumValid } = useContext(AuthContext);
+  const {
+    emailInput,
+    isValidateNumValid,
+    setValidateNumValid,
+    isPasswordValid,
+    setPasswordValid,
+    isPwCheckValid,
+    setPwCheckValid,
+  } = useContext(AuthContext);
 
   const handlePasswordInputChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -33,9 +42,21 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
     setPwCheckInput(value);
   };
 
-  const changePassword = () => {
+  const changePassword = async () => {
+    if (!isValidateNumValid) {
+      alert("이메일 인증을 진행해주세요");
+    } else if (!isPasswordValid) {
+      alert("비밀번호 형식을 확인해주세요");
+    } else if (!isPwCheckValid) {
+      alert("비밀번호 확인 값이 일치하지 않습니다.");
+    } else {
+      const res = await changePasswordAPI(emailInput, passwordInput);
+      handleImgLocation(res);
+    }
+  };
+
+  const backToLogin = () => {
     handleImgLocation(0);
-    console.log(passwordInput);
   };
 
   useEffect(() => {
@@ -46,46 +67,51 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
     <div className="flex flex-col items-center w-full">
       <div className="mt-16 mb-20 text-[2.4rem]">비밀번호 변경</div>
 
-      <div className="flex-col justify-between w-[24vw]">
-        {/* 이메일 인증 관련 컴포넌트 */}
-        <EmailVerification />
+      {/* 이메일 인증 관련 컴포넌트 */}
+      <EmailVerification location={2} />
 
-        {isValidateNumValid && (
+      {isValidateNumValid ? (
+        <div>
           <div>
-            <div>
-              {/* 새 비밀번호 input */}
-              <div className="flex mb-2 items-center justify-between">
-                <span className="">새 비밀번호</span>
-                <Input
-                  onChange={handlePasswordInputChange}
-                  value={passwordInput}
-                  validate={validatePassword}
-                  type="password"
-                />
-              </div>
-
-              {/* 비밀번호 확인 input */}
-              <div className="flex mb-2 items-center justify-between">
-                <span className="mr-2">비밀번호 확인</span>
-                <Input
-                  onChange={handlePwCheckInputChange}
-                  value={pwCheckInput}
-                  validate={(value) =>
-                    validateMatchPassword(value, passwordInput)
-                  }
-                  type="password"
-                />
-              </div>
+            {/* 새 비밀번호 input */}
+            <div className="flex mb-2 items-center justify-between">
+              <span className="">새 비밀번호</span>
+              <Input
+                onChange={handlePasswordInputChange}
+                value={passwordInput}
+                validate={validatePassword}
+                setValidateState={setPasswordValid}
+                type="password"
+              />
             </div>
 
-            <Button
-              onClick={changePassword}
-              children="비밀번호 변경"
-              className="mt-10"
-            />
+            {/* 비밀번호 확인 input */}
+            <div className="flex mb-2 items-center justify-between">
+              <span className="mr-2">비밀번호 확인</span>
+              <Input
+                onChange={handlePwCheckInputChange}
+                value={pwCheckInput}
+                validate={(value) =>
+                  validateMatchPassword(value, passwordInput)
+                }
+                setValidateState={setPwCheckValid}
+                type="password"
+              />
+            </div>
           </div>
-        )}
-      </div>
+
+          <Button
+            onClick={changePassword}
+            children="비밀번호 변경"
+            className="mt-10"
+          />
+        </div>
+      ) : (
+        <div className="mt-2 opacity-50">
+          <span className="mr-4">비밀번호를 아신다면?</span>
+          <span onClick={backToLogin}>로그인</span>
+        </div>
+      )}
     </div>
   );
 };

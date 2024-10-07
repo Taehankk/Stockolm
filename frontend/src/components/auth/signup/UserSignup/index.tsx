@@ -74,7 +74,7 @@ const UserSignUp = () => {
       </div>
 
       {/* 이메일 input */}
-      <EmailVerification />
+      <EmailVerification location={1} />
 
       {/* 비밀번호 input */}
       <div className="flex min-h-[3.4rem] items-start justify-between">

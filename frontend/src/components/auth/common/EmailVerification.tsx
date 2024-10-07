@@ -8,12 +8,19 @@ import { validateEmail } from "../../../utils/validation";
 import { sendEmailAPI, checkValidateAPI } from "../../../api/authAPI";
 import { AuthContext } from "../AuthContext";
 
-const EmailVerification = () => {
-  const [emailInput, setEmailInput] = useState("");
+interface Props {
+  location: number;
+}
+const EmailVerification = ({ location }: Props) => {
   const [validateNumInput, setValidateNumInput] = useState("");
 
-  const { emailAuthId, setEmailAuthId, setValidateNumValid } =
-    useContext(AuthContext);
+  const {
+    emailInput,
+    setEmailInput,
+    emailAuthId,
+    setEmailAuthId,
+    setValidateNumValid,
+  } = useContext(AuthContext);
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -28,7 +35,7 @@ const EmailVerification = () => {
   };
 
   const sendEmail = async () => {
-    const authID = await sendEmailAPI(emailInput);
+    const authID = await sendEmailAPI(location, emailInput);
     setEmailAuthId(authID);
   };
 
@@ -48,9 +55,9 @@ const EmailVerification = () => {
   };
 
   return (
-    <div className="flex-col justify-between w-full">
-      <div className="flex mb-2 items-center justify-between">
-        <span className="">이메일</span>
+    <div className="flex-col">
+      <div className="flex mb-2 w-full justify-between">
+        <span className="w-full">이메일</span>
         <Input
           onChange={handleEmailInputChange}
           value={emailInput}
@@ -70,7 +77,7 @@ const EmailVerification = () => {
           placeholder="인증 코드 입력"
           onChange={handleValidateNumInputChange}
           value={validateNumInput}
-          className="mr-8 w-32 text-sm"
+          className="mr-12 w-32 text-sm"
         />
         <Button
           size="small"

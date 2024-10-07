@@ -12,19 +12,28 @@ export const checkNicknameDuplicateAPI = async (nickname: string) => {
   }
 };
 
-export const sendEmailAPI = async (email: string) => {
+export const sendEmailAPI = async (location: number, email: string) => {
   try {
-    const res = await axiosInstance.post("/user/send-mail", {
-      userEmail: email,
-    });
-
-    alert("이메일에서 인증코드를 확인해주세요.");
-    return res.data.emailAuthId;
-  } catch (e: any) {
-    if (e.response && e.response.status === 400) {
-      alert("이미 가입한 이메일입니다.");
-      return "";
+    if (location === 1) {
+      const res = await axiosInstance.post("/user/send-mail", {
+        userEmail: email,
+      });
+      alert("이메일에서 인증코드를 확인해주세요.");
+      return res.data.emailAuthId;
+    } else {
+      const res = await axiosInstance.post("/user/find-password/send-mail", {
+        userEmail: email,
+      });
+      alert("이메일에서 인증코드를 확인해주세요.");
+      return res.data.emailAuthId;
     }
+  } catch (e: any) {
+    if (location === 1 && e.response && e.response.status === 400) {
+      alert("이미 가입한 이메일입니다.");
+    } else if (location === 2 && e.response && e.response.status === 404) {
+      alert("이메일을 확인해주세요");
+    }
+    return "";
   }
 };
 
@@ -90,5 +99,19 @@ export const signUpAPI = async (
       alert("입력정보를 확인해주세요");
     }
     return 1;
+  }
+};
+
+export const changePasswordAPI = async (email: string, password: string) => {
+  try {
+    await axiosInstance.patch("/user/password", {
+      userEmail: email, //유저 이메일
+      newPassword: password,
+    });
+    alert("비밀번호 변경 완료");
+    return 0;
+  } catch {
+    alert("비밀번호 변경 실패, 입력값을 확인하세요");
+    return 2;
   }
 };
