@@ -12,7 +12,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
@@ -95,6 +97,16 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
         QAnalystInfo analystInfo = QAnalystInfo.analystInfo;
         QUser user = QUser.user;
 
+          // Subquery to count total posts by the user
+        JPQLQuery<Long> totalPosts = JPAExpressions
+                .select(analystBoard.count())
+                .from(analystBoard)
+                .where(analystBoard.user.userId.eq(analystInfo.user.userId));
+
+        // Calculated accuracy and reliability
+        NumberExpression<Integer> calculatedAccuracy = analystInfo.accuracy.divide(totalPosts).multiply(100.0);
+        NumberExpression<Integer> calculatedReliability = analystInfo.reliability.divide(totalPosts).multiply(100.0);
+
         return queryFactory
                 .select(Projections.constructor(
                         BestAnalystResponse.class,
@@ -102,8 +114,8 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                         analystBoard.goalDate,
                         analystBoard.opinion,
                         analystBoard.goalStock,
-                        analystInfo.reliability,
-                        analystInfo.accuracy,
+                        calculatedReliability.as("reliability"), // Calculated accuracy
+                        calculatedAccuracy.as("accuracy"), // Calculated accuracy
                         user.userName,
                         user.userImagePath,
                         user.userNickname
