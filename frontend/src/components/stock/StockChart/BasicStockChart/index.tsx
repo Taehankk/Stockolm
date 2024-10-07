@@ -79,7 +79,7 @@ const BasicStockChart = ({ stockData, stockCode }: BasicStockChartProps) => {
   const options: ApexOptions = {
     chart: {
       type: timeFrame === "day" ? "line" : "candlestick",
-      height: 350,
+      height: 390,
       zoom: {
         enabled: true,
       },
@@ -187,7 +187,7 @@ const BasicStockChart = ({ stockData, stockCode }: BasicStockChartProps) => {
           options={options}
           series={[{ data }]}
           type={timeFrame === "day" ? "line" : "candlestick"}
-          height={230}
+          height={390}
         />
       </div>
       <div className="flex">

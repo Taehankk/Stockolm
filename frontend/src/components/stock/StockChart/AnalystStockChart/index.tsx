@@ -148,7 +148,7 @@ const AnalystStockChart = ({
           { name: "분석가 예측", data: analystSeries },
         ]}
         type="line"
-        height={350}
+        height={410}
       />
     </div>
   );
