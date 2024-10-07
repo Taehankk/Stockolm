@@ -136,7 +136,7 @@ const BoardDetailPage = () => {
     if (token) {
       dispatch(getUserInfo());
     }
-  }, []);
+  }, [token]);
 
   return (
     <BasicLayout>
