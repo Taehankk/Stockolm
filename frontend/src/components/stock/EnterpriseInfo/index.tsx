@@ -1,4 +1,3 @@
-import "./index.css";
 import { StockInfo } from "../../../types/stock";
 
 interface EnterpriseInfoProps {
@@ -7,35 +6,61 @@ interface EnterpriseInfoProps {
 
 const EnterpriseInfo = ({ stockInfo }: EnterpriseInfoProps) => {
   return (
-    <div>
-      <div className="invest-info-title">
-        <span>회사정보</span>
+    <div className="p-4">
+      <div className="border-b pb-2 mb-4">
+        <span className="text-xl font-semibold">회사정보</span>
       </div>
-      <div className="invest-infomations">
-        <div className="invest-infomation">
-          <div>회사명</div>
-          <div>대표자명</div>
-          <div>종목코드</div>
-          <div>기업고유코드</div>
+      <div className="flex flex-wrap justify-between text-sm">
+        <div className="w-full sm:w-1/2 mb-4">
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">회사명: </span>
+            <span className="w-2/3 whitespace-nowrap overflow-hidden text-ellipsis hover:text-clip">
+              {stockInfo.corpName}
+            </span>
+          </div>
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">대표자명: </span>
+            <span className="w-2/3 whitespace-nowrap overflow-hidden text-ellipsis hover:text-clip">
+              {stockInfo.ceoName}
+            </span>
+          </div>
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">종목코드: </span>
+            <span className="w-2/3 whitespace-nowrap overflow-hidden text-ellipsis hover:text-clip">
+              {stockInfo.stockCode}
+            </span>
+          </div>
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">기업고유코드: </span>
+            <span className="w-2/3 whitespace-nowrap overflow-hidden text-ellipsis hover:text-clip">
+              {stockInfo.corpCode}
+            </span>
+          </div>
         </div>
-        <div className="invest-infomation-right">
-          <div>{stockInfo.corpName}</div>
-          <div>{stockInfo.ceoName}</div>
-          <div>{stockInfo.stockCode}</div>
-          <div>{stockInfo.corpCode}</div>
-        </div>
-        <div className="invest-divider"></div>
-        <div>
-          <div>주소</div>
-          <div>홈페이지</div>
-          <div>전화번호</div>
-          <div>팩스번호</div>
-        </div>
-        <div className="invest-infomation-right">
-          <div>{stockInfo.address}</div>
-          <div>{stockInfo.url}</div>
-          <div>{stockInfo.phoneNumber}</div>
-          <div>{stockInfo.faxNumber}</div>
+
+        <div className="w-full sm:w-1/2 mb-4">
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">주소: </span>
+            <span className="w-2/3 whitespace-nowrap overflow-hidden text-ellipsis hover:text-clip">
+              {stockInfo.address}
+            </span>
+          </div>
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">홈페이지: </span>
+            {stockInfo.url}
+          </div>
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">전화번호: </span>
+            <span className="w-2/3 whitespace-nowrap overflow-hidden text-ellipsis hover:text-clip">
+              {stockInfo.phoneNumber}
+            </span>
+          </div>
+          <div className="mb-2 flex">
+            <span className="font-semibold w-1/3">팩스번호: </span>
+            <span className="w-2/3 whitespace-nowrap overflow-hidden text-ellipsis hover:text-clip">
+              {stockInfo.faxNumber}
+            </span>
+          </div>
         </div>
       </div>
     </div>
