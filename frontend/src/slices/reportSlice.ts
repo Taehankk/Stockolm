@@ -64,8 +64,8 @@ const initialState: ReportState = {
 
 export const getReportData = createAsyncThunk(
   "board/getReportData",
-  async () => {
-    const response = await getReportAPI();
+  async (reportID: string) => {
+    const response = await getReportAPI(reportID);
     return response;
   }
 );
@@ -100,6 +100,9 @@ const reportSlice = createSlice({
     },
     setGoalDate: (state, action: PayloadAction<string>) => {
       state.goalDate = action.payload;
+    },
+    setFilePath: (state, action: PayloadAction<string>) => {
+      state.filePath = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -145,5 +148,6 @@ export const {
   setGoalStock,
   setMarketCapitalization,
   setOpinion,
+  setFilePath,
 } = reportSlice.actions;
 export default reportSlice.reducer;
