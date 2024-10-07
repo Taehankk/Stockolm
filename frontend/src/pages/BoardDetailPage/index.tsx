@@ -20,15 +20,20 @@ import {
 import {
   changeLikeStateAPI,
   deleteBoardAPI,
-  deleteCommentAPI,
   getBoardAPI,
-  getCommentListAPI,
   writeCommentAPI,
 } from "../../api/communityAPI";
 
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../store";
 import { getUserInfo } from "../../slices/userSlice";
+import {
+  setBoardCategory,
+  setBoardContent,
+  setBoardID,
+  setBoardTitle,
+} from "../../slices/boardSlice";
+import CommentList from "../../components/community/board/CommentList";
 
 interface BoardData {
   userNickname: string;
@@ -41,16 +46,6 @@ interface BoardData {
   createAt: string;
   updateAt: string;
   isLike: boolean;
-}
-
-interface Comment {
-  commentId: number;
-  userId: number; // 댓글 작성자의 id -> 이걸 활용해 사용자 = 댓글 작성자인 경우만 "수정/삭제" 버튼을 보여주기
-  userNickname: string;
-  userImagePath: string;
-  content: string;
-  createAt: string;
-  updateAt: string;
 }
 
 const BoardDetailPage = () => {
@@ -68,7 +63,7 @@ const BoardDetailPage = () => {
   const nickName = useSelector((state: RootState) => state.user.userNickName);
 
   const [boardData, setBoardData] = useState<BoardData>();
-  const [commentData, setCommentData] = useState<Comment[]>([]);
+  const [commentLength, setCommentLength] = useState(0);
 
   const [commentValue, setCommentValue] = useState("");
 
@@ -99,7 +94,17 @@ const BoardDetailPage = () => {
     }
   };
 
-  const openBoardUpdate = () => {};
+  const handleCommentCount = (value: number) => {
+    setCommentLength(value);
+  };
+
+  const openBoardUpdate = () => {
+    dispatch(setBoardID(boardID!));
+    dispatch(setBoardTitle(boardData?.title || ""));
+    dispatch(setBoardCategory(boardData?.category || "ETC"));
+    dispatch(setBoardContent(boardData?.content || ""));
+    navigate("/community/board/write");
+  };
 
   const handleBoardDelete = async (id: string) => {
     try {
@@ -108,16 +113,6 @@ const BoardDetailPage = () => {
       navigate("/community/board");
     } catch {
       alert("게시글 삭제 실패");
-    }
-  };
-
-  const getCommentList = async () => {
-    try {
-      const res = await getCommentListAPI(token, boardID!);
-
-      setCommentData(res);
-    } catch {
-      alert("댓글 조회 실패");
     }
   };
 
@@ -136,21 +131,8 @@ const BoardDetailPage = () => {
     }
   };
 
-  const openCommentInput = () => {};
-
-  const handleDeleteComment = async (id: number) => {
-    try {
-      await deleteCommentAPI(id);
-      alert("댓글 삭제 완료");
-      window.location.reload();
-    } catch {
-      alert("댓글 삭제 실패");
-    }
-  };
-
   useEffect(() => {
     getBoard();
-    getCommentList();
     if (token) {
       dispatch(getUserInfo());
     }
@@ -201,7 +183,7 @@ const BoardDetailPage = () => {
                 </span>
                 <span className="flex gap-2">
                   <FontAwesomeIcon icon={faMessage} />
-                  {commentData.length}
+                  {commentLength}
                 </span>
               </div>
             </div>
@@ -279,54 +261,7 @@ const BoardDetailPage = () => {
               ) : (
                 ""
               )}
-
-              <div className="flex flex-col mt-4 items-center">
-                {commentData[0] ? (
-                  commentData.map((comment, index) => (
-                    <div key={index} className="flex border-t-2 w-full p-4">
-                      <div className="flex w-[20%] mr-4 items-center">
-                        <img
-                          className="h-[6rem] w-[6rem] object-cover rounded-full border border-black"
-                          src={comment.userImagePath}
-                        />
-                      </div>
-                      <div className="flex w-[80%] flex-col mt-2">
-                        <div className="flex justify-between items-center mb-5">
-                          <span className="text-2xl">
-                            {comment.userNickname}
-                          </span>
-                          <span className="text-sm opacity-50">
-                            {comment.createAt?.slice(0, 16).replace("T", " ")}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-lg">{comment.content}</span>
-                          {comment.userNickname === nickName ? (
-                            <div className="flex opacity-50">
-                              <span
-                                onClick={openCommentInput}
-                                children="수정"
-                                className="cursor-pointer bg-white text-sm w-10"
-                              />
-                              <span
-                                onClick={() =>
-                                  handleDeleteComment(comment.commentId)
-                                }
-                                children="삭제"
-                                className="cursor-pointer bg-white text-sm w-10"
-                              />
-                            </div>
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-2xl mt-10">등록된 댓글이 없습니다.</div>
-                )}
-              </div>
+              <CommentList handleCommentCount={handleCommentCount} />
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import CommunityCard from "../../../components/common/CommunityCard";
 
@@ -23,8 +23,11 @@ interface Report {
 }
 
 const Report = () => {
-  const dispatch = useAppDispatch();
   const token = sessionStorage.getItem("access_token");
+  const ROLE = sessionStorage.getItem("role");
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [reportList, setReportList] = useState<Report[]>([]);
 
@@ -40,6 +43,14 @@ const Report = () => {
   const [sort, setSort] = useState("latest");
   const [searchWord, setSearchWord] = useState("");
 
+  const toReportWrite = () => {
+    if (token) {
+      navigate("/community/report/write");
+    } else {
+      alert("로그인 후 이용가능합니다.");
+    }
+  };
+
   const handleSort = (value: string) => {
     setSort(value);
   };
@@ -50,11 +61,7 @@ const Report = () => {
   };
 
   const searchReport = () => {
-    if (searchWord !== "") {
-      getReportList();
-    } else {
-      alert("검색어를 입력하세요");
-    }
+    getReportList();
   };
 
   const getReportList = async () => {
@@ -115,14 +122,18 @@ const Report = () => {
         />
       </div>
 
-      <div className="flex justify-end">
-        <Link
-          to={"/community/report/write"}
-          className="w-16 h-6 text-center content-center text-xs border border-black rounded-md"
-        >
-          글쓰기
-        </Link>
-      </div>
+      {ROLE === "ANALYST" ? (
+        <div className="flex justify-end">
+          <div
+            onClick={toReportWrite}
+            className="w-16 h-6 text-center content-center text-xs border border-black rounded-md"
+          >
+            글쓰기
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };
