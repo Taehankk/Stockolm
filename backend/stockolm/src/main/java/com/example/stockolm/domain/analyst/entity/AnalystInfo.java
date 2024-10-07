@@ -34,12 +34,12 @@ public class AnalystInfo {
         this.totalAnalystScore += 100;
     }
 
-    public void updateAccuracy(int accuracy) {
-        this.accuracy = accuracy;
+    public void raiseReliability() {
+        this.reliability += 1;
     }
 
-    public void updateReliability(int reliability) {
-        this.reliability = reliability;
+    public void raiseAccuracy() {
+        this.accuracy += 1;
     }
 
     @PreUpdate
