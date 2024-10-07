@@ -49,6 +49,7 @@ public class RankCustomRepository {
                         user.userImagePath,
                         Expressions.numberTemplate(Integer.class, ROW_NUM_QUERY, getRankExpression(rankValue)),
                         analystBoard.countDistinct(),
+                        analystInfo.totalAnalystScore,
                         analystInfo.reliability.divide(analystBoard.countDistinct()).multiply(100).floor(),
                         analystInfo.accuracy.divide(analystBoard.countDistinct()).multiply(100).floor()
                 ))
@@ -75,9 +76,9 @@ public class RankCustomRepository {
     private ComparableExpressionBase<?> getRankExpression(String rankValue) {
 
         if (rankValue != null && rankValue.equals(RELIABILITY)) {
-            return analystInfo.reliability.divide(analystBoard.countDistinct()).floor();
+            return analystInfo.reliability.divide(analystBoard.countDistinct()).multiply(100).floor();
         } else if (rankValue != null && rankValue.equals(ACCURACY)) {
-            return analystInfo.accuracy.divide(analystBoard.countDistinct()).floor();
+            return analystInfo.accuracy.divide(analystBoard.countDistinct()).multiply(100).floor();
         }
         return analystInfo.totalAnalystScore;
     }
