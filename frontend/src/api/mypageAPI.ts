@@ -100,7 +100,7 @@ export const fetchAnalyzeStock = async () => {
         '/stock/analyzed-stock'
       );
 
-      console.log(response.data);
+      console.log(response.data); 
       return response.data;
 
     } catch (error) {
@@ -110,10 +110,13 @@ export const fetchAnalyzeStock = async () => {
     }
 }
 
-export const fetchFavoriteBoard = async () => {
+export const fetchFavoriteBoard = async (stockName:string) => {
     try {
       const response = await axiosTokenInstance.get(
-        '/analyst-board/like/11'
+        '/analyst-board/like',
+        {
+          params: { "stockName": stockName},
+        },
       );
 
       console.log(response.data);
@@ -163,3 +166,25 @@ export const patchNickname = async (newNickname: string) => {
 
     }
 }
+
+export const postProfileImage = async (file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await axiosTokenInstance.post(
+      '/upload/user-image',
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    return response;
+
+  } catch (error) {
+    console.error("Error uploading profile image:", error);
+    throw error;
+  }
+};
