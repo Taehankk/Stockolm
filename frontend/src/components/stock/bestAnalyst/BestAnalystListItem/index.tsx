@@ -10,7 +10,7 @@ const BestAnalystListItem = ({ analyst }: BestAnalystListItemProps) => {
   const nav = useNavigate();
 
   const handleBestAnalystClick = () => {
-    nav(`/analyst/${analyst.analystName}/report/${analyst.analystBoardId}`);
+    nav(`/analyst/${analyst.analystNickname}/report/${analyst.analystBoardId}`);
   };
 
   return (
