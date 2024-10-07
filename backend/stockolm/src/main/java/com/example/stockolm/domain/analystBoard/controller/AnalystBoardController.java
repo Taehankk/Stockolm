@@ -34,7 +34,7 @@ public class AnalystBoardController {
         }
     }
 
-    @GetMapping("/like/{userId}")
+    @GetMapping("/like")
     @Operation(summary = "내가 좋아요한 분석글 조회", description = "내가 좋아요한 분석글 조회 API")
     public ResponseEntity<?> getLikedAnalystBoard(@AuthPrincipal @Parameter(hidden = true) Long userId,
                                                   @RequestParam(required = false) String stockName) {
