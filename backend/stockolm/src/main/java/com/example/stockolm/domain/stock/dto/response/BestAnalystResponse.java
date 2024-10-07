@@ -13,9 +13,9 @@ public class BestAnalystResponse {
 
     private String userImagePath;
 
-    private Integer reliability;
+    private Double reliability;
 
-    private Integer accuracy;
+    private Double accuracy;
 
     private Long analystBoardId;
 
@@ -26,7 +26,7 @@ public class BestAnalystResponse {
     private Integer goalStock;
 
 
-    public BestAnalystResponse(Long analystBoardId, LocalDate goalDate, String opinion, Integer goalStock, Integer reliability, Integer accuracy, String analystName, String userImagePath, String analystNickname) {
+    public BestAnalystResponse(Long analystBoardId, LocalDate goalDate, String opinion, Integer goalStock, Double reliability, Double accuracy, String analystName, String userImagePath, String analystNickname) {
         this.analystBoardId = analystBoardId;
         this.goalDate = goalDate;
         this.opinion = opinion;
