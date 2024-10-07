@@ -11,6 +11,7 @@ interface Board {
 
 // 게시글 데이터
 interface BoardState {
+  boardID: string;
   currentPage: number;
   userNickname: string;
   userImagePath: string;
@@ -27,6 +28,7 @@ interface BoardState {
 }
 
 const initialState: BoardState = {
+  boardID: "-1",
   currentPage: 1,
   userNickname: "",
   userImagePath: "",
@@ -63,6 +65,9 @@ const boardSlice = createSlice({
   name: "board",
   initialState,
   reducers: {
+    setBoardID: (state, action: PayloadAction<string>) => {
+      state.boardID = action.payload;
+    },
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
@@ -71,6 +76,9 @@ const boardSlice = createSlice({
     },
     setBoardContent: (state, action: PayloadAction<string>) => {
       state.content = action.payload;
+    },
+    setBoardCategory: (state, action: PayloadAction<string>) => {
+      state.category = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -110,6 +118,11 @@ const boardSlice = createSlice({
   },
 });
 
-export const { setCurrentPage, setBoardTitle, setBoardContent } =
-  boardSlice.actions;
+export const {
+  setBoardID,
+  setCurrentPage,
+  setBoardTitle,
+  setBoardContent,
+  setBoardCategory,
+} = boardSlice.actions;
 export default boardSlice.reducer;
