@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import {
   pdfFormAPI,
   pdfSummaryAPI,
+  uploadPdfAPI,
   writeReportAPI,
 } from "../../api/communityAPI";
 
@@ -22,6 +23,7 @@ import {
   setReportTitle,
   setOpinion,
   setMarketCapitalization,
+  setFilePath,
 } from "../../slices/reportSlice";
 import { useSelector } from "react-redux";
 
@@ -30,13 +32,14 @@ import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface Report {
   title: string;
-  content: string;
   stockName: string;
   opinion: string;
   goalStock: number;
   currentStock: number;
   marketCapitalization: number;
+  content: string;
   goalDate: Date;
+  filePath: string;
 }
 
 const ReportWritePage = () => {
@@ -60,11 +63,22 @@ const ReportWritePage = () => {
     (state: RootState) => state.report.marketCapitalization
   );
   const reportContent = useSelector((state: RootState) => state.report.content);
+  const filePath = useSelector((state: RootState) => state.report.filePath);
 
   const [predictDate, setPredictDate] = useState("");
 
-  const backToBoardList = () => {
-    navigate("/community/board");
+  const backToReportList = () => {
+    navigate("/community/report");
+  };
+
+  const uploadPdfFile = async (file: File) => {
+    try {
+      const res = await uploadPdfAPI(file);
+      dispatch(setFilePath(res));
+    } catch (e) {
+      console.log(e);
+      alert("파일 업로드 실패");
+    }
   };
 
   const summaryPdfFile = async (file: string) => {
@@ -85,6 +99,7 @@ const ReportWritePage = () => {
 
   const fileUploadHandler = async (file: File) => {
     if (file) {
+      await uploadPdfFile(file);
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
@@ -127,6 +142,7 @@ const ReportWritePage = () => {
         currentStock: currentStock,
         marketCapitalization: marketCapitalization,
         goalDate: new Date("20" + goalDate.replace(/\./g, "-")),
+        filePath: filePath,
       };
 
       await writeReportAPI(report);
@@ -138,14 +154,13 @@ const ReportWritePage = () => {
       dispatch(setGoalStock(0));
       dispatch(setOpinion(""));
       dispatch(setMarketCapitalization(0));
+      dispatch(setFilePath(""));
 
       navigate("/community/report");
     } catch {
       console.log("게시글 등록 실패");
     }
   };
-
-  useEffect(() => {}, []);
 
   useEffect(() => {
     if (base64File) {
@@ -200,11 +215,11 @@ const ReportWritePage = () => {
       <div className="flex justify-center mt-10">
         <div className="flex flex-col">
           <div
-            onClick={backToBoardList}
+            onClick={backToReportList}
             className="cursor-pointer text-3xl mb-10"
           >
             <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
-            자유게시판
+            종목분석게시판
           </div>
           <div className="w-full">
             <span className="mr-2">주식종목</span>
