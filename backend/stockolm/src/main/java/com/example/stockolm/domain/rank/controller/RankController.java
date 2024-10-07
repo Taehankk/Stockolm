@@ -23,8 +23,9 @@ public class RankController {
     @GetMapping()
     @Operation(summary = "랭킹 조회", description = "(전체, 신뢰도, 정확도) 랭킹 조회 API")
     public ResponseEntity<Page<AnalystRankInfoResponse>> getAnalystTotalRank(@RequestParam(required = false) String rankValue,
+                                                                             @RequestParam(required = false) String analystName,
                                                                              Pageable pageable) {
-        Page<AnalystRankInfoResponse> totalRank = rankService.getTotalRank(rankValue, pageable);
+        Page<AnalystRankInfoResponse> totalRank = rankService.getTotalRank(rankValue, analystName , pageable);
 
         return ResponseEntity.status(OK).body(totalRank);
     }
