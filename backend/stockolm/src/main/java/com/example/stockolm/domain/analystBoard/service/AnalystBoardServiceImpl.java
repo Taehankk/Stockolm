@@ -56,8 +56,6 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
             throw new StockNotFoundException();
         }
 
-        // file을 S3에 올리고 주소 받는 로직 추가예정
-
         AnalystBoard analystBoard = AnalystBoard.builder()
                 .user(user)
                 .stock(stock)
@@ -70,7 +68,7 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
                 .goalDate(createAnalystBoardRequest.getGoalDate())
                 .goalAccuracy(GoalCategory.WAIT)    // 초기값은 "대기"
                 .goalReliability(GoalCategory.WAIT) // 초기값은 "대기"
-//                .filePath(filepath)
+                .filePath(createAnalystBoardRequest.getFilePath())
                 .build();
 
         analystBoardRepository.save(analystBoard);
