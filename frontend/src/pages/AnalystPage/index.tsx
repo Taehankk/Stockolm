@@ -25,6 +25,7 @@ interface Analyst {
 }
 
 interface AnalystInfo {
+  userName: string,
   boardSize: number,
   follower: number,
   totalAnalystRank: number,
@@ -121,7 +122,7 @@ const Analyst: React.FC = () => {
             <div>
               <img className="w-[6rem] h-[6rem] rounded-full" src={profile}></img>
             </div>
-            <span className="self-end ml-[4rem] text-[1.625rem]">{nickname}</span>
+            <span className="self-end ml-[4rem] text-[1.625rem]">{analystInfo?.userName}</span>
           </div>
           <div className="flex justify-center gap-[2.2rem] my-[1.3rem] text-[1.25rem]">
             <div className="flex flex-col items-center">
