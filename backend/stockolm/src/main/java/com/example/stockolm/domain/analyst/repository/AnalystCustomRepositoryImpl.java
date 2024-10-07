@@ -125,8 +125,8 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         AnalystGoalInfoDTO analystGoalInfoDTO = queryFactory
                 .select(Projections.constructor(
                         AnalystGoalInfoDTO.class,
-                        analystInfo.reliability.divide(analystBoard.countDistinct()).floor(),
-                        analystInfo.accuracy.divide(analystBoard.countDistinct()).floor()
+                        analystInfo.reliability.divide(analystBoard.countDistinct()).multiply(100).floor(),
+                        analystInfo.accuracy.divide(analystBoard.countDistinct()).multiply(100).floor()
                 ))
                 .from(analystInfo)
                 .join(analystBoard).on(analystBoard.user.userId.eq(analystId))
