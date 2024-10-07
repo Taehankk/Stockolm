@@ -15,7 +15,7 @@ axiosTokenInstance.interceptors.request.use(
   async (config: CustomAxiosRequestConfig) => {
     const token = sessionStorage.getItem("access_token");
     config.headers["Authorization"] = "Bearer " + token;
-    config.headers["withCredentials"] = true;
+    config.withCredentials = true;
     return config;
   },
   (error) => {
@@ -32,7 +32,7 @@ axiosTokenInstance.interceptors.response.use(
 
     if (
       error.response &&
-      error.response.status === 500 &&
+      error.response.status === 401 &&
       !originalRequest.retry
     ) {
       const cookies = new Cookies();
@@ -46,20 +46,24 @@ axiosTokenInstance.interceptors.response.use(
             refreshToken: cookies.get("refreshToken"),
           },
           {
-            headers: {
-              withCredentials: true,
-            },
+            withCredentials: true,
           }
         );
 
-        const newAccessToken = data.headers.authorization;
+        const newAccessToken = data.headers.authorization.replace(
+          "Bearer ",
+          ""
+        );
         sessionStorage.setItem("access_token", newAccessToken);
 
         // 새로 발급된 토큰으로 다시 요청
-        originalRequest.headers["Authorization"] = `${newAccessToken}`;
+        originalRequest.headers["Authorization"] =
+          "Bearer " + `${newAccessToken}`;
         return axiosTokenInstance(originalRequest);
       } catch (refreshError) {
         console.error("Token refresh failed:", refreshError);
+        sessionStorage.clear();
+        window.location.href = "/auth";
         return Promise.reject(refreshError);
       }
     }
