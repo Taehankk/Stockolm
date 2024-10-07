@@ -7,7 +7,13 @@ import Pagination from "../../../components/common/Pagination";
 
 import { useEffect, useState } from "react";
 
-import { setCurrentPage } from "../../../slices/boardSlice";
+import {
+  setBoardCategory,
+  setBoardContent,
+  setBoardID,
+  setBoardTitle,
+  setCurrentPage,
+} from "../../../slices/boardSlice";
 import { getBoardListAPI } from "../../../api/communityAPI";
 import Filter from "../../../components/community/board/Filter";
 import Search from "../../../components/community/common/Search";
@@ -16,7 +22,7 @@ import OneBoard from "../../../components/community/board/OneBoard";
 interface Board {
   userNickname: string;
   userImagePath: string;
-  boardId: number;
+  boardId: string;
   title: string;
   category: string;
   viewCnt: number;
@@ -58,11 +64,7 @@ const Board = () => {
   };
 
   const searchBoard = () => {
-    if (searchWord !== "") {
-      getBoardList();
-    } else {
-      alert("검색어를 입력하세요");
-    }
+    getBoardList();
   };
 
   const getBoardList = async () => {
@@ -80,6 +82,11 @@ const Board = () => {
 
   const toBoardWrite = () => {
     if (token) {
+      dispatch(setBoardID("-1"));
+      dispatch(setBoardCategory(""));
+      dispatch(setBoardTitle(""));
+      dispatch(setBoardContent(""));
+
       navigate("/community/board/write");
     } else {
       alert("로그인 후 이용가능합니다.");

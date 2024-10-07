@@ -155,6 +155,10 @@ export const writeBoardAPI = async (board: Board) => {
   }
 };
 
+export const updateBoardAPI = async (boardID: string, board: Board) => {
+  await axiosTokenInstance.put(`/board/${boardID}`, board);
+};
+
 export const deleteBoardAPI = async (boardID: string) => {
   await axiosTokenInstance.delete(`/board/${boardID}`);
 };
@@ -178,6 +182,12 @@ export const writeCommentAPI = async (boardID: string, comment: string) => {
     console.log(e);
     console.log("댓글 등록 실패");
   }
+};
+
+export const updateCommentAPI = async (commentID: number, comment: string) => {
+  await axiosTokenInstance.put(`/comment/${commentID}`, {
+    content: comment,
+  });
 };
 
 export const deleteCommentAPI = async (commentID: number) => {
