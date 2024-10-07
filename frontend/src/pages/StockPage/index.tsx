@@ -6,8 +6,9 @@ import InvestInfo from "../../components/stock/InvestInfo";
 import EnterpriseInfo from "../../components/stock/EnterpriseInfo";
 import BestAnalystList from "../../components/stock/bestAnalyst/BestAnalystList";
 import StockChart from "../../components/stock/StockChart";
+import RedUp from "../../assets/RedUp.webp";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RootState, useAppDispatch } from "../../store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +29,7 @@ const StockPage = () => {
   const error = useSelector((state: RootState) => state.stock.error);
 
   const nav = useNavigate();
+  const [atBottom, setAtBottom] = useState(false);
 
   useEffect(() => {
     if (searchTerm) {
@@ -40,6 +42,17 @@ const StockPage = () => {
       dispatch(fetchBestAnalysts(stockId));
     }
   }, [dispatch, searchTerm, searchCode, stockId]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 2;
+      setAtBottom(isBottom);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching stock data</div>;
@@ -55,19 +68,44 @@ const StockPage = () => {
     }
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  };
+
   return (
     <BasicLayout>
       <div className="top">
         <div className="chart-info">
           <Summary searchCode={searchCode} searchTerm={searchTerm}></Summary>
         </div>
-        <div className="navigator">
-          <Button size="medium" onClick={handleCommunityButtonClick}>
-            종목게시판
-          </Button>
-          <Button size="medium" onClick={handleCommunityBoardButtonClick}>
-            자유게시판
-          </Button>
+        <div className="right-nav">
+          <div>
+            <img
+              src={RedUp}
+              alt={`투자상승이`}
+              className="size-[10rem] ml-[3rem] mt-3 rounded-full"
+            />
+          </div>
+          <div className="navigator">
+            <Button
+              size="medium"
+              className="bg-red-400"
+              onClick={handleCommunityButtonClick}
+            >
+              종목게시판
+            </Button>
+            <Button
+              size="medium"
+              className="bg-red-400"
+              onClick={handleCommunityBoardButtonClick}
+            >
+              자유게시판
+            </Button>
+          </div>
         </div>
       </div>
       <div className="middle">
@@ -97,6 +135,12 @@ const StockPage = () => {
             </div>
           )}
         </div>
+        <button
+          onClick={atBottom ? scrollToTop : scrollToBottom}
+          className="stock-scroll-botton"
+        >
+          {atBottom ? "▲ 최상단으로" : "▼ 투자정보보기"}
+        </button>
       </div>
     </BasicLayout>
   );

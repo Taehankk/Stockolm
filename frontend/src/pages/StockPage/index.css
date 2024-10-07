@@ -11,7 +11,6 @@
   display: flex;
   min-height: 35vh;
   gap: 20px;
-  align-items: center;
 }
 
 .chart {
@@ -35,12 +34,30 @@
 .enterprise-infos {
   width: 58%;
 }
-
+.right-nav {
+  display: flex;
+  gap: 20px;
+}
 .navigator {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
-  margin: auto;
-  gap: 1rem;
+  gap: 0.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.stock-scroll-botton {
+  position: fixed;
+  bottom: 10px;
+  right: 65px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 20%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
 }
