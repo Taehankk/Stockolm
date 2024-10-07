@@ -52,7 +52,7 @@
           <ReactApexChart options={options} series={options.series} type="donut" width="100%" height="100%"/>
           <div className={`w-full h-[${textHeight}] absolute inset-0 flex flex-col gap-[0.5rem] justify-center items-center text-[${textSize}]`}>
             {content ? <span>{content}</span> : <></>}
-            {value !== 100 ? <span className="pl-[0.3rem]">{roundedValue}%</span> : <></>}
+            {value !== 101 ? <span className="pl-[0.3rem]">{roundedValue}%</span> : <></>}
           </div>
         </div>
     );

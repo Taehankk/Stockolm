@@ -1,5 +1,5 @@
-  import { useEffect, useState } from "react";
-  import { getStockData } from "../../../api/stockAPI";
+import { useEffect, useState } from "react";
+import { getStockData } from "../../../api/stockAPI";
 
   interface Stock {
     stockCode: string, 
@@ -7,6 +7,7 @@
   }
   interface StockInfoListProps {
     dataProps: Stock[];
+    onStockClick?: (stock: Stock) => void;
   }
 
   interface StockInfo {
@@ -20,11 +21,13 @@
 
   const StockInfoList = ({
     dataProps, 
+    onStockClick,
   }: StockInfoListProps) => {
 
     const [dataList, setDataList] = useState<StockInfo[]>([]);
 
     const fetchData = async (dataProps: Stock[]) => {
+      console.log(dataProps)
       try {
         const results = await Promise.all(dataProps.map(stock => getStockData(stock.stockCode)));
 
@@ -42,7 +45,7 @@
         fetchData(dataProps);
       }
     }, [dataProps]);
-
+    
     return(
       <div>
         <div className="flex justify-around items-center w-[60rem] h-[4rem] border-y-black border-y-[0.1rem]">
@@ -56,7 +59,7 @@
       <div>
       <div className="w-[60rem] min-h-[15rem] max-h-[15rem] border-b-black border-b-[0.1rem] overflow-y-auto overflow-x-hidden custom-scrollbar">
           {dataList.length > 0 ? dataList.map((data, index) => (
-            <div key={index} className="flex justify-around items-center w-[60rem] h-[5rem]">
+            <div key={index} className="flex justify-around items-center w-[60rem] h-[5rem] cursor-pointer" onClick={() => onStockClick && onStockClick(dataProps[index])}>
               <span className="w-1/6 text-center">{dataProps[index].stockName}</span>
               <span className="w-1/6 text-center">{data.stck_prpr}</span>
               <span className="w-1/6 text-center">{data.prdy_vrss}</span>

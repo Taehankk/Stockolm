@@ -2,13 +2,12 @@ import Button from "../../elements/Button";
 import close from "/src/assets/close.svg";
 import watch from "/src/assets/watch.svg";
 import like from "/src/assets/like.svg";
-import { fetchFavoriteBoard } from "../../../api/mypageAPI";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { fetchAnalystKeywordBoard } from "../../../api/analystAPI";
+import { useParams } from "react-router-dom";
+import { fetchAnalystBoard } from "../../../api/analystAPI";
 
-interface ModalProps {
+interface RepresentModalProps {
   size?: string;
   context?: string;
   content?: string;
@@ -20,11 +19,11 @@ interface ModalProps {
   onCloseClick?: () => void;
   onConfirmClick?: () => void;
   onFileClick?: () => void;
-  onContentClick?: () => void; 
+  onContentClick?: (id: number) => void; 
 }
 
 interface UserDataProps {
-  conten?: string;
+  content?: string;
   name?: string;
   file?: string;
 }
@@ -34,16 +33,6 @@ interface AnalDataProps {
   watch?: number;
   like?: number;
   file?: string;
-}
-
-interface FavoriteBoard {
-  analystBoardId?: number; 
-	stockName?: string;
-	title?: string;
-	userName?: string;
-	userNickName?: string;
-	goal_stock?: number;
-	filePath?: string;
 }
 
 interface AnalystBoard {
@@ -91,11 +80,11 @@ interface AnalystBoard {
   empty?: boolean;
 }
 
-type Props = ModalProps & UserDataProps & AnalDataProps;
+type Props = RepresentModalProps & UserDataProps & AnalDataProps;
 
-const Modal = ({
+const RepresentModal = ({
   size = "smal",
-  context = "비밀번호를 변경하시겠습니까?",
+  context = "대표글로 설정하시겠습니까  ?",
   stockNameProps,
   onCloseClick,
   onConfirmClick,
@@ -104,59 +93,37 @@ const Modal = ({
 }: Props) => {
   
   const [role, setRole] = useState("");
-  const [keywordCurrentPage, setKeywordCurrentPage] = useState(1);
-  const [keywordItemsPerPage, setKeywordItemsPerPage] = useState(9999);
-
-  const nav = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(9999);
+  const { nickname } = useParams<{ nickname: string }>();
 
   useEffect(() => {
     setRole(sessionStorage.getItem("role") || "USER");
-    setKeywordCurrentPage(1);
-    setKeywordItemsPerPage(9999);
+    setCurrentPage(1);
+    setItemsPerPage(9999);
   },[])
 
-  const handleClickFavoriteStock = (userNickName?: string, analystBoardId?: number) => {
-    if (userNickName && analystBoardId) {
-      nav(`/analyst/${userNickName}/report/${analystBoardId}`);
+  const { data: analystBoard, error: analystBoardError, isLoading: analystBoardIsLoading } = useQuery<AnalystBoard, Error>({
+    queryKey: ["analystBoard", currentPage, itemsPerPage, nickname], 
+    queryFn: ({ queryKey }) => fetchAnalystBoard(queryKey[1] as number - 1, queryKey[2] as number, queryKey[3] as string),
+  });
+
+  const handleClickAnalyzeStock = (analystBoardId: number) => {
+    if (onContentClick) {
+      onContentClick(analystBoardId);
     }
-  };
-
-  const handleClickAnalyzeStock = (userNickName: string, analystBoardId: number) => {
-    nav(`/analyst/${userNickName}/report/${analystBoardId}`);
   }
-
-  const { data: favoriteBoard, error: analystBoardError, isLoading: analystBoardIsLoading } = useQuery<FavoriteBoard, Error>({
-    queryKey: ["favoriteBoard", stockNameProps], 
-    queryFn: ({ queryKey }) => fetchFavoriteBoard(queryKey[1] as string),
-    enabled: role === "USER" && !!stockNameProps,
-  });
-
-  const { data: analystKeywordBoard, error: analystKeywordBoardError, isLoading: analystKeywordBoardIsLoading } = useQuery<AnalystBoard, Error>({
-    queryKey: ["analystKeywordBoard", keywordCurrentPage, keywordItemsPerPage, stockNameProps], 
-    queryFn: ({ queryKey }) => fetchAnalystKeywordBoard(queryKey[1] as number - 1, queryKey[2] as number, queryKey[3] as string),
-    enabled: role === "ANALYST" && !!stockNameProps,
-  });
 
   useEffect(() => {
     console.log("role:", role);
     console.log("stockNameProps:", stockNameProps);
-    console.log("analystKeywordBoard:", analystKeywordBoard)
   }, [role, stockNameProps]);
 
-  useEffect(() => {
-    console.log(stockNameProps)
-    console.log([favoriteBoard])
-  },[favoriteBoard])
-
-  useEffect(() => {
-  }, [analystKeywordBoard, analystKeywordBoardError]);
-
-
-  if ( analystKeywordBoardIsLoading || analystBoardIsLoading) {
+  if ( analystBoardIsLoading) {
     return <p>Loading...</p>;
   }
 
-  if ( analystKeywordBoardError || analystBoardError) {
+  if ( analystBoardError) {
     return <p>Error</p>;
   }
 
@@ -173,23 +140,14 @@ const Modal = ({
         <div className="fixed z-50 top-0 left-0 w-[100vw] h-[100vh] bg-black bg-opacity-[0.3]">
           <div className="flex flex-col items-center absolute top-[5rem] left-[16rem] z-100 rounded-xl bg-white w-[60rem] h-[36rem]">
             <img src={close} className="self-end pr-[2rem] pt-[2rem] mb-[2rem] cursor-pointer" onClick={onCloseClick} />
-            {role === "USER" ? (
-              <span className="text-[1.5rem] mb-[3rem]">내가 좋아한 글</span>
-            ) : (
+            
               <span className="text-[1.5rem] mb-[3rem]">내가 분석한 글</span>
-            )}
+            
             <div className="flex flex-col w-full h-[20rem] gap-[3rem] overflow-y-auto">
-              {role === "USER" ? [favoriteBoard].flat()?.map((item, index) => (
-                <div key={index} className="flex w-full px-[5rem] text-[1.25rem]" onClick={() => handleClickFavoriteStock(item?.userNickName, item?.analystBoardId)}>
-                  <span className="w-[33rem] cursor-pointer" onClick={onContentClick}>{item?.title}</span>
-                  <div className="flex">
-                    <span className="w-[10rem]">{item?.userName}</span>
-                    <span className="cursor-pointer" onClick={onFileClick}>{item?.filePath}</span>
-                  </div>
-                </div>)) :
-                analystKeywordBoard?.content?.map((item, index) => (
-                  <div key={index} className="flex w-full px-[5rem] text-[1.25rem]" onClick={() => handleClickAnalyzeStock(item.userNickName, item.analystBoardId)}>
-                    <span className="w-[26rem] pr-[2rem] cursor-pointer" onClick={onContentClick}>{item.title}</span>
+              {
+                analystBoard?.content?.map((item, index) => (
+                  <div key={index} className="flex w-full px-[5rem] text-[1.25rem]" onClick={() => handleClickAnalyzeStock(item.analystBoardId)}>
+                    <span className="w-[26rem] pr-[2rem] cursor-pointer" onClick={() => onContentClick && onContentClick(item.analystBoardId)}>{item.title}</span>
                     <div className="flex">
                       <div className="flex w-[8rem] gap-[0.5rem]">
                         <img src={watch} className="w-[1.25rem] h-[1.25rem] self-center"/>
@@ -210,4 +168,4 @@ const Modal = ({
   </div>);
 };
 
-export default Modal;
+export default RepresentModal;
