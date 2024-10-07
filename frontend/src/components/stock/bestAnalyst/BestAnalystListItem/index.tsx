@@ -30,9 +30,9 @@ const BestAnalystListItem = ({ analyst }: BestAnalystListItemProps) => {
           <span className="block font-normal">{analyst.analystName}</span>
           <span className="text-gray-400">신뢰도 {analyst.reliability}%</span>
         </div>
-        <div className="flex-2">
-          <span className="px-2 py-1 bg-red-400 rounded-lg text-white text-small">
-            {analyst.opinion}
+        <div className="flex-2 ml-10">
+          <span className="px-2 py-1 bg-red-400 rounded-lg text-white text-small ">
+            {analyst.opinion}의견
           </span>
         </div>
       </div>

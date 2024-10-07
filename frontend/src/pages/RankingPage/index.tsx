@@ -32,6 +32,13 @@ const RankingPage: React.FC = () => {
     console.log(query);
   };
 
+  // rankValue에 따른 텍스트 값 설정
+  const getRankText = () => {
+    if (rankValue === "accuracy") return "정확도";
+    if (rankValue === "reliability") return "신뢰도";
+    return "종합";
+  };
+
   return (
     <BasicLayout>
       <div>
@@ -85,7 +92,7 @@ const RankingPage: React.FC = () => {
             <span className="w-1/6 text-center">순위</span>
             <span className="w-1/6 text-center">분석가</span>
             <span className="w-1/6 text-center">분석글 개수</span>
-            <span className="w-1/6 text-center">종합</span>
+            <span className="w-1/6 text-center">{getRankText()}</span>
           </div>
           <div className="h-3/5">
             <RankingList items={rankings} />
