@@ -86,5 +86,5 @@ export default {
       pattern: new RegExp(`^rounded-(${Object.keys(borderRadius).join("|")})$`),
     },
   ],
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };
