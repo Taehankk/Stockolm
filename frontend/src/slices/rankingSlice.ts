@@ -34,14 +34,15 @@ const initialState: RankingState = {
 };
 
 export const getRankings = createAsyncThunk<
-  RankingResponse, // 성공 시 반환하는 값의 타입
-  { rankValue: string | null; page: number; size: number; sort: string | null }, // 함수 호출 시 인자의 타입
-  { rejectValue: string } // 실패 시 반환하는 값의 타입
+  RankingResponse,
+  { rankValue: string | null; page: number; size: number; sort: string | null },
+  { rejectValue: string }
 >(
   "rankings/fetchRankings",
   async ({ rankValue, page, size, sort }, thunkAPI) => {
     try {
       const data = await fetchRankings(rankValue, page, size, sort);
+      console.log("받아오는 ranking", data);
       return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -63,7 +64,7 @@ const rankingSlice = createSlice({
         state.error = null;
       })
       .addCase(getRankings.fulfilled, (state, action) => {
-        state.rankings = action.payload.content; // content 배열 저장
+        state.rankings = action.payload.content;
         state.totalPages = action.payload.totalPages;
         state.totalElements = action.payload.totalElements;
         state.loading = false;

@@ -49,6 +49,11 @@ const StockPage = () => {
       nav(`/community/report?stockName=${encodeURIComponent(searchTerm)}`);
     }
   };
+  const handleCommunityBoardButtonClick = () => {
+    if (searchTerm) {
+      nav(`/community/board?stockName=${encodeURIComponent(searchTerm)}`);
+    }
+  };
 
   return (
     <BasicLayout>
@@ -59,6 +64,9 @@ const StockPage = () => {
         <div className="navigator">
           <Button size="medium" onClick={handleCommunityButtonClick}>
             종목게시판
+          </Button>
+          <Button size="medium" onClick={handleCommunityBoardButtonClick}>
+            자유게시판
           </Button>
         </div>
       </div>
@@ -71,17 +79,24 @@ const StockPage = () => {
         </div>
       </div>
       <div className="bottom">
-        {stockInfo && (
-          <>
-            <div className="invest-infos">
-              <InvestInfo stockInfo={stockInfo}></InvestInfo>
+        <div className="invest-infos">
+          {stockInfo ? (
+            <InvestInfo stockInfo={stockInfo}></InvestInfo>
+          ) : (
+            <div className="text-center text-gray-500">
+              투자관련 정보가 없습니다
             </div>
-            <div className="divider">|</div>
-            <div className="enterprise-infos">
-              <EnterpriseInfo stockInfo={stockInfo}></EnterpriseInfo>
+          )}
+        </div>
+        <div className="enterprise-infos">
+          {stockInfo ? (
+            <EnterpriseInfo stockInfo={stockInfo}></EnterpriseInfo>
+          ) : (
+            <div className="text-center text-gray-500">
+              회사관련 정보가 없습니다
             </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </BasicLayout>
   );
