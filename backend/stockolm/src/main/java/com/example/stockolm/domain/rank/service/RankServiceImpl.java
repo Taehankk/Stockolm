@@ -18,7 +18,7 @@ public class RankServiceImpl implements RankService {
     private final RankCustomRepository rankCustomRepository;
 
     @Override
-    public Page<AnalystRankInfoResponse> getTotalRank(String rankValue, Pageable pageable) {
-        return rankCustomRepository.getTotalRank(rankValue, pageable);
+    public Page<AnalystRankInfoResponse> getTotalRank(String rankValue, String analystName, Pageable pageable) {
+        return rankCustomRepository.getTotalRank(rankValue, analystName, pageable);
     }
 }
