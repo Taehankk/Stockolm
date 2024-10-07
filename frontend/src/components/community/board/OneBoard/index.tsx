@@ -11,7 +11,7 @@ import { faHeart as like } from "@fortawesome/free-solid-svg-icons";
 interface Board {
   userNickname: string;
   userImagePath: string;
-  boardId: number;
+  boardId: string;
   title: string;
   category: string;
   viewCnt: number;
