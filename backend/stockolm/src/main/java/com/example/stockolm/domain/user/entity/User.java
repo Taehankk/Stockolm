@@ -72,4 +72,8 @@ public class User {
     public void deleteRefreshToken() {
         this.refreshToken = null;
     }
+
+    public void setDefaultUserImagePath(String DEFAULT_USER_IMAGE_PATH) {
+        this.userImagePath = DEFAULT_USER_IMAGE_PATH;
+    }
 }
