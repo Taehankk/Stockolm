@@ -20,5 +20,5 @@ public interface AnalystBoardService {
 
     void likeAnalystBoard(Long analystBoardId, Long userId);
 
-    Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, String searchAnalyst);
+    Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, String searchAnalyst, String stockName);
 }
