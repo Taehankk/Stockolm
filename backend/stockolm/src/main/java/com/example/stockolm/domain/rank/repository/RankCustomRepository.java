@@ -46,8 +46,8 @@ public class RankCustomRepository {
                         user.userImagePath,
                         Expressions.numberTemplate(Integer.class, ROW_NUM_QUERY, getRankExpression(rankValue)),
                         analystBoard.countDistinct(),
-                        analystInfo.reliability.divide(analystBoard.countDistinct()).floor(),
-                        analystInfo.accuracy.divide(analystBoard.countDistinct()).floor()
+                        analystInfo.reliability.divide(analystBoard.countDistinct()).multiply(100).floor(),
+                        analystInfo.accuracy.divide(analystBoard.countDistinct()).multiply(100).floor()
                 ))
                 .from(analystBoard)
                 .join(user).on(user.userId.eq(analystBoard.user.userId))
