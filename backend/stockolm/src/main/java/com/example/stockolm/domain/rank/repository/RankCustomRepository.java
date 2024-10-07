@@ -60,7 +60,7 @@ public class RankCustomRepository {
                 .fetch();
 
         long total = queryFactory
-                .select(user.countDistinct())
+                .select(user.userId).distinct()
                 .from(analystBoard)
                 .join(user).on(user.userId.eq(analystBoard.user.userId))
                 .fetchCount();
