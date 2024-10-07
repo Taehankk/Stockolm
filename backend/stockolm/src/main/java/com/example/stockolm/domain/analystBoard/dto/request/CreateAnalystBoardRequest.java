@@ -30,5 +30,5 @@ public class CreateAnalystBoardRequest {
 
     private LocalDate goalDate;    // 목표 날짜
 
-    private MultipartFile file;        // 리포트 파일
+    private String filePath;        // 리포트 파일 주소
 }
