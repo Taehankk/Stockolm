@@ -64,19 +64,21 @@ public class GoalStockComparisonScheduler {
         int maxRangeCurrentStock = (int) (currentStock + (currentStock * 0.05));
         if (minRangeCurrentStock <= goalStock && maxRangeCurrentStock >= goalStock) {         // 예측 성공
             analystInfo.raiseScore();
+            analystInfo.raiseAccuracy();
             analystBoard.successGoalAccuracy();
         } else {                                // 예측 실패
             analystBoard.failGoalAccuracy();
         }
-        updateReliabilityBasedOnStockChange(analystBoard, goalStock, beforeStock, currentStock);   // 신뢰도 조정
+        updateReliabilityBasedOnStockChange(analystBoard, analystInfo, goalStock, beforeStock, currentStock);   // 신뢰도 조정
     }
 
     // 주가 변화에 따른 신뢰도 업데이트
-    private void updateReliabilityBasedOnStockChange(AnalystBoard analystBoard,
+    private void updateReliabilityBasedOnStockChange(AnalystBoard analystBoard, AnalystInfo analystInfo,
                                                      int goalStock, int beforeStock, int currentStock) {
 
         if (currentStock > beforeStock) {  // 주가가 상승한 경우
             if (goalStock > beforeStock) {  // 상승 예측 성공
+                analystInfo.raiseReliability();
                 analystBoard.successGoalReliability();
             } else {                        // 상승 예측 실패
                 analystBoard.failGoalReliability();
@@ -85,6 +87,7 @@ public class GoalStockComparisonScheduler {
             if (goalStock > beforeStock) {  // 상승 예측 실패
                 analystBoard.failGoalReliability();
             } else {                        // 하락 예측 성공
+                analystInfo.raiseReliability();
                 analystBoard.successGoalReliability();
             }
         }

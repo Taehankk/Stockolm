@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface RankService {
-    Page<AnalystRankInfoResponse> getTotalRank(String rankValue, Pageable pageable);
+    Page<AnalystRankInfoResponse> getTotalRank(String rankValue, String analystName, Pageable pageable);
 }
