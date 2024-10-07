@@ -111,3 +111,12 @@ export const getStockInfo = async (stockCode: string) => {
     throw error;
   }
 };
+
+export const getMinuteChartData = async (stockCode: string) => {
+  const headers = {};
+  const response = await axios.get(`${baseURL}/stock/time-chart/${stockCode}`, {
+    headers,
+  });
+  console.log("분봉데이터", response.data);
+  return response.data;
+};
