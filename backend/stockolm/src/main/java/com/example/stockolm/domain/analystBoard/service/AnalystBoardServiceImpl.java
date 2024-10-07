@@ -128,7 +128,7 @@ public class AnalystBoardServiceImpl implements AnalystBoardService {
     }
 
     @Override
-    public Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, String searchAnalyst) {
-        return analystBoardRepository.getAnalystBoardPage(searchWord, pageable, userId, searchAnalyst);
+    public Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, String searchAnalyst, String stockName) {
+        return analystBoardRepository.getAnalystBoardPage(searchWord, pageable, userId, searchAnalyst, stockName);
     }
 }

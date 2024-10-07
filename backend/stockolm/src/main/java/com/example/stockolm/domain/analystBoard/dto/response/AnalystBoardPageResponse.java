@@ -14,21 +14,22 @@ public class AnalystBoardPageResponse {
 
     // stock 관련
     private String stockName;
-    private String companyImagePath; // 추가
+    private String companyImagePath;
 
     // analystBoard 관련
-    private Long analystBoardId;     // 추가
-    private boolean mainContent;     // 추가
+    private Long analystBoardId;
+    private boolean mainContent;
     private String title;
     private int likeCnt;
     private int viewCnt;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private boolean isLike;
+    private String filePath;
 
     public AnalystBoardPageResponse(String userName, String userNickName, String userImagePath,
                                     String stockName, String companyImagePath,
-                                    Long analystBoardId, boolean mainContent, String title, int likeCnt, int viewCnt, LocalDateTime createAt, LocalDateTime updateAt, boolean isLike) {
+                                    Long analystBoardId, boolean mainContent, String title, int likeCnt, int viewCnt, LocalDateTime createAt, LocalDateTime updateAt, boolean isLike, String filePath) {
         this.userName = userName;
         this.userNickName = userNickName;
         this.userImagePath = userImagePath;
@@ -42,5 +43,6 @@ public class AnalystBoardPageResponse {
         this.createAt = createAt;
         this.updateAt = updateAt;
         this.isLike = isLike;
+        this.filePath = filePath;
     }
 }
