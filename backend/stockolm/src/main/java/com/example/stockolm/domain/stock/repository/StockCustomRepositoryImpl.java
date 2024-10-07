@@ -88,7 +88,7 @@ public class StockCustomRepositoryImpl implements StockCustomRepository {
 
         return queryFactory
                 .select(Projections.constructor(AnalyzedStockResponse.class,
-                        stock.stockName, stock.stockCode)).distinct()
+                        stock.stockCode, stock.stockName)).distinct()
                 .from(analystBoard)
                 .join(analystBoard.stock, stock)
                 .where(analystBoard.user.userId.eq(UserId))
