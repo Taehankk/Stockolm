@@ -7,6 +7,7 @@ import com.example.stockolm.domain.rank.dto.response.AnalystRankInfoResponse;
 import com.example.stockolm.domain.user.entity.QUser;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -22,6 +23,8 @@ import java.util.List;
 
 import static com.example.stockolm.domain.analyst.entity.QAnalystInfo.analystInfo;
 import static com.example.stockolm.domain.analystBoard.entity.QAnalystBoard.analystBoard;
+import static com.example.stockolm.domain.user.entity.QUser.user;
+import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Repository
 @RequiredArgsConstructor
@@ -34,7 +37,7 @@ public class RankCustomRepository {
 
     private static final String ROW_NUM_QUERY = "ROW_NUMBER() OVER (ORDER BY {0} DESC)";
 
-    public Page<AnalystRankInfoResponse> getTotalRank(String rankValue, Pageable pageable) {
+    public Page<AnalystRankInfoResponse> getTotalRank(String rankValue, String analystName, Pageable pageable) {
         QAnalystInfo analystInfo = QAnalystInfo.analystInfo;
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
         QUser user = QUser.user;
@@ -52,6 +55,7 @@ public class RankCustomRepository {
                 .from(analystBoard)
                 .join(user).on(user.userId.eq(analystBoard.user.userId))
                 .join(analystInfo).on(analystInfo.user.userId.eq(user.userId))
+                .where(userNameContains(analystName))
                 .groupBy(user.userId, user.userName, user.userNickname, user.userImagePath,
                         analystInfo.totalAnalystScore, analystInfo.reliability, analystInfo.accuracy)
                 .orderBy(getRankExpression(rankValue).desc())
@@ -76,6 +80,10 @@ public class RankCustomRepository {
             return analystInfo.accuracy.divide(analystBoard.countDistinct()).floor();
         }
         return analystInfo.totalAnalystScore;
+    }
+
+    private BooleanExpression userNameContains(String userName) {
+        return isEmpty(userName) ? null : user.userName.contains(userName);
     }
 
 }
