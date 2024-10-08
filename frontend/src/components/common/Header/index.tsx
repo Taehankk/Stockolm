@@ -3,6 +3,7 @@ import SearchBar from "../SearchBar";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { logoutAPI } from "../../../api/authAPI";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -14,7 +15,8 @@ const Header = () => {
     setMenuOpen(!isMenuOpen);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutAPI();
     sessionStorage.removeItem("access_token");
     sessionStorage.removeItem("role");
     navigate("/");

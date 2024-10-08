@@ -1,4 +1,5 @@
 import axiosInstance from "./axiosInstance";
+import axiosTokenInstance from "./axiosTokenInstance";
 
 export const checkNicknameDuplicateAPI = async (nickname: string) => {
   try {
@@ -102,6 +103,77 @@ export const signUpAPI = async (
   }
 };
 
+export const loginAPI = async (email: string, password: string) => {
+  await axiosInstance
+    .post("/user/login", {
+      userEmail: email, //유저 이메일
+      userPassword: password,
+    })
+    .then((res) => {
+      const accessToken = res.headers.authorization.replace("Bearer ", "");
+      sessionStorage.setItem("access_token", accessToken); // 만료시간 1시간, refresh는 43200분(720시간, 30일)
+
+      const token = sessionStorage.getItem("access_token");
+
+      updateAccessToken(decodeToken(token!));
+    })
+    .catch((e) => {
+      if (e.response) {
+        alert(e.response.data);
+      }
+    });
+};
+
+export const updateAccessToken = async (expTime: number) => {
+  const currentTime = Math.floor(Date.now() / 1000);
+  const refreshTime = expTime - currentTime - 300;
+
+  if (refreshTime > 0) {
+    setTimeout(async () => {
+      try {
+        const res = await axiosTokenInstance.post("/refresh-token");
+
+        const newAccessToken = res.headers.authorization.replace("Bearer ", "");
+        sessionStorage.setItem("access_token", newAccessToken);
+
+        updateAccessToken(decodeToken(newAccessToken!));
+      } catch {
+        alert("로그인 세션이 만료되었습니다. 다시 로그인해 주세요.");
+        sessionStorage.clear();
+        window.location.href = "/auth ";
+      }
+    }, refreshTime * 1000);
+  }
+};
+
+export const decodeToken = (token: string) => {
+  const payload = token?.split(".")[1];
+
+  if (payload) {
+    const base64 = payload?.replace(/-/g, "+").replace(/_/g, "/");
+
+    try {
+      const decodedJWT = JSON.parse(
+        decodeURIComponent(
+          window
+            .atob(base64)
+            .split("")
+            .map(function (c) {
+              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+        )
+      );
+      console.log(decodedJWT);
+
+      sessionStorage.setItem("role", decodedJWT.roleType);
+      return decodedJWT.exp;
+    } catch (e) {
+      console.log("JWT 디코딩 오류 발생 : " + e);
+    }
+  }
+};
+
 export const changePasswordAPI = async (email: string, password: string) => {
   try {
     await axiosInstance.patch("/user/password", {
@@ -114,4 +186,8 @@ export const changePasswordAPI = async (email: string, password: string) => {
     alert("비밀번호 변경 실패, 입력값을 확인하세요");
     return 2;
   }
+};
+
+export const logoutAPI = async () => {
+  await axiosTokenInstance.post("/user/logout");
 };
