@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { validateTitleInputLength } from "../../utils/validation";
 
 interface Report {
   title: string;
@@ -84,14 +85,20 @@ const ReportWritePage = () => {
   const summaryPdfFile = async (file: string) => {
     try {
       const form = await pdfFormAPI(file);
-
-      dispatch(setStockName(form[1].mentionText));
-      dispatch(setGoalDate(form[5].mentionText));
-      dispatch(setCurrentStock(form[3]?.mentionText.replace(/,/g, "")));
-      dispatch(setGoalStock(form[4]?.mentionText.replace(/,/g, "")));
-      dispatch(setOpinion(form[6].mentionText));
-      dispatch(setMarketCapitalization(form[2]?.mentionText.replace(/,/g, "")));
-      setPredictDate(form[0].mentionText);
+      // dispatch(setStockName(form[1].mentionText));
+      // dispatch(setGoalDate(form[5].mentionText));
+      // dispatch(setCurrentStock(form[3]?.mentionText.replace(/,/g, "")));
+      // dispatch(setGoalStock(form[4]?.mentionText.replace(/,/g, "")));
+      // dispatch(setOpinion(form[6].mentionText));
+      // dispatch(setMarketCapitalization(form[2]?.mentionText.replace(/,/g, "")));
+      // setPredictDate(form[0].mentionText);
+      dispatch(setStockName(form[5]));
+      dispatch(setGoalDate(form[13]));
+      dispatch(setCurrentStock(form[9]?.replace(/,/g, "")));
+      dispatch(setGoalStock(form[11]?.replace(/,/g, "")));
+      dispatch(setOpinion(form[15]));
+      dispatch(setMarketCapitalization(form[7]?.replace(/,/g, "")));
+      setPredictDate(form[4]);
     } catch {
       alert("STOCKOLM 제공 파일 양식인지 확인해주세요");
     }
@@ -128,38 +135,63 @@ const ReportWritePage = () => {
 
   const handleReportTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    dispatch(setReportTitle(value));
+    dispatch(setReportTitle(validateTitleInputLength(value)));
   };
 
   const writeReport = async () => {
-    try {
-      const report: Report = {
-        title: reportTitle,
-        content: reportContent,
-        stockName: stockName,
-        opinion: opinion,
-        goalStock: goalStock,
-        currentStock: currentStock,
-        marketCapitalization: marketCapitalization,
-        goalDate: new Date("20" + goalDate.replace(/\./g, "-")),
-        filePath: filePath,
-      };
+    if (!filePath) {
+      alert("PDF 를 업로드 해주세요.");
+    } else if (reportTitle === "") {
+      alert("제목을 입력해주세요.");
+    } else if (reportContent === "" || stockName === "") {
+      alert("PDF 업로드를 확인해주세요.");
+    } else {
+      try {
+        const report: Report = {
+          title: reportTitle,
+          content: reportContent,
+          stockName: stockName,
+          opinion: opinion,
+          goalStock: goalStock,
+          currentStock: currentStock,
+          marketCapitalization: marketCapitalization,
+          goalDate: new Date("20" + goalDate.replace(/\./g, "-")),
+          filePath: filePath,
+        };
 
-      await writeReportAPI(report);
+        await writeReportAPI(report);
+        // console.log(report);
+        // console.log(marketCapitalization);
 
-      dispatch(setReportTitle(""));
-      dispatch(setStockName(""));
-      dispatch(setGoalDate(""));
-      dispatch(setCurrentStock(0));
-      dispatch(setGoalStock(0));
-      dispatch(setOpinion(""));
-      dispatch(setMarketCapitalization(0));
-      dispatch(setFilePath(""));
+        dispatch(setReportTitle(""));
+        dispatch(setStockName(""));
+        dispatch(setGoalDate(""));
+        dispatch(setCurrentStock(0));
+        dispatch(setGoalStock(0));
+        dispatch(setOpinion(""));
+        dispatch(setMarketCapitalization(0));
+        dispatch(setFilePath(""));
+        dispatch(setReportContent(""));
 
-      navigate("/community/report");
-    } catch {
-      console.log("게시글 등록 실패");
+        navigate("/community/report");
+      } catch {
+        console.log("게시글 등록 실패");
+        alert("게시글 등록 실패");
+      }
     }
+  };
+
+  const cancelReportWrite = () => {
+    dispatch(setReportTitle(""));
+    dispatch(setStockName(""));
+    dispatch(setGoalDate(""));
+    dispatch(setCurrentStock(0));
+    dispatch(setGoalStock(0));
+    dispatch(setOpinion(""));
+    dispatch(setMarketCapitalization(0));
+    dispatch(setFilePath(""));
+    dispatch(setReportContent(""));
+    navigate("/community/report");
   };
 
   useEffect(() => {
@@ -194,8 +226,10 @@ const ReportWritePage = () => {
             " 대비 <span style='color: " +
             percentStyle +
             ";'>" +
-            Number(percentValue.toPrecision(3)) * 100 +
-            "%</span> 주가 상승 예상]</h3><p><br></p><p><br></p><h2><u>🔍 주가 예측 근거 요약</u></h2><h3>" +
+            (Number(percentValue) * 100).toFixed(2) +
+            "%</span> 주가" +
+            `${percentValue < 0 ? "하락" : "상승"}` +
+            "예상]</h3><p><br></p><p><br></p><h2><u>🔍 주가 예측 근거 요약</u></h2><h3>" +
             summaryContent +
             "</h3>";
 
@@ -212,28 +246,29 @@ const ReportWritePage = () => {
 
   return (
     <BasicLayout>
-      <div className="flex justify-center mt-10">
-        <div className="flex flex-col">
+      <div className="w-[90vw] max-w-6xl mx-auto flex justify-center mt-10">
+        <div className="w-full flex flex-col">
           <div
             onClick={backToReportList}
-            className="cursor-pointer text-3xl mb-10"
+            className="cursor-pointer text-3xl mb-10 items-center"
           >
             <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
             종목분석게시판
           </div>
-          <div className="w-full">
-            <span className="mr-2">주식종목</span>
-            <span className="rounded-full border border-black">
+          <div className="flex mb-4 items-center">
+            <span className="mr-4">주식종목</span>
+            <span className="text-center content-center rounded-full border border-black px-4 min-w-[4rem] min-h-[2rem]">
               {stockName}
             </span>
           </div>
-          <div className="flex">
-            <span>파일</span>
+          <div className="flex mb-4">
+            <span className="mr-2">파일</span>
             <div>
-              <Input
+              <input
                 type="file"
                 onChange={fileUploadValidHandler}
-                className="w-96"
+                placeholder="PDF 파일 업로드"
+                className=""
               />
             </div>
           </div>
@@ -241,7 +276,7 @@ const ReportWritePage = () => {
             value={reportTitle}
             onChange={handleReportTitle}
             placeholder="제목을 입력해주세요"
-            className="border-none"
+            className="border-none p-2 mb-4"
           />
 
           {/* 글 작성 라이브러리 칸 */}
@@ -251,6 +286,7 @@ const ReportWritePage = () => {
 
           <div className="flex justify-end">
             <Button
+              onClick={cancelReportWrite}
               size="small"
               color="black"
               border="black"

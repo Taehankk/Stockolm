@@ -10,6 +10,7 @@ import WriteForm from "../../components/boardWrite/WriteForm";
 import { writeBoardAPI, updateBoardAPI } from "../../api/communityAPI";
 import { useNavigate } from "react-router-dom";
 import Category from "../../components/boardWrite/Category";
+import { validateTitleInputLength } from "../../utils/validation";
 
 interface Board {
   title: string;
@@ -32,7 +33,7 @@ const BoardWritePage = () => {
 
   const handleTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setTitle(value);
+    setTitle(validateTitleInputLength(value));
   };
 
   const writeBoard = async () => {

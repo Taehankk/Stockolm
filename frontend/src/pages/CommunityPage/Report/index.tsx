@@ -10,16 +10,23 @@ import { setCurrentPage } from "../../../slices/reportSlice";
 import { getReportListAPI } from "../../../api/communityAPI";
 import Filter from "../../../components/community/report/Filter";
 import Search from "../../../components/community/common/Search";
+import { validateSearchInputLength } from "../../../utils/validation";
 
 interface Report {
   analystBoardId: number;
-  userName: string; // 애널리스트 실명
-  userImagePath: string;
-  roleType: string; // "SUBSCRIBER"일때만 전부 보여주기
-  isLike: boolean;
-  title: string;
-  stockName: string;
+  companyImagePath: string;
   createAt: string;
+  filePath: string;
+  like: boolean;
+  likeCnt: number;
+  mainContent: boolean;
+  stockName: string;
+  title: string;
+  updateAt: string;
+  userImagePath: string;
+  userName: string; // 애널리스트 실명
+  userNickName: string; // 애널리스트 닉네임
+  viewCnt: number;
 }
 
 const Report = () => {
@@ -57,7 +64,7 @@ const Report = () => {
 
   const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchWord(value);
+    setSearchWord(validateSearchInputLength(value));
   };
 
   const searchReport = () => {
@@ -72,6 +79,8 @@ const Report = () => {
       sort,
       searchWord
     );
+
+    console.log(res.content);
 
     setTotalItems(res.totalElements);
     setReportList(res.content);
@@ -98,12 +107,13 @@ const Report = () => {
           <div className="grid grid-cols-3 mt-4 gap-y-4">
             {reportList.map((report, index) => (
               <CommunityCard
-                id={index}
+                id={report.analystBoardId}
                 stock={report.stockName}
                 title={report.title}
                 key={index}
+                nickname={report.userNickName}
                 writer={report.userName}
-                writeTime={report.createAt}
+                writeTime={report.createAt.split("T")[0]}
                 represent={false}
               />
             ))}
@@ -126,7 +136,7 @@ const Report = () => {
         <div className="flex justify-end">
           <div
             onClick={toReportWrite}
-            className="w-16 h-6 text-center content-center text-xs border border-black rounded-md"
+            className="w-16 h-10 mb-10 text-center content-center text-xs border border-black rounded-md"
           >
             글쓰기
           </div>

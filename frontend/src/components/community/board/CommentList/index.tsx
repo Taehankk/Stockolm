@@ -61,19 +61,33 @@ const CommentList = ({ handleCommentCount }: Props) => {
   };
 
   const updateComment = async (commentID: number) => {
-    try {
-      await updateCommentAPI(commentID, newCommentValue);
-      setCommentData((prevComments) =>
-        prevComments.map((item) =>
-          item.commentId === commentID
-            ? { ...item, isCommentInputOpen: false }
-            : item
-        )
-      );
-      alert("댓글 수정 완료");
-      window.location.reload();
-    } catch {
-      alert("댓글 수정 실패");
+    if (newCommentValue !== "") {
+      try {
+        await updateCommentAPI(commentID, newCommentValue);
+        setCommentData((prevComments) =>
+          prevComments.map((item) =>
+            item.commentId === commentID
+              ? { ...item, isCommentInputOpen: false }
+              : item
+          )
+        );
+        alert("댓글 수정 완료");
+        window.location.reload();
+      } catch {
+        alert("댓글 수정 실패");
+      }
+    } else {
+      alert("댓글을 입력해주세요");
+    }
+  };
+
+  // onKeyDown 핸들러에서 Enter 키 감지
+  const handleKeyUp = (
+    commentID: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Enter") {
+      updateComment(commentID); // Enter 키 입력 시 searchList 함수 호출
     }
   };
 
@@ -133,6 +147,7 @@ const CommentList = ({ handleCommentCount }: Props) => {
                       size="large"
                       value={newCommentValue}
                       onChange={handleNewCommentValue}
+                      onKeyUp={(e) => handleKeyUp(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
                     />
                     <div className="flex gap-x-2">
                       <span
