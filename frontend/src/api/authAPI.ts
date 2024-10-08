@@ -116,6 +116,8 @@ export const loginAPI = async (email: string, password: string) => {
       const token = sessionStorage.getItem("access_token");
 
       updateAccessToken(decodeToken(token!));
+
+      window.location.href = "/";
     })
     .catch((e) => {
       if (e.response) {
