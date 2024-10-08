@@ -23,6 +23,11 @@ const Pagination: React.FC<PaginationProps> = ({
     return null;
   }
 
+  const pageGroupSize = 10;
+  const currentGroup = Math.ceil(currentPage / pageGroupSize);
+  const startPage = (currentGroup - 1) * pageGroupSize + 1;
+  const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
+
   const handleClick = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       onPageChange(page);
@@ -38,17 +43,21 @@ const Pagination: React.FC<PaginationProps> = ({
       >
         이전
       </button>
-      {[...Array(totalPages)].map((_, index) => (
+
+      {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
         <button
           key={index}
-          onClick={() => handleClick(index + 1)}
+          onClick={() => handleClick(startPage + index)}
           className={`px-4 py-2 mx-1 ${
-            currentPage === index + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+            currentPage === startPage + index
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200"
           } rounded hover:bg-blue-300 transition-colors`}
         >
-          {index + 1}
+          {startPage + index}
         </button>
       ))}
+
       <button
         className="px-4 py-2 mx-2 bg-gray-200 text-black rounded disabled:opacity-50"
         onClick={() => handleClick(currentPage + 1)}

@@ -24,9 +24,17 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
   accuracy,
 }) => {
   const nav = useNavigate();
-
   const handleClick = () => {
-    nav(`/analyst/${userNickname}`);
+    const accessToken = sessionStorage.getItem("access_token");
+
+    if (accessToken) {
+      nav(`/analyst/${userNickname}`);
+    } else {
+      alert("로그인이 필요합니다.");
+      nav(`/auth`, {
+        state: { imgLocation: 0 },
+      });
+    }
   };
 
   const getRankImage = () => {
