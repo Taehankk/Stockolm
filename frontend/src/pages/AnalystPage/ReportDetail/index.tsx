@@ -162,7 +162,10 @@ const ReportDetail = () => {
                   <span className="opacity-50">보고서 다운로드</span>
                 </a>
                 {report?.userNickName !== loginUser ? (
-                  <div onClick={handleLike} className="flex mb-1 text-2xl">
+                  <div
+                    onClick={handleLike}
+                    className="flex mb-1 text-2xl cursor-pointer"
+                  >
                     {isLike ? (
                       <FontAwesomeIcon
                         icon={like}
