@@ -29,8 +29,8 @@ const CommunityCard = ({
             <img src={imagePath} className="w-[70%] h-[70%]" />
           </div>
           <div className="flex flex-col h-[7rem] justify-evenly pt-[0.5rem] px-[1rem]">
-            <span className="w-[5.625rem] h-[1.375rem] rounded-full bg-[#51E8B3] text-[white] text-center">{stock}</span>
-            <span className="text-[1.25rem]">{title}</span>
+            <span className="w-[5.625rem] h-[1.375rem] rounded-full bg-[#51E8B3] text-[white] text-center overflow-hidden text-ellipsis whitespace-nowrap">{stock}</span>
+            <span className="text-[1.25rem] overflow-hidden text-ellipsis whitespace-nowrap">{title}</span>
             <div className="flex justify-end items-end gap-[0.6rem] text-[#B4B4B4] text-[0.875rem]">
               <span>{writer}</span>
               <span>{writeTime}</span>

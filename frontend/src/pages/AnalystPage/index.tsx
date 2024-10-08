@@ -7,7 +7,6 @@ import { Outlet } from "react-router-dom";
 
 import Button from "../../components/elements/Button";
 
-import profile from "/src/assets/winter.jpg";
 import follow from "/src/assets/follow.svg";
 import unfollow from "/src/assets/unfollow.svg";
 
@@ -58,6 +57,7 @@ interface AnalystInfo {
 const Analyst: React.FC = () => {
 
   const { nickname } = useParams<{ nickname: string }>();
+  const [imagePath, setImagePath] = useState("");
   const [ isFollow, setIsFollow ] = useState(false);
   const queryClient = useQueryClient();
 
@@ -76,6 +76,8 @@ const Analyst: React.FC = () => {
     favoriteAnalysts?.map((analyst) => {
       if (analyst.userNickName === nickname) {
         setIsFollow(true);
+        setImagePath(analyst.userImagePath);
+        
         flag = true;
       }
 
@@ -120,7 +122,7 @@ const Analyst: React.FC = () => {
         <div className="w-[23rem] mr-[2rem] pr-[3rem] border-b-black border-r">
           <div className="flex justify-center items-center pb-[0.3rem] border-b-black border-b-[0.0625rem]">
             <div>
-              <img className="w-[6rem] h-[6rem] rounded-full" src={profile}></img>
+              <img className="w-[6rem] h-[6rem] rounded-full" src={imagePath}></img>
             </div>
             <span className="self-end ml-[4rem] text-[1.625rem]">{analystInfo?.userName}</span>
           </div>

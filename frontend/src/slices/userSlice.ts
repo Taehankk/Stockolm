@@ -38,6 +38,7 @@ const userSlice = createSlice({
       })
       .addCase(getUserInfo.fulfilled, (state, action: PayloadAction<UserState>) => {
         state.loading = false;
+        state.userName = action.payload.userName;
         state.userNickName = action.payload.userNickName;
         state.userImagePath = action.payload.userImagePath;
       })

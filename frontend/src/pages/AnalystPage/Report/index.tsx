@@ -154,8 +154,8 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
       }
     };
 
-    const currentCards = analystBoard?.content;
-
+    const currentCards = analystBoard?.content || [];
+  
     return (
       <div className="w-full">
         <div className="flex h-[3rem] justify-between w-full border-b-black border-b-[0.0625rem]">
