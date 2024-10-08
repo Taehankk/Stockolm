@@ -93,6 +93,7 @@ const BoardDetailPage = () => {
   const getBoard = async () => {
     try {
       const res = await getBoardAPI(token, boardID!);
+
       setBoardData(res);
       setLike(res.like);
       setBoardLike(res.likeCnt);
@@ -130,9 +131,13 @@ const BoardDetailPage = () => {
 
   const registComment = async () => {
     if (commentValue !== "") {
-      await writeCommentAPI(boardID!, commentValue);
-      alert("댓글 등록 완료");
-      window.location.reload();
+      try {
+        await writeCommentAPI(Number(boardID!), commentValue);
+        alert("댓글 등록 완료");
+        window.location.reload();
+      } catch {
+        alert("댓글 등록 실패");
+      }
     } else {
       alert("댓글을 입력하세요");
     }
