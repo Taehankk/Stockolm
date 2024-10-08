@@ -191,15 +191,10 @@ export const getCommentListAPI = async (
   return res.data;
 };
 
-export const writeCommentAPI = async (boardID: string, comment: string) => {
-  try {
-    await axiosTokenInstance.post(`/comment/${boardID}`, {
-      content: comment,
-    });
-  } catch (e) {
-    console.log(e);
-    console.log("댓글 등록 실패");
-  }
+export const writeCommentAPI = async (boardId: number, comment: string) => {
+  await axiosTokenInstance.post(`/comment/${boardId}`, {
+    content: comment,
+  });
 };
 
 export const updateCommentAPI = async (commentID: number, comment: string) => {
