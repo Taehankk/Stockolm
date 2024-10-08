@@ -162,7 +162,7 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                     .exists();
         }
 
-        List<AnalystBoardPageResponse> analystBoardPage = queryFactory
+        JPQLQuery<AnalystBoardPageResponse> query = queryFactory
                 .select(Projections.constructor(AnalystBoardPageResponse.class,
                         user.userName,
                         user.userNickname,
@@ -182,22 +182,28 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                 .from(analystBoard)
                 .join(analystBoard.user, user)
                 .join(analystBoard.stock, stock)
-                .where(builder)
+                .where(builder);
+
+        // 정렬 조건 적용 (항상 내림차순)
+        String sortProperty = pageable.getSort().isSorted()
+                ? pageable.getSort().iterator().next().getProperty()
+                : "latest"; // 기본값은 최신순 정렬
+
+        switch (sortProperty) {
+            case "like":
+                query.orderBy(analystBoard.likeCnt.desc());
+                break;
+            case "view":
+                query.orderBy(analystBoard.viewCnt.desc());
+                break;
+            default:
+                query.orderBy(analystBoard.createAt.desc());
+        }
+
+        List<AnalystBoardPageResponse> analystBoardPage = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-        // 정렬 조건 처리
-        Map<String, Function<AnalystBoardPageResponse, Comparable>> sortMap = Map.of(
-                "latest", AnalystBoardPageResponse::getCreateAt,
-                "like", AnalystBoardPageResponse::getLikeCnt,
-                "view", AnalystBoardPageResponse::getViewCnt
-        );
-        Comparator<AnalystBoardPageResponse> comparator = Comparator.comparing(
-                sortMap.getOrDefault(pageable.getSort().isSorted() ? pageable.getSort().iterator().next().getProperty() : "",
-                        AnalystBoardPageResponse::getCreateAt) // 기본값은 최신순 정렬
-        );
-        analystBoardPage.sort(comparator.reversed()); // 항상 내림차순 정렬
 
         Long total = queryFactory
                 .select(analystBoard.count())
