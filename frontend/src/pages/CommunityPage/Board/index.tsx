@@ -18,6 +18,7 @@ import { getBoardListAPI } from "../../../api/communityAPI";
 import Filter from "../../../components/community/board/Filter";
 import Search from "../../../components/community/common/Search";
 import OneBoard from "../../../components/community/board/OneBoard";
+import { validateSearchInputLength } from "../../../utils/validation";
 
 interface Board {
   userNickname: string;
@@ -60,7 +61,7 @@ const Board = () => {
 
   const handleSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchWord(value);
+    setSearchWord(validateSearchInputLength(value));
   };
 
   const searchBoard = () => {
