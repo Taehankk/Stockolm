@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { getStockData, toggleFollowAPI } from "../../../api/stockAPI";
-
 import { RootState } from "../../../store";
 import { updateFollowStatus } from "../../../slices/stockSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,25 +14,24 @@ interface SummaryProps {
 }
 
 interface StockData {
-  stck_prpr: number;
-  prdy_vrss: number;
-  prdy_ctrt: number;
-  stck_hgpr: number;
-  stck_lwpr: number;
-  acml_vol: number;
-  acml_tr_pbmn: number;
+  stckPrpr: number;
+  prdyVrss: number;
+  prdyCtrt: number;
+  stckHgpr: number;
+  stckLwpr: number;
+  acmlVol: number;
+  acmlTrPbmn: number;
 }
 
 const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
   const dispatch = useDispatch();
-
   const { isFollow } = useSelector((state: RootState) => state.stock);
   const [stockData, setStockData] = useState<StockData | null>(null);
 
   const fetchData = async () => {
     try {
       const data = await getStockData(searchCode);
-      setStockData(data.output);
+      setStockData(data[0]);
     } catch (error) {
       console.error("주식 요약 정보를 불러오지 못함", error);
     }
@@ -41,7 +39,7 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 10000);
+    const interval = setInterval(fetchData, 10000); // 10초마다 주식 데이터를 갱신
     return () => clearInterval(interval);
   }, [searchCode]);
 
@@ -49,54 +47,45 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
 
   const toggleFollow = async () => {
     try {
-      console.log(searchTerm);
       await toggleFollowAPI(searchTerm);
       dispatch(updateFollowStatus(!isFollow));
     } catch (error) {
       console.error("관심 종목 상태를 변경하지 못했습니다.", error);
     }
-    console.log(isFollow);
   };
 
   return (
     <div className="flex flex-col">
       <div className="flex items-center h-12 border-b pt-3 pb-2 mb-2">
-        {/* 상단: 
-        종목명 : searchTerm 
-        종목코드 : searchCode
-        가격:stck_prpr 
-        등락 가격:stockData.prdy_vrss 
-        등락 률:stockData.prdy_ctrt
-        */}
         <div className="flex items-baseline gap-5 w-4/5">
           <div className="text-2xl">{searchTerm}</div>
           <div className="text-sm">{searchCode}</div>
-          <div>{Math.abs(stockData.stck_prpr).toLocaleString()}</div>
+          <div>{Math.abs(stockData.stckPrpr).toLocaleString()}</div>
           <div className="flex">
-            {stockData.prdy_vrss > 0 ? (
+            {stockData.prdyVrss > 0 ? (
               <>
                 <FontAwesomeIcon icon={faCaretUp} className="text-red-500" />
                 <span className="ml-1 text-red-500">
-                  {Math.abs(stockData.prdy_vrss).toLocaleString()}
+                  {Math.abs(stockData.prdyVrss).toLocaleString()}
                 </span>
               </>
             ) : (
               <>
                 <FontAwesomeIcon icon={faCaretDown} className="text-blue-500" />
                 <span className="ml-1 text-blue-500">
-                  {Math.abs(stockData.prdy_vrss).toLocaleString()}
+                  {Math.abs(stockData.prdyVrss).toLocaleString()}
                 </span>
               </>
             )}
           </div>
           <div>
-            {stockData.prdy_vrss > 0 ? (
+            {stockData.prdyVrss > 0 ? (
               <span className="ml-1 text-red-500">
-                {Math.abs(stockData.prdy_ctrt) + "%"}
+                {Math.abs(stockData.prdyCtrt).toFixed(2) + "%"}
               </span>
             ) : (
               <span className="ml-1 text-blue-500">
-                {Math.abs(stockData.prdy_ctrt) + "%"}
+                {Math.abs(stockData.prdyCtrt).toFixed(2) + "%"}
               </span>
             )}
           </div>
@@ -115,34 +104,34 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
             <div>전일</div>
             <div>
               {Math.abs(
-                stockData.stck_prpr - stockData.prdy_vrss
+                stockData.stckPrpr - stockData.prdyVrss
               ).toLocaleString()}
             </div>
           </div>
           <div className="flex flex-col">
             <div>시가</div>
-            <div>{Math.abs(stockData.stck_prpr).toLocaleString()}</div>
+            <div>{Math.abs(stockData.stckPrpr).toLocaleString()}</div>
           </div>
         </div>
         <div className="flex flex-col">
           <div className="flex flex-col">
             <div>고가</div>
-            <div>{Math.abs(stockData.stck_hgpr).toLocaleString()}</div>
+            <div>{Math.abs(stockData.stckHgpr).toLocaleString()}</div>
           </div>
           <div className="flex flex-col">
             <div>저가</div>
-            <div>{Math.abs(stockData.stck_lwpr).toLocaleString()}</div>
+            <div>{Math.abs(stockData.stckLwpr).toLocaleString()}</div>
           </div>
         </div>
         <div className="flex flex-col">
           <div className="flex flex-col">
             <div>거래량</div>
-            <div>{Math.abs(stockData.acml_vol).toLocaleString()}</div>
+            <div>{Math.abs(stockData.acmlVol).toLocaleString()}</div>
           </div>
           <div className="flex flex-col">
             <div>거래대금</div>
             <div>
-              {Math.round(stockData.acml_tr_pbmn / 1_000_000).toLocaleString()}{" "}
+              {Math.round(stockData.acmlTrPbmn / 1_000_000).toLocaleString()}{" "}
               백만
             </div>
           </div>
