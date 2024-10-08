@@ -232,7 +232,10 @@ const BoardDetailPage = () => {
                   />
                 </div>
               ) : (
-                <div onClick={handleLike} className="flex mb-1 text-2xl">
+                <div
+                  onClick={handleLike}
+                  className="flex mb-1 text-2xl cursor-pointer"
+                >
                   {isLike ? (
                     <FontAwesomeIcon icon={like} className="text-PrimaryRed" />
                   ) : (
