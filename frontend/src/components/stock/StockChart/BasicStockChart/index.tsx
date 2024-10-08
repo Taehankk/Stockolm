@@ -153,31 +153,31 @@ const BasicStockChart = ({ stockData, stockCode }: BasicStockChartProps) => {
       width: timeFrame === "day" ? 3 : 1,
       colors: timeFrame === "day" ? ["#FF0000"] : undefined,
     },
-    fill:
-      timeFrame === "day"
-        ? {
-            opacity: 0.9,
-            type: "gradient",
-            gradient: {
-              shade: "dark",
-              type: "diagonal2",
-              gradientToColors: ["#FF5F5F"],
-              stops: [0, 100],
-              opacityFrom: 0.8,
-              opacityTo: 0.2,
-            },
-          }
-        : {
-            type: "solid",
-            gradient: {
-              shade: "dark",
-              type: "vertical",
-              gradientToColors: ["#FF5F5F"],
-              stops: [0, 100],
-              opacityFrom: 0.7,
-              opacityTo: 0.2,
-            },
-          },
+    // fill:
+    //   timeFrame === "day"
+    //     ? {
+    //         opacity: 0.9,
+    //         type: "gradient",
+    //         gradient: {
+    //           shade: "dark",
+    //           type: "diagonal2",
+    //           gradientToColors: ["#FF5F5F"],
+    //           stops: [0, 100],
+    //           opacityFrom: 0.8,
+    //           opacityTo: 0.2,
+    //         },
+    //       }
+    //     : {
+    //         type: "solid",
+    //         gradient: {
+    //           shade: "dark",
+    //           type: "vertical",
+    //           gradientToColors: ["#FF5F5F"],
+    //           stops: [0, 100],
+    //           opacityFrom: 0.7,
+    //           opacityTo: 0.2,
+    //         },
+    //       },
   };
 
   return (
