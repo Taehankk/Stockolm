@@ -1,6 +1,7 @@
 package com.example.stockolm.global.util.webclient;
 
 import com.example.stockolm.domain.stock.dto.response.GetChartResponse;
+import com.example.stockolm.domain.stock.dto.response.StockPriceResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,17 @@ public class KoreaInvestWebClientUtil {
         headers.set("appkey", koreaInvestAppKey);
         headers.set("appsecret", koreaInvestAppSecretKey);
         headers.set("tr_id", "FHKST03010200");
+        headers.set("custtype", "P");
+        return headers;
+    }
+
+    private HttpHeaders createHeader2() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(koreaInvestAccessToken);
+        headers.set("appkey", koreaInvestAppKey);
+        headers.set("appsecret", koreaInvestAppSecretKey);
+        headers.set("tr_id", "FHKST01010100");
         headers.set("custtype", "P");
         return headers;
     }
@@ -183,5 +195,51 @@ public class KoreaInvestWebClientUtil {
         return valueNode != null ? valueNode.asText(null) : null;
     }
 
+
+    public Mono<List<StockPriceResponse>> getStockPrice(String stockCode) {
+        HttpHeaders headers = createHeader2();
+
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/uapi/domestic-stock/v1/quotations/inquire-price")
+                        .queryParam("FID_COND_MRKT_DIV_CODE", "J")
+                        .queryParam("FID_INPUT_ISCD", stockCode)
+                        .build())
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .retrieve()
+                .bodyToMono(String.class)
+                .flatMap(this::parseStockPrice);
+    }
+
+    private Mono<List<StockPriceResponse>> parseStockPrice(String response) {
+        try {
+            List<StockPriceResponse> responseDataList = new ArrayList<>();
+            JsonNode rootNode = objectMapper.readTree(response);
+
+            // output 필드가 있는지 확인
+            if (rootNode.has("output")) {
+                JsonNode outputNode = rootNode.get("output");
+
+                // output 필드가 null이 아닌지 확인하고, 필요한 데이터 추출
+                if (outputNode != null) {
+                    StockPriceResponse responseData = StockPriceResponse.builder()
+                            .acmlTrPbmn(getJsonNodeValue(outputNode, "acml_tr_pbmn"))
+                            .acmlVol(getJsonNodeValue(outputNode, "acml_vol"))
+                            .prdyCtrt(getJsonNodeValue(outputNode, "prdy_ctrt"))
+                            .prdyVrss(getJsonNodeValue(outputNode, "prdy_vrss"))
+                            .stckPrpr(getJsonNodeValue(outputNode, "stck_prpr"))
+                            .stckHgpr(getJsonNodeValue(outputNode, "stck_hgpr"))
+                            .stckLwpr(getJsonNodeValue(outputNode, "stck_lwpr"))
+                            .build();
+                    responseDataList.add(responseData);
+                }
+            } else {
+                throw new IllegalStateException("'output' field is missing in the response");
+            }
+
+            return Mono.just(responseDataList);
+        } catch (Exception e) {
+            return Mono.error(e);
+        }
+    }
 
 }

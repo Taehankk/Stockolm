@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -128,6 +129,12 @@ public class StockController {
     @Operation(summary = "분봉 차트 조회", description = "분봉 차트 조회 API")
     public Flux<List<GetChartResponse>> getChart(@PathVariable("stock-code") String stockCode) {
         return koreaInvestWebClientUtil.getChart(stockCode);
+    }
+
+    @GetMapping("/inquire-price/{stock-code}")
+    @Operation(summary = "실시간 시세 조회", description = "실시간 시세 조회 API")
+    public Mono<List<StockPriceResponse>> getStockPrice(@PathVariable("stock-code") String stockCode){
+        return koreaInvestWebClientUtil.getStockPrice(stockCode);
     }
 
 
