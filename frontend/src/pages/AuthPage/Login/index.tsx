@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-// import Cookies from "universal-cookie";
 
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
@@ -12,7 +9,6 @@ interface Props {
 }
 
 const Login = ({ handleImgLocation }: Props) => {
-  const navigate = useNavigate();
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
 
@@ -28,9 +24,20 @@ const Login = ({ handleImgLocation }: Props) => {
     setPasswordInput(value);
   };
 
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      login(); // Enter 키 입력 시 login 함수 호출
+    }
+  };
+
   const login = async () => {
-    await loginAPI(emailInput, passwordInput);
-    navigate("/");
+    if (emailInput === "") {
+      alert("이메일을 입력하세요.");
+    } else if (passwordInput === "") {
+      alert("비밀번호를 입력하세요.");
+    } else {
+      await loginAPI(emailInput, passwordInput);
+    }
   };
 
   return (
@@ -45,6 +52,7 @@ const Login = ({ handleImgLocation }: Props) => {
           <span className="mr-6">비밀번호</span>
           <Input
             onChange={handlePasswordInputChange}
+            onKeyUp={handleKeyUp}
             value={passwordInput}
             type="password"
           />
