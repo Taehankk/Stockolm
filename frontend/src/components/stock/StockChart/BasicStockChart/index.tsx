@@ -120,16 +120,15 @@ const BasicStockChart = ({ stockData, stockCode }: BasicStockChartProps) => {
       forceNiceScale: true,
     },
     tooltip: {
-      shared: true,
+      shared: false,
       x: {
         format: "dd MMM HH:mm",
       },
-      custom: function ({ series, seriesIndex, dataPointIndex }) {
-        const isCandlestick = timeFrame !== "day";
-        const dataPoint = series[seriesIndex][dataPointIndex];
+      custom: function ({ dataPointIndex, w }) {
+        const dataPoint = w.globals.initialSeries[0].data[dataPointIndex];
 
-        if (isCandlestick && Array.isArray(dataPoint)) {
-          const [open, high, low, close] = dataPoint;
+        if (dataPoint && Array.isArray(dataPoint.y)) {
+          const [open, high, low, close] = dataPoint.y;
           return `
             <div style="padding: 10px;">
               <strong>시가: </strong>${open}<br/>
@@ -138,14 +137,9 @@ const BasicStockChart = ({ stockData, stockCode }: BasicStockChartProps) => {
               <strong>종가: </strong>${close}<br/>
             </div>
           `;
-        } else if (!isCandlestick) {
-          return `
-            <div style="padding: 10px;">
-              <strong>종가: </strong>${dataPoint}<br/>
-            </div>
-          `;
+        } else {
+          return `<div style="padding: 10px;"><strong>종가: </strong>${dataPoint}</div>`;
         }
-        return "";
       },
     },
     stroke: {
@@ -153,33 +147,7 @@ const BasicStockChart = ({ stockData, stockCode }: BasicStockChartProps) => {
       width: timeFrame === "day" ? 3 : 1,
       colors: timeFrame === "day" ? ["#FF0000"] : undefined,
     },
-    // fill:
-    //   timeFrame === "day"
-    //     ? {
-    //         opacity: 0.9,
-    //         type: "gradient",
-    //         gradient: {
-    //           shade: "dark",
-    //           type: "diagonal2",
-    //           gradientToColors: ["#FF5F5F"],
-    //           stops: [0, 100],
-    //           opacityFrom: 0.8,
-    //           opacityTo: 0.2,
-    //         },
-    //       }
-    //     : {
-    //         type: "solid",
-    //         gradient: {
-    //           shade: "dark",
-    //           type: "vertical",
-    //           gradientToColors: ["#FF5F5F"],
-    //           stops: [0, 100],
-    //           opacityFrom: 0.7,
-    //           opacityTo: 0.2,
-    //         },
-    //       },
   };
-
   return (
     <div className="chart-container">
       <div className="w-[100%]">
