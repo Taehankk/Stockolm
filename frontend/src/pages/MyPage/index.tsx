@@ -86,8 +86,15 @@ const MyPage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      const fileType = file.type;
+  
+      if (fileType === 'image/jpeg') {
+        setSelectedFile(file);
+        setImagePreview(URL.createObjectURL(file));
+      } else {
+        alert("JPG 파일만 업로드할 수 있습니다.");
+        e.target.value = '';
+      }
     }
   };
 

@@ -1,10 +1,6 @@
 import axios from "axios";
 import axiosTokenInstance from "./axiosTokenInstance";
 
-const appkey = import.meta.env.VITE_STOCK_APP_KEY;
-const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
-const accessToken = import.meta.env.VITE_STOCK_ACCESS_TOKEN;
-
 interface Stock {
   stockCode: string, 
   stockName: string,
@@ -18,33 +14,6 @@ interface Analyst {
     reliability: number;
     totalAnalystRanking: number;
 }
-
-export const getStockData = async (stockCode: string) => {
-    const headers = {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${accessToken}`,
-      appkey: appkey,
-      appsecret: appsecret,
-      tr_id: "FHKST01010100",
-    };
-  
-    try {
-      const response = await axios.get(
-        `/api/uapi/domestic-stock/v1/quotations/inquire-price`,
-        {
-          headers: headers,
-          params: {
-            FID_COND_MRKT_DIV_CODE: "J",
-            FID_INPUT_ISCD: `${stockCode}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching stock data:", error);
-      throw error;
-    }
-  };
 
 export const fetchUser = async () => {
     try {
@@ -174,11 +143,6 @@ export const postProfileImage = async (file: File) => {
 
     const response = await axiosTokenInstance.post(
       '/upload/user-image',
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
     );
 
     return response;

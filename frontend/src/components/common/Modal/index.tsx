@@ -116,10 +116,10 @@ const Modal = ({
   },[])
 
   const handleClickFavoriteStock = (userNickName?: string, analystBoardId?: number) => {
-    if (userNickName && analystBoardId) {
-      nav(`/analyst/${userNickName}/report/${analystBoardId}`);
-    }
-  };
+  if (userNickName && analystBoardId) {
+    nav(`/analyst/${userNickName}/report/${analystBoardId}`);
+  }
+};
 
   const handleClickAnalyzeStock = (userNickName: string, analystBoardId: number) => {
     nav(`/analyst/${userNickName}/report/${analystBoardId}`);

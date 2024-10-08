@@ -12,11 +12,11 @@ import { getStockData } from "../../../api/stockAPI";
 
   interface StockInfo {
     stockName: string,
-    stck_prpr: string;
-    prdy_vrss: string;
-    prdy_ctrt: string;
-    acml_vol: string;
-    acml_tr_pbmn: string;
+    stckPrpr: string;
+    prdyVrss: string;
+    prdyCtrt: string;
+    acmlVol: string;
+    acmlTrPbmn: string;
   }
 
   const StockInfoList = ({
@@ -31,8 +31,8 @@ import { getStockData } from "../../../api/stockAPI";
       try {
         const results = await Promise.all(dataProps.map(stock => getStockData(stock.stockCode)));
 
-        setDataList(results.map(result => result.output));
-
+        await setDataList(results.map(result => result));
+        
       } catch (error) {
         console.error("주식 요약 정보를 불러오지 못함", error);
       } finally {
@@ -45,6 +45,25 @@ import { getStockData } from "../../../api/stockAPI";
         fetchData(dataProps);
       }
     }, [dataProps]);
+
+  const formatNumberWithCommas = (number: string | number) => {
+    return Number(number).toLocaleString();
+  };
+
+  const formatTransactionAmount = (amount: string | number) => {
+    const dividedAmount = Number(amount) / 1000000;
+    if (dividedAmount < 1) {
+      return dividedAmount.toFixed(1);
+    }
+    return dividedAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 1 });
+  };
+
+    const getColorClass = (value: string | number) => {
+      const numericValue = Number(value);
+      if (numericValue > 0) return 'text-red-500';
+      if (numericValue < 0) return 'text-blue-500';
+      return 'text-black';
+    };
     
     return(
       <div>
@@ -58,14 +77,14 @@ import { getStockData } from "../../../api/stockAPI";
         </div>
       <div>
       <div className="w-[60rem] min-h-[15rem] max-h-[15rem] border-b-black border-b-[0.1rem] overflow-y-auto overflow-x-hidden custom-scrollbar">
-          {dataList.length > 0 ? dataList.map((data, index) => (
+          {dataList.length > 0 ? dataList.flat().map((data, index) => (
             <div key={index} className="flex justify-around items-center w-[60rem] h-[5rem] cursor-pointer" onClick={() => onStockClick && onStockClick(dataProps[index])}>
               <span className="w-1/6 text-center">{dataProps[index].stockName}</span>
-              <span className="w-1/6 text-center">{data.stck_prpr}</span>
-              <span className="w-1/6 text-center">{data.prdy_vrss}</span>
-              <span className="w-1/6 text-center">{data.prdy_ctrt}</span>
-              <span className="w-1/6 text-center">{data.acml_vol}</span>
-              <span className="w-1/6 text-center">{data.acml_tr_pbmn}</span>
+              <span className="w-1/6 text-center">{formatNumberWithCommas(data.stckPrpr)}</span>
+              <span className={`w-1/6 text-center ${getColorClass(data.prdyVrss)}`}>{formatNumberWithCommas(data.prdyVrss)}</span>
+              <span className={`w-1/6 text-center ${getColorClass(data.prdyVrss)}`}>{formatNumberWithCommas(data.prdyCtrt)}</span>
+              <span className="w-1/6 text-center">{formatNumberWithCommas(data.acmlVol)}</span>
+              <span className="w-1/6 text-center">{formatTransactionAmount(data.acmlTrPbmn)}</span>
             </div>
           )) : <div className="flex min-h-[14rem] justify-center items-center"><span className="text-[1.5rem]">등록된 종목이 없습니다.</span></div>}
         </div>
