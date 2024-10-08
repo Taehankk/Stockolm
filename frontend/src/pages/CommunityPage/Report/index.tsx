@@ -69,6 +69,7 @@ const Report = () => {
 
   const searchReport = () => {
     getReportList();
+    dispatch(setCurrentPage(1));
   };
 
   const getReportList = async () => {
@@ -88,7 +89,12 @@ const Report = () => {
 
   useEffect(() => {
     getReportList();
-  }, [currentPage, sort]);
+  }, [currentPage]);
+
+  useEffect(() => {
+    getReportList();
+    dispatch(setCurrentPage(1));
+  }, [sort]);
 
   return (
     <div className="mt-10">

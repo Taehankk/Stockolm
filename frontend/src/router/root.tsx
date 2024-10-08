@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-const Loading = () => <div>Loading...</div>;
+import LoadingSpinner from "../components/common/LoadingSpinner";
+const Loading = () => <LoadingSpinner />;
 
 const Landing = lazy(() => import("../pages/LandingPage"));
 

@@ -217,7 +217,7 @@ export const deleteCommentAPI = async (commentID: number) => {
 };
 
 export const changeReportLikeStateAPI = async (reportID: string) => {
-  await axiosTokenInstance.post(`analyst-board/like/${reportID}`);
+  await axiosTokenInstance.post(`/analyst-board/like/${reportID}`);
 };
 
 export const getReportListAPI = async (
@@ -241,10 +241,15 @@ export const getReportListAPI = async (
   return res.data;
 };
 
-export const getReportAPI = async (reportID: string) => {
-  const res = await axiosTokenInstance.get(`/analyst-board/${reportID}`);
-  console.log(res.data);
-  return res.data;
+export const getReportAPI = async (reportID: string, nickname: string) => {
+  try {
+    const res = await axiosTokenInstance.get(`/analyst-board/${reportID}`);
+    console.log(res.data);
+    return res.data;
+  } catch {
+    window.location.href = `/analyst/${nickname}/report`;
+    alert("게시글 가져오기 실패");
+  }
 };
 
 export const writeReportAPI = async (report: Report) => {

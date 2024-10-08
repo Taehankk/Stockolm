@@ -164,7 +164,7 @@ const ReportWritePage = () => {
         // console.log(marketCapitalization);
 
         dispatch(setReportTitle(""));
-        dispatch(setStockName(""));
+        dispatch(setStockName("PDF 파일을 업로드 해주세요."));
         dispatch(setGoalDate(""));
         dispatch(setCurrentStock(0));
         dispatch(setGoalStock(0));
@@ -183,7 +183,7 @@ const ReportWritePage = () => {
 
   const cancelReportWrite = () => {
     dispatch(setReportTitle(""));
-    dispatch(setStockName(""));
+    dispatch(setStockName("PDF 파일을 업로드 해주세요."));
     dispatch(setGoalDate(""));
     dispatch(setCurrentStock(0));
     dispatch(setGoalStock(0));

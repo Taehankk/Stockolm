@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { getReportAPI } from "../api/communityAPI";
-
+// import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+// import { getReportAPI } from "../api/communityAPI";
+//
 // 분석글 작성
 // interface Report {
 //   title: string;
@@ -62,14 +63,6 @@ const initialState: ReportState = {
   error: null,
 };
 
-export const getReportData = createAsyncThunk(
-  "board/getReportData",
-  async (reportID: string) => {
-    const response = await getReportAPI(reportID);
-    return response;
-  }
-);
-
 const reportSlice = createSlice({
   name: "board",
   initialState,
@@ -104,37 +97,6 @@ const reportSlice = createSlice({
     setFilePath: (state, action: PayloadAction<string>) => {
       state.filePath = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(getReportData.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getReportData.fulfilled, (state, action) => {
-        state.loading = false;
-        state.analystBoardId = action.payload.analystBoardId;
-        state.stockName = action.payload.stockName;
-        state.title = action.payload.title;
-        state.userName = action.payload.userName;
-        state.userNickname = action.payload.userNickname;
-        state.userImagePath = action.payload.userImagePath;
-        state.opinion = action.payload.opinion;
-        state.goalStock = action.payload.goalStock;
-        state.currentStock = action.payload.currentStock;
-        state.marketCapitalization = action.payload.marketCapitalization;
-        state.content = action.payload.content;
-        state.filePath = action.payload.filePath;
-        state.likeCnt = action.payload.likeCnt;
-        state.viewCnt = action.payload.viewCnt;
-        state.createAt = action.payload.createAt;
-        state.updateAt = action.payload.updateAt;
-        state.isLike = action.payload.isLike;
-      })
-      .addCase(getReportData.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "분석글 가져오기 실패";
-      });
   },
 });
 

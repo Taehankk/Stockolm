@@ -20,6 +20,7 @@ import {
 import { RootState, useAppDispatch } from "../../../store";
 import { getUserInfo } from "../../../slices/userSlice";
 import { useSelector } from "react-redux";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 interface Report {
   content: string; // 요약 내용
@@ -41,6 +42,8 @@ interface Report {
 }
 
 const ReportDetail = () => {
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -49,20 +52,22 @@ const ReportDetail = () => {
   const sanitizer = dompurify.sanitize;
 
   const token = sessionStorage.getItem("access_token");
-  const nickName = useSelector((state: RootState) => state.user.userNickName);
+  const loginUser = useSelector((state: RootState) => state.user.userNickName);
 
   const { nickname, id: reportID } = useParams();
 
   const [report, setReport] = useState<Report>();
 
   const [isLike, setLike] = useState(false);
+  const [reportLike, setReportLike] = useState(0);
 
   const getReport = async () => {
     try {
-      const res = await getReportAPI(reportID!);
+      const res = await getReportAPI(reportID!, nickname!);
       setReport(res);
+      setLoading(false);
     } catch {
-      alert("게시글 가져오기 실패");
+      setLoading(false);
     }
   };
 
@@ -72,9 +77,14 @@ const ReportDetail = () => {
 
   const handleLike = async () => {
     try {
-      if (nickName !== report?.userNickName) {
-        await changeReportLikeStateAPI(reportID!);
+      if (loginUser !== report?.userNickName) {
         setLike(!isLike);
+        if (isLike) {
+          setReportLike(reportLike - 1);
+        } else {
+          setReportLike(reportLike + 1);
+        }
+        await changeReportLikeStateAPI(reportID!);
       }
     } catch {
       alert("좋아요 변경 실패");
@@ -88,13 +98,14 @@ const ReportDetail = () => {
   useEffect(() => {
     if (report) {
       setLike(report.like);
+      setReportLike(report.likeCnt);
     }
 
     if (report && report.userNickName && report.userNickName !== nickname) {
+      navigate(`/analyst/${nickname}/report`);
       alert(
         `해당 애널리스트가 작성한 게시글이 아닙니다. ${nickname} 의 페이지로 이동합니다.`
       );
-      navigate(`/analyst/${nickname}/report`);
     }
   }, [report, nickname, reportID, navigate]);
 
@@ -103,6 +114,10 @@ const ReportDetail = () => {
       dispatch(getUserInfo());
     }
   }, [token]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="flex justify-items-center w-[80%]">
@@ -128,17 +143,10 @@ const ReportDetail = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="flex w-full gap-2 mr-2">
-                    <div onClick={handleLike}>
-                      {isLike ? (
-                        <FontAwesomeIcon
-                          icon={like}
-                          className="text-PrimaryRed"
-                        />
-                      ) : (
-                        <FontAwesomeIcon icon={unlike} className="opacity-50" />
-                      )}
+                    <div>
+                      <FontAwesomeIcon icon={unlike} className="opacity-50" />
                     </div>
-                    <span className="opacity-50">{report?.likeCnt}</span>
+                    <span className="opacity-50">{reportLike}</span>
                   </span>
                   <span className="flex w-full gap-2 mr-2 opacity-50">
                     <FontAwesomeIcon icon={faEye} className="" />
@@ -152,6 +160,17 @@ const ReportDetail = () => {
                 </span>
                 <span className="opacity-50">보고서 다운로드</span>
               </a>
+              {report?.userNickName !== loginUser ? (
+                <div onClick={handleLike} className="flex mb-1 text-2xl">
+                  {isLike ? (
+                    <FontAwesomeIcon icon={like} className="text-PrimaryRed" />
+                  ) : (
+                    <FontAwesomeIcon icon={unlike} className="text-2xl" />
+                  )}
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           </div>
 

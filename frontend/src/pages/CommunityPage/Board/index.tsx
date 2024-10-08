@@ -66,6 +66,7 @@ const Board = () => {
 
   const searchBoard = () => {
     getBoardList();
+    dispatch(setCurrentPage(1));
   };
 
   const getBoardList = async () => {
@@ -96,7 +97,12 @@ const Board = () => {
 
   useEffect(() => {
     getBoardList();
-  }, [currentPage, sort]);
+  }, [currentPage]);
+
+  useEffect(() => {
+    getBoardList();
+    dispatch(setCurrentPage(1));
+  }, [sort]);
 
   return (
     <div className="mt-10">
