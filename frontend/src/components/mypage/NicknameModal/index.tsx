@@ -18,18 +18,29 @@ const NicknameModal = ({
 }: NicknameModalProps) => {
 
   const [newNickname, setNewNickname] = useState("");
+  const [error, setError] = useState("");
 
   const dispatch: AppDispatch = useDispatch(); 
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewNickname(e.target.value);
+    const value = e.target.value;
+    if (value.length <= 8) {
+      setNewNickname(value);
+      setError("");
+      console.log(error);
+    } else {
+      setError("닉네임은 1~8글자로 입력해주세요.");
+    }
   }
-
   const handleClickCloseButton = () => {
     setIsModal(false);
   }
 
   const handleClickConfirmButton = async () => {
+    if (newNickname.length === 0) {
+      alert("닉네임을 입력해주세요.");
+    return;
+  }
     try {
       const response = await patchNickname(newNickname);
 
