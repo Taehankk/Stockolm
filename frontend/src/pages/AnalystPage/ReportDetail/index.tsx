@@ -120,23 +120,23 @@ const ReportDetail = () => {
   }
 
   return (
-    <div className="flex justify-items-center w-[80%]">
-      <div className="">
+    <div className="">
+      <div className="w-[90%] flex-col justify-center items-center">
         <div
           onClick={backToReportList}
-          className="cursor-pointer text-3xl mb-10"
+          className="cursor-pointer text-3xl mb-8"
         >
           <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
           작성글보기
         </div>
 
-        <div className="border border-black border-opacity-10 rounded-lg p-10">
+        <div className="flex-col ml-4 min-h-[40rem] justify-center items-center border border-black border-opacity-10 rounded-lg p-10">
           {/* 제목 */}
           <div className="text-4xl">{report?.title}</div>
 
           {/* 시간, 좋아요, 조회수, pdf */}
           <div className="flex text-sm mt-3">
-            <div className="flex w-full gap-2 justify-between">
+            <div className="flex w-full gap-2 items-center justify-between">
               <div className="flex justify-between">
                 <div className="mr-20 w-full opacity-50">
                   <span className="">{report?.createAt.split("T")[0]}</span>
@@ -154,23 +154,28 @@ const ReportDetail = () => {
                   </span>
                 </div>
               </div>
-              <a href={report?.filePath} className="cursor-pointer">
-                <span className="mr-2">
-                  <FontAwesomeIcon icon={faFilePdf} />
-                </span>
-                <span className="opacity-50">보고서 다운로드</span>
-              </a>
-              {report?.userNickName !== loginUser ? (
-                <div onClick={handleLike} className="flex mb-1 text-2xl">
-                  {isLike ? (
-                    <FontAwesomeIcon icon={like} className="text-PrimaryRed" />
-                  ) : (
-                    <FontAwesomeIcon icon={unlike} className="text-2xl" />
-                  )}
-                </div>
-              ) : (
-                ""
-              )}
+              <div className="flex items-center">
+                <a href={report?.filePath} className="cursor-pointer mr-4">
+                  <span className="mr-2">
+                    <FontAwesomeIcon icon={faFilePdf} />
+                  </span>
+                  <span className="opacity-50">보고서 다운로드</span>
+                </a>
+                {report?.userNickName !== loginUser ? (
+                  <div onClick={handleLike} className="flex mb-1 text-2xl">
+                    {isLike ? (
+                      <FontAwesomeIcon
+                        icon={like}
+                        className="text-PrimaryRed"
+                      />
+                    ) : (
+                      <FontAwesomeIcon icon={unlike} className="text-2xl" />
+                    )}
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           </div>
 
