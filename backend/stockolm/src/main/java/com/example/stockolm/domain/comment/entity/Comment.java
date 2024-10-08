@@ -23,8 +23,8 @@ public class Comment {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id")
-    private Board board;
+    @JoinColumn(name = "board_id", updatable = false, insertable = false)
+    private Board board; // comment 생성으로 board의 수정일이 업데이트 되는것을 방지하기 위해, 읽기 전용으로 설정
 
     private String content;
 
