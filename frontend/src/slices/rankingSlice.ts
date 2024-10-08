@@ -35,13 +35,25 @@ const initialState: RankingState = {
 
 export const getRankings = createAsyncThunk<
   RankingResponse,
-  { rankValue: string | null; page: number; size: number; sort: string | null },
+  {
+    rankValue: string | null;
+    page: number;
+    size: number;
+    sort: string | null;
+    analystName?: string;
+  },
   { rejectValue: string }
 >(
   "rankings/fetchRankings",
-  async ({ rankValue, page, size, sort }, thunkAPI) => {
+  async ({ rankValue, page, size, sort, analystName }, thunkAPI) => {
     try {
-      const data = await fetchRankings(rankValue, page, size, sort);
+      const data = await fetchRankings(
+        rankValue,
+        page,
+        size,
+        sort,
+        analystName
+      );
       console.log("받아오는 ranking", data);
       return data;
     } catch (error: unknown) {

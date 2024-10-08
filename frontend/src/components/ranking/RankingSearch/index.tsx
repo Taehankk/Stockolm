@@ -11,6 +11,12 @@ const RankingSearch: React.FC<RankingSearchProps> = ({ onSearch }) => {
     onSearch(searchTerm);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <div className="flex w-3/5 items-center border border-gray-400 rounded-full px-2 py-1 justify-between">
       <input
@@ -19,6 +25,7 @@ const RankingSearch: React.FC<RankingSearchProps> = ({ onSearch }) => {
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="분석가 이름을 검색하세요"
         className="p-2 px-6 w-4/5 rounded outline-none"
+        onKeyDown={handleKeyDown}
       />
       <button
         onClick={handleSearch}
