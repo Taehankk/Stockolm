@@ -213,28 +213,29 @@ const ReportWritePage = () => {
 
   return (
     <BasicLayout>
-      <div className="flex justify-center mt-10">
-        <div className="flex flex-col">
+      <div className="w-[90vw] max-w-6xl mx-auto flex justify-center mt-10">
+        <div className="w-full flex flex-col">
           <div
             onClick={backToReportList}
-            className="cursor-pointer text-3xl mb-10"
+            className="cursor-pointer text-3xl mb-10 items-center"
           >
             <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
             종목분석게시판
           </div>
-          <div className="w-full">
-            <span className="mr-2">주식종목</span>
-            <span className="rounded-full border border-black">
+          <div className="flex mb-4 items-center">
+            <span className="mr-4">주식종목</span>
+            <span className="text-center content-center rounded-full border border-black px-4 min-w-[4rem] min-h-[2rem]">
               {stockName}
             </span>
           </div>
-          <div className="flex">
-            <span>파일</span>
+          <div className="flex mb-4">
+            <span className="mr-2">파일</span>
             <div>
-              <Input
+              <input
                 type="file"
                 onChange={fileUploadValidHandler}
-                className="w-96"
+                placeholder="PDF 파일 업로드"
+                className=""
               />
             </div>
           </div>
@@ -242,7 +243,7 @@ const ReportWritePage = () => {
             value={reportTitle}
             onChange={handleReportTitle}
             placeholder="제목을 입력해주세요"
-            className="border-none"
+            className="border-none p-2 mb-4"
           />
 
           {/* 글 작성 라이브러리 칸 */}
