@@ -40,7 +40,7 @@ const AnalystStockChart = ({
       };
 
       const recentStockData = stockData
-        .slice(-50)
+        .slice(-80)
         .filter(
           (item) =>
             !isNaN(new Date(formatDate(item.stockDate)).getTime()) &&
@@ -87,32 +87,26 @@ const AnalystStockChart = ({
       labels: {
         formatter: function (timestamp) {
           if (timestamp) {
-            return new Date(timestamp).toLocaleDateString("ko", {
+            const date = new Date(timestamp).toLocaleDateString("ko", {
               month: "short",
               day: "numeric",
             });
+            return date;
           }
           return "";
         },
       },
     },
-    fill: {
-      type: ["solid", "gradient"],
-      gradient: {
-        shade: "dark",
-        gradientToColors: ["#FDD835"],
-        shadeIntensity: 1,
-        type: "horizontal",
-        opacityFrom: 0.9,
-        opacityTo: 0.3,
-        stops: [0, 100],
-      },
-    },
     yaxis: {
+      forceNiceScale: true,
       tickAmount: 5,
     },
     tooltip: {
       shared: false,
+      x: {
+        format: "dd MMM",
+      },
+
       custom: function ({ seriesIndex, dataPointIndex, w }) {
         const data = w.globals.series[seriesIndex][dataPointIndex];
         if (seriesIndex === 1) {
@@ -133,7 +127,7 @@ const AnalystStockChart = ({
       },
     },
     markers: {
-      size: [0, 5],
+      size: [0.1, 5],
       colors: ["#FF4560"],
     },
     colors: ["#00E396", "#FF4560"],
