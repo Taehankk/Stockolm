@@ -69,6 +69,7 @@ const MyPage: React.FC = () => {
 
   useEffect(() => {
     setNickName(userNickName);
+
   }, [userNickName]);
 
   if (loading || analystInfoIsLoading) {
