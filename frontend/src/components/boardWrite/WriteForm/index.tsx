@@ -11,6 +11,7 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
 import axiosTokenInstance from "../../../api/axiosTokenInstance";
+import { validateEditorInputLength } from "../../../utils/validation";
 
 const WriteForm = () => {
   const location = useLocation();
@@ -96,9 +97,9 @@ const WriteForm = () => {
 
   const handleChange = (html: string) => {
     if (location.pathname === "/community/report/write") {
-      dispatch(setReportContent(html));
+      dispatch(setReportContent(validateEditorInputLength(html)));
     } else if (location.pathname === "/community/board/write") {
-      dispatch(setBoardContent(html));
+      dispatch(setBoardContent(validateEditorInputLength(html)));
     }
   };
 
@@ -119,7 +120,7 @@ const WriteForm = () => {
         }
         onChange={handleChange}
         ref={quillRef}
-        className="h-40"
+        className="h-40 w-[60rem]"
       />
     </div>
   );

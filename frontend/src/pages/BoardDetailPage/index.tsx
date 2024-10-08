@@ -59,6 +59,7 @@ const BoardDetailPage = () => {
   const token = sessionStorage.getItem("access_token");
 
   const [isLike, setLike] = useState(false);
+  const [boardLike, setBoardLike] = useState(0);
 
   const nickName = useSelector((state: RootState) => state.user.userNickName);
 
@@ -77,6 +78,11 @@ const BoardDetailPage = () => {
     if (boardData?.userNickname !== nickName) {
       try {
         setLike(!isLike);
+        if (isLike) {
+          setBoardLike(boardLike - 1);
+        } else {
+          setBoardLike(boardLike + 1);
+        }
         await changeLikeStateAPI(boardID!);
       } catch {
         alert("좋아요 변경 실패");
@@ -89,6 +95,7 @@ const BoardDetailPage = () => {
       const res = await getBoardAPI(token, boardID!);
       setBoardData(res);
       setLike(res.like);
+      setBoardLike(res.likeCnt);
     } catch {
       alert("게시판 상세 조회 실패");
     }
@@ -131,6 +138,13 @@ const BoardDetailPage = () => {
     }
   };
 
+  // onKeyDown 핸들러에서 Enter 키 감지
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      registComment(); // Enter 키 입력 시 searchList 함수 호출
+    }
+  };
+
   useEffect(() => {
     getBoard();
     if (token) {
@@ -165,17 +179,10 @@ const BoardDetailPage = () => {
               </span>
               <div className="flex gap-2">
                 <span className="flex gap-2 mr-2">
-                  <div onClick={handleLike}>
-                    {isLike ? (
-                      <FontAwesomeIcon
-                        icon={like}
-                        className="text-PrimaryRed"
-                      />
-                    ) : (
-                      <FontAwesomeIcon icon={unlike} />
-                    )}
+                  <div>
+                    <FontAwesomeIcon icon={unlike} />
                   </div>
-                  {boardData?.likeCnt}
+                  {boardLike}
                 </span>
                 <span className="flex gap-2 mr-2">
                   <FontAwesomeIcon icon={faEye} />
@@ -250,6 +257,7 @@ const BoardDetailPage = () => {
                   <Input
                     value={commentValue}
                     onChange={handleCommentValue}
+                    onKeyUp={handleKeyUp} // Enter 키 감지하는 핸들러 추가
                     className="rounded-3xl w-[40rem] mr-2"
                   />
                   <Button

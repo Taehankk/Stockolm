@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { validateTitleInputLength } from "../../utils/validation";
 
 interface Report {
   title: string;
@@ -128,7 +129,7 @@ const ReportWritePage = () => {
 
   const handleReportTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    dispatch(setReportTitle(value));
+    dispatch(setReportTitle(validateTitleInputLength(value)));
   };
 
   const writeReport = async () => {

@@ -40,3 +40,35 @@ export const validateMatchPassword = (
   }
   return undefined;
 };
+
+export const validateSearchInputLength = (value: string) => {
+  if (value.length > 20) {
+    alert("최대 20자 입력만 가능합니다.");
+    return value.slice(0, 21);
+  }
+  return value;
+};
+
+export const validateCommentInputLength = (value: string) => {
+  if (value.length > 100) {
+    alert("최대 50자 입력만 가능합니다.");
+    return value.slice(0, 51);
+  }
+  return value;
+};
+
+export const validateEditorInputLength = (value: string) => {
+  if (value.length > 500) {
+    alert("최대 300자 입력만 가능합니다.");
+    return value.slice(0, 301);
+  }
+  return value;
+};
+
+export const validateTitleInputLength = (value: string) => {
+  if (value.length > 50) {
+    alert("최대 30자 입력만 가능합니다.");
+    return value.slice(0, 16);
+  }
+  return value;
+};
