@@ -138,11 +138,16 @@ export const patchNickname = async (newNickname: string) => {
 
 export const postProfileImage = async (file: File) => {
   try {
-    const formData = new FormData();
-    formData.append('file', file);
-
     const response = await axiosTokenInstance.post(
       '/upload/user-image',
+      {
+        file: file, // multipart/form-data 형식으로 전송
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
 
     return response;
