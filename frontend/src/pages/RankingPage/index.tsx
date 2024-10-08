@@ -17,22 +17,32 @@ const RankingPage: React.FC = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rankValue, setRankValue] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     dispatch(
-      getRankings({ rankValue, page: currentPage, size: 5, sort: null })
+      getRankings({
+        rankValue,
+        page: currentPage,
+        size: 5,
+        sort: null,
+        analystName: searchQuery,
+      })
     );
-  }, [dispatch, currentPage, rankValue]);
+  }, [dispatch, currentPage, rankValue, searchQuery]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleSearch = (query: string) => {
-    console.log(query);
+    setSearchQuery(query);
   };
 
-  // rankValue에 따른 텍스트 값 설정
+  const handleShowAll = () => {
+    setSearchQuery(undefined); // 검색어 초기화
+  };
+
   const getRankText = () => {
     if (rankValue === "accuracy") return "정확도";
     if (rankValue === "reliability") return "신뢰도";
@@ -47,6 +57,16 @@ const RankingPage: React.FC = () => {
             <RankingSearch onSearch={handleSearch} />
           </div>
           <div className="flex justify-end my-3 gap-3">
+            <Button
+              size="large"
+              fontSize="medium"
+              color="black"
+              className="bg-white mr-[35rem] py-2 flex items-center justify-center"
+              border="1"
+              onClick={handleShowAll}
+            >
+              전체순위보기
+            </Button>
             <Button
               size="small"
               fontSize="medium"

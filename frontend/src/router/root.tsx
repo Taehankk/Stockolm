@@ -23,7 +23,7 @@ const BoardWrite = lazy(() => import("../pages/BoardWritePage"));
 const AuthPage = lazy(() => import("../pages/AuthPage"));
 
 const MyPageIndex = lazy(() => import("../pages/MyPage"));
-const MyPageProfile = lazy(() =>  import("../pages/MyPage/Profile"));
+const MyPageProfile = lazy(() => import("../pages/MyPage/Profile"));
 const MyPagePassword = lazy(() => import("../pages/MyPage/Password"));
 
 const Ranking = lazy(() => import("../pages/RankingPage"));
@@ -183,6 +183,10 @@ const root = createBrowserRouter([
         <Stock />
       </Suspense>
     ),
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace={true} />,
   },
 ]);
 

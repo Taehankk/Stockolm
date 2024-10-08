@@ -1,4 +1,3 @@
-import face from "../../../../assets/face.jpg";
 import { Analyst } from "../../../../types/stock";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +9,18 @@ const BestAnalystListItem = ({ analyst }: BestAnalystListItemProps) => {
   const nav = useNavigate();
 
   const handleBestAnalystClick = () => {
-    nav(`/analyst/${analyst.analystNickname}/report/${analyst.analystBoardId}`);
+    const accessToken = sessionStorage.getItem("access_token");
+
+    if (accessToken) {
+      nav(
+        `/analyst/${analyst.analystNickname}/report/${analyst.analystBoardId}`
+      );
+    } else {
+      alert("로그인이 필요합니다.");
+      nav(`/auth`, {
+        state: { imgLocation: 0 },
+      });
+    }
   };
 
   return (
@@ -22,7 +32,7 @@ const BestAnalystListItem = ({ analyst }: BestAnalystListItemProps) => {
         <div className="flex-2">
           <img
             className="w-[50px] h-[50px] rounded-full border"
-            src={analyst.userImagePath || face}
+            src={analyst.userImagePath}
             alt={analyst.analystName}
           />
         </div>
