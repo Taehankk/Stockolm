@@ -105,35 +105,41 @@ const Board = () => {
   }, [sort]);
 
   return (
-    <div className="mt-10">
-      <span className="text-3xl">자유게시판</span>
-      <div className="flex mt-4 mb-2 justify-between items-center">
-        <Filter sort={sort} handleSort={handleSort} />
-        <Search
-          searchValue={searchWord}
-          handleSearchValue={handleSearchValue}
-          searchList={searchBoard}
+    <div className="w-[90%] mt-10">
+      <div>
+        <span className="text-3xl">자유게시판</span>
+        <div className="flex mt-4 mb-2 justify-between items-center">
+          <Filter sort={sort} handleSort={handleSort} />
+          <Search
+            searchValue={searchWord}
+            handleSearchValue={handleSearchValue}
+            searchList={searchBoard}
+          />
+        </div>
+
+        {boardList[0] ? (
+          boardList.map((board, index) => (
+            <OneBoard key={index} board={board} />
+          ))
+        ) : (
+          <span className="mt-[10rem] text-[1.5rem]">
+            등록된 글이 없습니다.
+          </span>
+        )}
+
+        <Pagination
+          currentPage={currentPage}
+          totalItems={totalItems}
+          onPageChange={onPageChange}
+          itemsPerPage={itemsPerPage}
         />
-      </div>
-
-      {boardList[0] ? (
-        boardList.map((board, index) => <OneBoard key={index} board={board} />)
-      ) : (
-        <span className="mt-[10rem] text-[1.5rem]">등록된 글이 없습니다.</span>
-      )}
-
-      <Pagination
-        currentPage={currentPage}
-        totalItems={totalItems}
-        onPageChange={onPageChange}
-        itemsPerPage={itemsPerPage}
-      />
-      <div className="flex justify-end mt-6">
-        <div
-          onClick={toBoardWrite}
-          className="w-16 h-6 text-center content-center text-xs border border-black rounded-md"
-        >
-          글쓰기
+        <div className="flex justify-end mt-6">
+          <div
+            onClick={toBoardWrite}
+            className="w-16 h-8 mb-10 text-center content-center text-xs border border-black rounded-md"
+          >
+            글쓰기
+          </div>
         </div>
       </div>
     </div>

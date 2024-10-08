@@ -104,7 +104,7 @@ const WriteForm = () => {
   };
 
   return (
-    <div className="h-full">
+    <div className="w-full h-full">
       <ReactQuill
         theme="snow"
         modules={modules}
@@ -120,7 +120,7 @@ const WriteForm = () => {
         }
         onChange={handleChange}
         ref={quillRef}
-        className="h-40 w-[50rem]"
+        className="h-40 w-full"
       />
     </div>
   );

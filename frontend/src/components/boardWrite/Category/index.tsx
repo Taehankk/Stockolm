@@ -5,8 +5,8 @@ interface Props {
 
 const Category = ({ category, handleCategory }: Props) => {
   return (
-    <div className="flex gap-2 items-center">
-      <span>카테고리</span>
+    <div className="flex gap-2 items-center mb-4">
+      <span className="mr-4">카테고리</span>
       <div className="flex gap-2">
         <div
           key="WORRY"
