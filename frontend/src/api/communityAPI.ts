@@ -12,12 +12,12 @@ interface Board {
 
 interface Report {
   title: string;
-  content: string;
   stockName: string;
   opinion: string;
   goalStock: number;
   currentStock: number;
   marketCapitalization: number;
+  content: string;
   goalDate: Date;
   filePath: string;
 }
@@ -66,7 +66,10 @@ export const pdfFormAPI = async (file: string | undefined) => {
       }
     );
 
-    return res.data.document.entities[0].properties;
+    console.log(res.data.document.text.split("\n"));
+
+    // return res.data.document.entities[0].properties;
+    return res.data.document.text.split("\n");
   } catch (e) {
     console.log(e);
   }
@@ -246,21 +249,21 @@ export const getReportAPI = async (reportID: string) => {
 
 export const writeReportAPI = async (report: Report) => {
   try {
+    console.log(report);
     const res = await axiosTokenInstance.post("/analyst-board", {
       title: report.title,
-      content: report.content,
       stockName: report.stockName,
       opinion: report.opinion,
-      goalStock: report.goalStock,
-      currentStock: report.currentStock,
-      marketCapitalization: report.marketCapitalization * 1000000,
+      goalStock: Number(report.goalStock),
+      currentStock: Number(report.currentStock),
+      marketCapitalization: Number(report.marketCapitalization) * 1000000,
+      content: report.content,
       goalDate: report.goalDate,
       filePath: report.filePath,
     });
 
-    console.log(res.data);
     return res.data;
   } catch {
-    alert("PDF 형식이나 미입력값을 확인하세요.");
+    alert("PDF 형식(종목명 등)이나 미입력값을 확인하세요.");
   }
 };
