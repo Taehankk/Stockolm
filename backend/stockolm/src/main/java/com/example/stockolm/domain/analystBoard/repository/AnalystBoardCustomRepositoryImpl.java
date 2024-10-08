@@ -13,18 +13,25 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import static com.example.stockolm.domain.analyst.entity.QAnalystInfo.analystInfo;
+import static com.example.stockolm.domain.analystBoard.entity.QAnalystBoard.analystBoard;
+import static com.example.stockolm.domain.user.entity.QUser.user;
 
 
 public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepository {
@@ -97,16 +104,6 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
         QAnalystInfo analystInfo = QAnalystInfo.analystInfo;
         QUser user = QUser.user;
 
-          // Subquery to count total posts by the user
-        JPQLQuery<Long> totalPosts = JPAExpressions
-                .select(analystBoard.count())
-                .from(analystBoard)
-                .where(analystBoard.user.userId.eq(analystInfo.user.userId));
-
-        // Calculated accuracy and reliability
-        NumberExpression<Integer> calculatedAccuracy = analystInfo.accuracy.divide(totalPosts).multiply(100.0);
-        NumberExpression<Integer> calculatedReliability = analystInfo.reliability.divide(totalPosts).multiply(100.0);
-
         return queryFactory
                 .select(Projections.constructor(
                         BestAnalystResponse.class,
@@ -114,8 +111,8 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                         analystBoard.goalDate,
                         analystBoard.opinion,
                         analystBoard.goalStock,
-                        calculatedReliability.as("reliability"), // Calculated accuracy
-                        calculatedAccuracy.as("accuracy"), // Calculated accuracy
+                        getAnalystReliability(user.userId),
+                        getAnalystAccuracy(user.userId),
                         user.userName,
                         user.userImagePath,
                         user.userNickname
@@ -124,9 +121,27 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                 .join(analystInfo).on(analystBoard.user.userId.eq(analystInfo.user.userId))
                 .join(user).on(analystBoard.user.userId.eq(user.userId))
                 .where(analystBoard.stock.stockId.eq(stockId))
-                .orderBy(analystInfo.reliability.desc())
+                .orderBy(getAnalystReliability(user.userId).desc(), analystInfo.totalAnalystScore.desc())
                 .limit(5)
                 .fetch();
+    }
+
+
+    private NumberExpression<Integer> getAnalystReliability(NumberPath<Long> userId) {
+        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
+        return analystInfo.reliability.divide(boardSize).multiply(100).floor();
+    }
+
+    private NumberExpression<Integer> getAnalystAccuracy(NumberPath<Long> userId) {
+        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
+        return analystInfo.accuracy.divide(boardSize).multiply(100).floor();
+    }
+
+    private JPAQuery<Long> getGoalBoardSize(NumberPath<Long> userId) {
+        return queryFactory
+                .select(analystBoard.countDistinct())
+                .from(analystBoard)
+                .where(analystBoard.goalDate.loe(LocalDate.now()).and(user.userId.eq(userId)));
     }
 
     @Override
@@ -138,17 +153,17 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
 
         // 검색어 조건 처리
         BooleanBuilder builder = new BooleanBuilder();
-        if(searchWord != null && !searchWord.isEmpty()) {
+        if (searchWord != null && !searchWord.isEmpty()) {
             builder.and(analystBoard.title.contains(searchWord).or(analystBoard.content.contains(searchWord)).or(stock.stockName.contains(searchWord)));
         }
 
         // 애널리스트 검색 조건 처리
-        if(searchAnalyst != null && !searchAnalyst.isEmpty()) {
+        if (searchAnalyst != null && !searchAnalyst.isEmpty()) {
             builder.and(analystBoard.user.userNickname.eq(searchAnalyst));
         }
 
         // 종목별로 모아보기 조건 처리
-        if(stockName != null && !stockName.isEmpty()) {
+        if (stockName != null && !stockName.isEmpty()) {
             builder.and(analystBoard.stock.stockName.eq(stockName));
         }
 
@@ -185,7 +200,7 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                 .where(builder);
 
         // 특정 애널리스트가 작성한 글만 조회하는 경우, 대표글을 먼저 보여주기
-        if(searchAnalyst != null && !searchAnalyst.isEmpty()) {
+        if (searchAnalyst != null && !searchAnalyst.isEmpty()) {
             query.orderBy(analystBoard.mainContent.desc());
         }
 
