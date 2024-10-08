@@ -5,10 +5,13 @@ import com.example.stockolm.domain.board.entity.*;
 import com.example.stockolm.domain.comment.entity.QComment;
 import com.example.stockolm.domain.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
@@ -51,7 +54,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
                     .exists();
         }
 
-        List<BoardPageResponse> boardPage = queryFactory
+        JPQLQuery<BoardPageResponse> query = queryFactory
                 .select(Projections.constructor(BoardPageResponse.class,
                         user.userNickname,
                         user.userImagePath,
@@ -69,23 +72,38 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository {
                 ))
                 .from(board)
                 .join(board.user, user)
-                .where(builder)
+                .where(builder);
+
+        // 정렬 조건 적용 (항상 내림차순)
+        String sortProperty = pageable.getSort().isSorted()
+                ? pageable.getSort().iterator().next().getProperty()
+                : "latest"; // 기본값은 최신순 정렬
+
+        OrderSpecifier<?> orderSpecifier;
+
+        switch (sortProperty) {
+            case "like":
+                orderSpecifier = board.likeCnt.desc();
+                break;
+            case "view":
+                orderSpecifier = board.viewCnt.desc();
+                break;
+            case "comment":
+                orderSpecifier = new OrderSpecifier<>(Order.DESC,
+                        JPAExpressions.select(comment.count())
+                                .from(comment)
+                                .where(comment.board.boardId.eq(board.boardId)));
+                break;
+            default:
+                orderSpecifier = board.createAt.desc();
+        }
+        query.orderBy(orderSpecifier);
+
+        List<BoardPageResponse> boardPage = query
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        // 정렬 조건 처리
-        Map<String, Function<BoardPageResponse, Comparable>> sortMap = Map.of(
-                "latest", BoardPageResponse::getCreateAt,
-                "like", BoardPageResponse::getLikeCnt,
-                "view", BoardPageResponse::getViewCnt,
-                "comment", BoardPageResponse::getCommentCnt
-        );
-        Comparator<BoardPageResponse> comparator = Comparator.comparing(
-                sortMap.getOrDefault(pageable.getSort().isSorted() ? pageable.getSort().iterator().next().getProperty() : "",
-                        BoardPageResponse::getCreateAt) // 기본값은 최신순 정렬
-        );
-        boardPage.sort(comparator.reversed()); // 항상 내림차순 정렬
 
         Long total = queryFactory
                 .select(board.count())
