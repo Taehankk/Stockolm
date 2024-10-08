@@ -173,6 +173,11 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                 .join(analystBoard.stock, stock)
                 .where(builder);
 
+        // 특정 애널리스트가 작성한 글만 조회하는 경우, 대표글을 먼저 보여주기
+        if(searchAnalyst != null && !searchAnalyst.isEmpty()) {
+            query.orderBy(analystBoard.mainContent.desc());
+        }
+
         // 정렬 조건 적용 (항상 내림차순)
         String sortProperty = pageable.getSort().isSorted()
                 ? pageable.getSort().iterator().next().getProperty()
