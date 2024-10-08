@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
-import axiosTokenInstance from "../../../api/axiosTokenInstance";
 import axiosInstance from "../../../api/axiosInstance";
 
 interface Props {
