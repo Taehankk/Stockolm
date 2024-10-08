@@ -1,4 +1,3 @@
-import axios from "axios";
 import axiosTokenInstance from "./axiosTokenInstance";
 
 interface Stock {
