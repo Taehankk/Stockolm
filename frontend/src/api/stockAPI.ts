@@ -1,32 +1,34 @@
 import axios from "axios";
 
-const appkey = import.meta.env.VITE_STOCK_APP_KEY;
-const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
-const accessToken = import.meta.env.VITE_STOCK_ACCESS_TOKEN;
+// const appkey = import.meta.env.VITE_STOCK_APP_KEY;
+// const appsecret = import.meta.env.VITE_STOCK_APP_SECRET;
+// const accessToken = import.meta.env.VITE_STOCK_ACCESS_TOKEN;
 const baseURL = "https://j11b201.p.ssafy.io/api/v1";
 
 const getToken = () => sessionStorage.getItem("access_token");
 
 export const getStockData = async (stockCode: string) => {
-  const headers = {
-    "Content-Type": "application/json",
-    authorization: `Bearer ${accessToken}`,
-    appkey: appkey,
-    appsecret: appsecret,
-    tr_id: "FHKST01010100",
-  };
+  // const headers = {
+  //   "Content-Type": "application/json",
+  //   authorization: `Bearer ${accessToken}`,
+  //   appkey: appkey,
+  //   appsecret: appsecret,
+  //   tr_id: "FHKST01010100",
+  // };
 
   try {
     const response = await axios.get(
-      `/api/uapi/domestic-stock/v1/quotations/inquire-price`,
-      {
-        headers: headers,
-        params: {
-          FID_COND_MRKT_DIV_CODE: "J",
-          FID_INPUT_ISCD: `${stockCode}`,
-        },
-      }
+      // `/api/uapi/domestic-stock/v1/quotations/inquire-price`,
+      `${baseURL}/stock/inquire-price/${stockCode}`
+      // {
+      //   headers: headers,
+      //   params: {
+      //     FID_COND_MRKT_DIV_CODE: "J",
+      //     FID_INPUT_ISCD: `${stockCode}`,
+      //   },
+      // }
     );
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching stock data:", error);
