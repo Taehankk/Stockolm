@@ -82,14 +82,15 @@ const AnalystSignUp = () => {
         }`}
       >
         <div className="transition-transform">
-          <div className="flex justify-between items-center">
-            <span>코드</span>
+          {/* <div className="flex justify-between items-center"> */}
+          <div className="flex mt-2 gap-4 w-[24vw] justify-between">
+            <span className="mt-1.5">코드</span>
             <div className="flex items-center justify-end mb-2">
               <Input
-                size="small"
+                size="medium"
                 onChange={handleCodeInputChange}
                 value={codeInput}
-                className="mr-8 w-32"
+                className="mr-2 text-sm"
               />
               <Button
                 size="small"
@@ -100,8 +101,8 @@ const AnalystSignUp = () => {
             </div>
           </div>
 
-          <div className="flex justify-between items-center">
-            <span>이름</span>
+          <div className="flex justify-between mb-1.5 min-h-[3.4rem]">
+            <span className="mt-1.5">이름</span>
             <Input
               onChange={handleNameInputChange}
               value={nameInput}
