@@ -40,10 +40,6 @@ public class CommentServiceImpl implements CommentService {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        // Board 엔티티를 영속성 컨텍스트에서 분리하여 더티 체킹 방지
-        // - comment 생성시 board의 수정일까지 업데이트 되는 것을 방지하기 위함
-        entityManager.detach(board);
-
         Comment comment = Comment.builder()
                 .board(board)
                 .user(user)
@@ -62,10 +58,6 @@ public class CommentServiceImpl implements CommentService {
             throw new UnauthorizedAccessException();
         }
 
-        // Board 더티체킹 방지
-        Board board = comment.getBoard();
-        entityManager.detach(board);
-
         comment.update(modifyCommentRequest.getContent());
     }
 
@@ -77,10 +69,6 @@ public class CommentServiceImpl implements CommentService {
         if (!userId.equals(comment.getUser().getUserId())) {
             throw new UnauthorizedAccessException();
         }
-
-        // Board 더티체킹 방지
-        Board board = comment.getBoard();
-        entityManager.detach(board);
 
         commentRepository.deleteById(commentId);
     }
