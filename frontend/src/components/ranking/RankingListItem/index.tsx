@@ -9,9 +9,11 @@ interface RankingListItemProps {
   userNickname: string;
   userImagePath: string;
   totalAnalystRanking: number;
+  totalAnalystScore: number;
   totalBoardSize: number;
   reliability: number;
   accuracy: number;
+  rankValue: "accuracy" | "reliability" | "total" | null;
 }
 
 const RankingListItem: React.FC<RankingListItemProps> = ({
@@ -19,9 +21,11 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
   userNickname,
   userImagePath,
   totalAnalystRanking,
+  totalAnalystScore,
   totalBoardSize,
   reliability,
   accuracy,
+  rankValue,
 }) => {
   const nav = useNavigate();
   const handleClick = () => {
@@ -43,6 +47,17 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
     if (totalAnalystRanking === 3) return Rank3;
   };
 
+  const getDisplayValue = () => {
+    switch (rankValue) {
+      case "accuracy":
+        return `${accuracy}%`;
+      case "reliability":
+        return `${reliability}%`;
+      default:
+        return `${totalAnalystScore}점`;
+    }
+  };
+
   return (
     <div
       className="flex justify-around items-center w-full h-[5rem] cursor-pointer hover:bg-slate-200"
@@ -54,7 +69,7 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
             <img
               src={getRankImage()}
               alt={`Rank ${totalAnalystRanking}`}
-              className="w-6 h-6 mr-2 "
+              className="w-6 h-6 mr-2"
             />
             <span className="mt-[0.17rem]">{totalAnalystRanking}.</span>
           </div>
@@ -71,9 +86,7 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
         <span className="items-center justify-center">{userName}</span>
       </span>
       <span className="w-1/6 text-center">{totalBoardSize}건</span>
-      <span className="w-1/6 text-center">
-        {Math.round((reliability + accuracy) / 2)}%
-      </span>
+      <span className="w-1/6 text-center">{getDisplayValue()}</span>
     </div>
   );
 };
