@@ -25,4 +25,5 @@ public interface StockService {
 
     List<BestAnalystResponse> getBestAnalyst(Long stockId);
 
+    StockIsFollowedResponse isFollowed(Long userId, String stockName);
 }

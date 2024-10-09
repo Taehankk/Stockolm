@@ -11,6 +11,7 @@ import com.example.stockolm.global.util.webclient.KoreaInvestWebClientUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -133,8 +134,17 @@ public class StockController {
 
     @GetMapping("/inquire-price/{stock-code}")
     @Operation(summary = "실시간 시세 조회", description = "실시간 시세 조회 API")
-    public Mono<List<StockPriceResponse>> getStockPrice(@PathVariable("stock-code") String stockCode){
+    public Mono<List<StockPriceResponse>> getStockPrice(@PathVariable("stock-code") String stockCode) {
         return koreaInvestWebClientUtil.getStockPrice(stockCode);
+    }
+
+    @GetMapping("/follow/{stock-name}")
+    @Operation(summary = "종목 페이지 관심종목 등록 여부", description = "종목 페이지 관심종목 등록 여부 API")
+    public ResponseEntity<StockIsFollowedResponse> isFollowed(@AuthPrincipal @Parameter(hidden = true) Long userId, @PathVariable("stock-name") String stockName) {
+
+        StockIsFollowedResponse response = stockService.isFollowed(userId, stockName);
+
+        return ResponseEntity.ok().body(response);
     }
 
 
