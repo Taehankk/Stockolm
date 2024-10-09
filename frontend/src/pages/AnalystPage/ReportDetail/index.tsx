@@ -60,6 +60,7 @@ const ReportDetail = () => {
 
   const [isLike, setLike] = useState(false);
   const [reportLike, setReportLike] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getReport = async () => {
     try {
@@ -78,6 +79,8 @@ const ReportDetail = () => {
   const handleLike = async () => {
     try {
       if (loginUser !== report?.userNickName) {
+        if (isLoading) return;
+        setIsLoading(true);
         setLike(!isLike);
         if (isLike) {
           setReportLike(reportLike - 1);
@@ -88,6 +91,8 @@ const ReportDetail = () => {
       }
     } catch {
       alert("좋아요 변경 실패");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -169,10 +174,13 @@ const ReportDetail = () => {
                     {isLike ? (
                       <FontAwesomeIcon
                         icon={like}
-                        className="text-PrimaryRed"
+                        className={`text-PrimaryRed ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                       />
                     ) : (
-                      <FontAwesomeIcon icon={unlike} className="text-2xl" />
+                      <FontAwesomeIcon
+                        icon={unlike}
+                        className={`text-2xl ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                      />
                     )}
                   </div>
                 ) : (
