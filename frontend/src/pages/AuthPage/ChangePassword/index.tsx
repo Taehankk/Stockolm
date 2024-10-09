@@ -34,12 +34,16 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
-    setPasswordInput(value);
+      if (value.length <= 20) {
+        setPasswordInput(value);
+      }
   };
 
   const handlePwCheckInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setPwCheckInput(value);
+    if (value.length <= 20) {
+      setPwCheckInput(value);
+    }
   };
 
   const changePassword = async () => {
@@ -108,7 +112,7 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
       ) : (
         <div className="mt-2 opacity-50">
           <span className="mr-4">비밀번호를 아신다면?</span>
-          <span onClick={backToLogin}>로그인</span>
+          <span className="cursor-pointer" onClick={backToLogin}>로그인</span>
         </div>
       )}
     </div>

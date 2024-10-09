@@ -78,7 +78,7 @@ const Statistic: React.FC = () => {
           <DonutChart color="#FFF5D2" value={analystInfo?.reliability ?? 0} content="신뢰도"></DonutChart>
           <div className="flex flex-col" style={{marginBottom: '8rem'}}>
             {analystInfo?.reliabilityStock?.[0] ? (
-              <BarChart color="#FFE2B1" value={analystInfo.reliabilityStock[1].stockReliabilityValue} children={analystInfo.reliabilityStock[0].stockName} />
+              <BarChart color="#FFE2B1" value={analystInfo.reliabilityStock[0].stockReliabilityValue} children={analystInfo.reliabilityStock[0].stockName} />
             ) : <BarChart color="#FFE2B1" value={0} children={"분석없음"} />}
             {analystInfo?.reliabilityStock?.[1] ? (
               <BarChart color="#FFE2B1" value={analystInfo.reliabilityStock[1].stockReliabilityValue} children={analystInfo.reliabilityStock[1].stockName} />
@@ -93,7 +93,7 @@ const Statistic: React.FC = () => {
         <div className="flex gap-[3rem] w-full justify-end h-[11rem] ml-[3rem]">
           <div className="flex flex-col" style={{marginBottom: '8rem'}}>
             {analystInfo?.accuracyStock?.[0] ? (
-              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockAccuracyValue} children={analystInfo.accuracyStock[0].stockName} />
+              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[0].stockAccuracyValue} children={analystInfo.accuracyStock[0].stockName} />
             ) : <BarChart color="#61A9FB" value={0} children={"분석없음"} />}
             {analystInfo?.accuracyStock?.[1] ? (
               <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockAccuracyValue} children={analystInfo.accuracyStock[1].stockName} />

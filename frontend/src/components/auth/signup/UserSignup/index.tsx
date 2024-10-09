@@ -30,22 +30,29 @@ const UserSignUp = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
-    setNicknameInput(value);
+    if (value.length <= 7) {
+      setNicknameInput(value);
+    }
   };
 
   const handlePasswordInputChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
-    setPasswordInput(value);
+    if (value.length < 20) {
+      setPasswordInput(value);
+    }
   };
 
   const handlePwCheckInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setPwCheckInput(value);
+    if (value.length < 20) {
+      setPwCheckInput(value);
+    }
   };
 
   const checkNicknameValidation = async (nickname: string) => {
+
     const formatError = validateNickname(nickname);
     if (formatError) {
       return formatError; // 형식 검증 실패 시 바로 리턴
