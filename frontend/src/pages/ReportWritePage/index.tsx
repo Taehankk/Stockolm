@@ -28,7 +28,10 @@ import { useSelector } from "react-redux";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { validateTitleInputLength } from "../../utils/validation";
+import {
+  validateSearchInputLength,
+  validateTitleInputLength,
+} from "../../utils/validation";
 
 interface Report {
   title: string;
@@ -88,28 +91,55 @@ const ReportWritePage = () => {
   const summaryPdfFile = async (file: string) => {
     try {
       const form = await pdfFormAPI(file);
-      dispatch(setStockName(form[1].mentionText || ""));
-      dispatch(setGoalDate(form[5].mentionText || ""));
-      dispatch(setCurrentStock(form[3]?.mentionText.replace(/,/g, "") || 0));
-      dispatch(setGoalStock(form[4]?.mentionText.replace(/,/g, "") || 0));
-      dispatch(setOpinion(form[6].mentionText) || "");
-      dispatch(
-        setMarketCapitalization(form[2]?.mentionText.replace(/,/g, "") || 0)
-      );
-      setPredictDate(form[0].mentionText || "");
-      // dispatch(setStockName(form[5]));
-      // if (form[13].includes("24")) {
-      //   console.log(form[13]);
-      //   dispatch(setGoalDate(form[13])); // form[14]가 '투자'일 경우 form[13] 값을 사용
-      // } else if (form[14].includes("24")) {
-      //   console.log(form[14]);
-      //   dispatch(setGoalDate(form[14])); // 그렇지 않으면 원래 form[14] 값을 사용
-      // }
-      // dispatch(setCurrentStock(form[9]?.replace(/,/g, "")));
-      // dispatch(setGoalStock(form[11]?.replace(/,/g, "")));
-      // dispatch(setOpinion(form[15]));
-      // dispatch(setMarketCapitalization(form[7]?.replace(/,/g, "")));
-      // setPredictDate(form[4]);
+
+      if (form[0].type !== "date_time" || form[1].type !== "organization") {
+        setFileName("STOCKOLM 에서 제공한 PDF를 작성하여 업로드 해주세요.");
+        throw new Error("STOCKOLM 제공 파일 양식인지 확인해주세요"); // 에러 발생
+      }
+
+      if (form[0]) {
+        setPredictDate(form[0].mentionText);
+      } else {
+        setPredictDate("");
+      }
+
+      if (form[1]) {
+        dispatch(setStockName(form[1].mentionText));
+      } else {
+        dispatch(setStockName(""));
+      }
+
+      if (form[2]) {
+        dispatch(
+          setMarketCapitalization(form[2].mentionText.replace(/,/g, ""))
+        );
+      } else {
+        dispatch(setMarketCapitalization(0));
+      }
+
+      if (form[3]) {
+        dispatch(setCurrentStock(form[3]?.mentionText.replace(/,/g, "")));
+      } else {
+        dispatch(setCurrentStock(0));
+      }
+
+      if (form[4]) {
+        dispatch(setGoalStock(form[4]?.mentionText.replace(/,/g, "")));
+      } else {
+        dispatch(setGoalStock(0));
+      }
+
+      if (form[5]) {
+        dispatch(setGoalDate(form[5].mentionText));
+      } else {
+        dispatch(setGoalDate(""));
+      }
+
+      if (form[6]) {
+        dispatch(setOpinion(form[6].mentionText));
+      } else {
+        dispatch(setOpinion(""));
+      }
     } catch {
       alert("STOCKOLM 제공 파일 양식인지 확인해주세요");
     }
@@ -279,7 +309,11 @@ const ReportWritePage = () => {
             <input
               type="text"
               value={stockName}
-              onChange={(e) => dispatch(setStockName(e.target.value))}
+              onChange={(e) => {
+                dispatch(
+                  setStockName(validateSearchInputLength(e.target.value))
+                );
+              }}
               className="text-[0.8rem] text-center content-center rounded-lg border border-black px-4 min-w-[4rem] min-h-[2rem]"
             />
           </div>
@@ -321,7 +355,11 @@ const ReportWritePage = () => {
                   type="text"
                   value={marketCapitalization}
                   onChange={(e) =>
-                    dispatch(setMarketCapitalization(Number(e.target.value)))
+                    dispatch(
+                      setMarketCapitalization(
+                        Number(validateSearchInputLength(e.target.value))
+                      )
+                    )
                   }
                   className="border border-black border-opacity-50 p-2"
                 />
@@ -336,7 +374,11 @@ const ReportWritePage = () => {
                 <input
                   type="text"
                   value={opinion}
-                  onChange={(e) => dispatch(setOpinion(e.target.value))}
+                  onChange={(e) =>
+                    dispatch(
+                      setOpinion(validateSearchInputLength(e.target.value))
+                    )
+                  }
                   className="border border-black border-opacity-50 p-2"
                 />
               </div>
@@ -353,7 +395,11 @@ const ReportWritePage = () => {
                   type="text"
                   value={currentStock}
                   onChange={(e) =>
-                    dispatch(setCurrentStock(Number(e.target.value)))
+                    dispatch(
+                      setCurrentStock(
+                        Number(validateSearchInputLength(e.target.value))
+                      )
+                    )
                   }
                   className="border border-black border-opacity-50 p-2"
                 />
@@ -366,10 +412,14 @@ const ReportWritePage = () => {
                   <span className="flex w-full">(단위 : 원)</span>
                 </div>
                 <input
-                  type="number"
+                  type="text"
                   value={goalStock}
                   onChange={(e) =>
-                    dispatch(setGoalStock(Number(e.target.value)))
+                    dispatch(
+                      setGoalStock(
+                        Number(validateSearchInputLength(e.target.value))
+                      )
+                    )
                   }
                   className="border border-black border-opacity-50 p-2"
                 />
@@ -386,7 +436,9 @@ const ReportWritePage = () => {
                 <input
                   type="text"
                   value={predictDate}
-                  onChange={(e) => setPredictDate(e.target.value)}
+                  onChange={(e) =>
+                    setPredictDate(validateSearchInputLength(e.target.value))
+                  }
                   className="border border-black border-opacity-50 p-2"
                 />
               </div>
@@ -400,7 +452,11 @@ const ReportWritePage = () => {
                 <input
                   type="text"
                   value={goalDate}
-                  onChange={(e) => dispatch(setGoalDate(e.target.value))}
+                  onChange={(e) =>
+                    dispatch(
+                      setGoalDate(validateSearchInputLength(e.target.value))
+                    )
+                  }
                   className="border border-black border-opacity-50 p-2"
                 />
               </div>
