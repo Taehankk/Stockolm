@@ -97,17 +97,11 @@ const BoardWritePage = () => {
             value={title}
             onChange={handleTitle}
             placeholder="제목을 입력해주세요"
-            className="flex text-lg border-none w-full min-h-[3rem] p-2 mb-4"
+            className="flex text-lg border-b border-black w-full min-h-[3rem] p-2 mb-4"
           />
-          {/* <Input
-            value={title}
-            onChange={handleTitle}
-            placeholder="제목을 입력해주세요"
-            className="border-none"
-          /> */}
 
-          {/* <div>글 작성 라이브러리 칸</div> */}
-          <div className="h-40 mb-20">
+          {/* 글 작성 라이브러리 칸 */}
+          <div className="h-40 mb-48 w-full">
             <WriteForm />
           </div>
 
@@ -118,7 +112,7 @@ const BoardWritePage = () => {
               color="black"
               border="black"
               children="취소"
-              className="bg-white"
+              className="bg-white mr-2"
             />
             <Button onClick={writeBoard} size="small" children="등록" />
           </div>
