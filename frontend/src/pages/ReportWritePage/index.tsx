@@ -317,6 +317,7 @@ const ReportWritePage = () => {
                     setStockName(validateSearchInputLength(e.target.value))
                   );
                 }}
+                maxLength={20}
                 className="text-[0.8rem] text-center content-center rounded-lg border border-black px-4 min-w-[4rem] min-h-[2rem]"
               />
             </div>
@@ -364,6 +365,7 @@ const ReportWritePage = () => {
           value={reportTitle}
           onChange={handleReportTitle}
           placeholder="제목을 입력해주세요"
+          maxLength={50}
           className="flex text-lg border-b  border-black w-full min-h-[3rem] p-2 mb-4"
         />
 
@@ -386,6 +388,7 @@ const ReportWritePage = () => {
                     )
                   )
                 }
+                maxLength={20}
                 className="border border-black border-opacity-50 p-2"
               />
             </div>
@@ -404,6 +407,7 @@ const ReportWritePage = () => {
                     setOpinion(validateSearchInputLength(e.target.value))
                   );
                 }}
+                maxLength={20}
                 className="border border-black border-opacity-50 p-2"
               />
             </div>
@@ -426,6 +430,7 @@ const ReportWritePage = () => {
                     )
                   )
                 }
+                maxLength={20}
                 className="border border-black border-opacity-50 p-2"
               />
             </div>
@@ -446,6 +451,7 @@ const ReportWritePage = () => {
                     )
                   )
                 }
+                maxLength={20}
                 className="border border-black border-opacity-50 p-2"
               />
             </div>

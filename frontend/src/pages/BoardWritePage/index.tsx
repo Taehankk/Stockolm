@@ -98,6 +98,7 @@ const BoardWritePage = () => {
             onChange={handleTitle}
             placeholder="제목을 입력해주세요"
             className="flex text-lg border-b border-black w-full min-h-[3rem] p-2 mb-4"
+            maxLength={50}
           />
 
           {/* 글 작성 라이브러리 칸 */}
