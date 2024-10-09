@@ -52,6 +52,7 @@ interface AnalystBoard {
     createAt: string;
     updateAt: string;
     like: boolean;
+    filePath: string;
   }[];
   pageable?: {
     pageNumber: number;
@@ -88,7 +89,6 @@ const RepresentModal = ({
   stockNameProps,
   onCloseClick,
   onConfirmClick,
-  onFileClick,
   onContentClick,
 }: Props) => {
   
@@ -157,7 +157,6 @@ const RepresentModal = ({
                         <img src={like} className="w-[1.25rem] h-[1.25rem] self-center"/>
                         <span className="h-[1.6rem] self-center">{item.likeCnt}</span>
                       </div> 
-                      <span className="h-[1.6rem] self-center cursor-pointer" onClick={onFileClick}>{item.userImagePath}</span>
                     </div>
                   </div>
                   ))}

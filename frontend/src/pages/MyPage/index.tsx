@@ -200,9 +200,14 @@ const MyPage: React.FC = () => {
             <div className="flex flex-col gap-[1.5rem] mx-auto w-[9rem] mt-[5rem] border-[#B4B4B4] border-y-[1px] py-[1.3rem] text-[1.25rem]">
               <div>
                 <Link to={"profile"} className="cursor-pointer">
-                  내상태
+                  내 상태
                 </Link>
               </div>
+              {role === "ANALYST" ? <div>
+                <Link to={`/analyst/${userNickName}`} className="cursor-pointer">
+                  내 통계
+                </Link>
+              </div> : <></>}
               <div>
                 <Link to={"password"} className="cursor-pointer">
                   비밀번호 수정

@@ -92,7 +92,7 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
     const { nickname } = useParams<{ nickname: string }>();
     const [analystBoardId, setAnalystBoardId] = useState(-1);
     const [currentCard, setCurrentCard] = useState<AnalystBoard["content"]>([]);
-    
+    const [currentCards, setCurrentCards] = useState<AnalystBoard["content"]>([]);
 
     useEffect(() => {
       setRole(sessionStorage.getItem("role") || "USER");
@@ -116,12 +116,33 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
       queryFn: ({ queryKey }) => fetchAnalystBoard(queryKey[1] as number - 1, queryKey[2] as number, queryKey[3] as string),
     });
     
-
     useEffect(() => {
       if (analystBoard && analystBoard.content) {
         setCurrentCard(analystBoard.content);
       }
     }, [analystBoard]);
+
+    useEffect(() => {
+      let updatedData: AnalystBoard["content"] = analystBoard?.content ? [...analystBoard.content] : [];
+    
+      if (updatedData.length < itemsPerPage) {
+        const remainder = updatedData.length % itemsPerPage;
+    
+        if (remainder !== 0) {
+          if (remainder === 3) {
+            updatedData = [...updatedData];
+          } else if (remainder > 3) {
+            const emptySlots = itemsPerPage - remainder;
+            updatedData = [...updatedData, ...Array(emptySlots).fill(null)];
+          } else {
+            const emptySlots = itemsPerPage - remainder - 3;
+            updatedData = [...updatedData, ...Array(emptySlots).fill(null)];
+          }
+        }
+      }
+    
+      setCurrentCards(updatedData);
+    }, [analystBoard, itemsPerPage]); 
 
     if ( analystInfoIsLoading || analystBoardIsLoading) {
       return <p>Loading...</p>;
@@ -154,8 +175,6 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
       }
     };
 
-    const currentCards = analystBoard?.content || [];
-  
     return (
       <div className="w-full">
         <div className="flex h-[3rem] justify-between w-full border-b-black border-b-[0.0625rem]">
@@ -167,19 +186,26 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
         <div className="mx-[4rem]"></div>
         <div>
           <div className="flex justify-center items-center gap-[4rem] flex-wrap mt-[3rem]">
-            {currentCards && currentCards.length > 0 ? currentCards.map((item) => (
+          {currentCards && currentCards.length > 0 
+          ? currentCards.map((item, index) => 
+            item ? (
               <CommunityCard
-              key={item.analystBoardId}
-              id={item.analystBoardId}
-              imagePath={item.userImagePath}
-              nickname={item.userNickName}
-              stock={item.stockName}
-              title={item.title}
-              writer={item.userName}
-              writeTime={new Date(item.createAt).toLocaleDateString()}
-              represent={item.mainContent}
-            />
-            )) : <span className="mt-[10rem] text-[1.5rem]">등록된 글이 없습니다.</span>}
+                key={item.analystBoardId || index}
+                id={item.analystBoardId}
+                imagePath={item.userImagePath}
+                nickname={item.userNickName}
+                stock={item.stockName}
+                title={item.title}
+                writer={item.userName}
+                writeTime={new Date(item.createAt).toLocaleDateString()}
+                represent={item.mainContent}
+              />
+            ) : (
+              <div key={index} className="invisible w-[17rem] h-[16rem]"></div> // null인 경우 비어있는 div로 공간 채우기
+            )
+          ) 
+          : <span className="mt-[10rem] text-[1.5rem]">등록된 글이 없습니다.</span>
+        }
           </div>
         </div>
         <Pagination
