@@ -69,13 +69,12 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
 
       {/* 이메일 인증 관련 컴포넌트 */}
       <EmailVerification location={2} />
-
       {isValidateNumValid ? (
         <div>
           <div>
             {/* 새 비밀번호 input */}
-            <div className="flex mb-2 items-center justify-between">
-              <span className="">새 비밀번호</span>
+            <div className="flex mb-2 justify-between min-h-[3.4rem]">
+              <span className="mt-1.5">새 비밀번호</span>
               <Input
                 onChange={handlePasswordInputChange}
                 value={passwordInput}
@@ -86,8 +85,8 @@ const ChangePassword = ({ handleImgLocation }: Props) => {
             </div>
 
             {/* 비밀번호 확인 input */}
-            <div className="flex mb-2 items-center justify-between">
-              <span className="mr-2">비밀번호 확인</span>
+            <div className="flex mb-2 justify-between">
+              <span className="mt-1.5 mr-2">비밀번호 확인</span>
               <Input
                 onChange={handlePwCheckInputChange}
                 value={pwCheckInput}

@@ -63,7 +63,7 @@ const UserSignUp = () => {
   return (
     <div>
       {/* 닉네임 input */}
-      <div className="flex min-h-[3.4rem] items-start justify-between">
+      <div className="flex mb-1.5 w-[24vw] justify-between min-h-[3.4rem]">
         <span className="mt-1.5">닉네임</span>
         <Input
           onChange={handleNicknameInputChange}
@@ -77,7 +77,7 @@ const UserSignUp = () => {
       <EmailVerification location={1} />
 
       {/* 비밀번호 input */}
-      <div className="flex min-h-[3.4rem] items-start justify-between">
+      <div className="flex mt-5 mb-1.5 justify-between min-h-[3.4rem]">
         <span className="mt-1.5">비밀번호</span>
         <Input
           onChange={handlePasswordInputChange}
