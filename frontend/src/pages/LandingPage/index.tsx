@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import landingChart from "../../assets/LANDING01.svg"; // 절대 경로로 설정
-import landingAnalyst from "../../assets/LANDING02.svg"; // 절대 경로로 설정
-import landingCommunity from "../../assets/LANDING03.svg"; // 절대 경로로 설정
+import landingOlm from "../../assets/MAIN1.svg";
+import landingChart from "../../assets/MAIN2.svg"; // 절대 경로로 설정
+import landingAnalyst from "../../assets/MAIN3.svg"; // 절대 경로로 설정
+import landingCommunity from "../../assets/MAIN4.svg"; // 절대 경로로 설정
 import Header from "../../components/common/Header";
 import "./index.css";
 import Footer from "../../components/common/Footer";
@@ -201,10 +202,37 @@ const LandingPage = () => {
         </section>
 
         <section
-          className="footersection"
           ref={(el) => (sectionsRef.current[4] = el!)}
+          className="section section1"
         >
-          <footer className="footer m-auto w-[90vw] border-slate-200 border-t-2">
+          <div className="content flex gap-32 w-[80vw] justify-center p-20 relative">
+            <div className="landing-image-box">
+              <img src={landingOlm} alt="차트" className="landing-image" />
+            </div>
+            <div className="-z-10 w-2/3 h-[200px] top-[180px] right-0 rotate-45 bg-[#FDF8E7] absolute rounded-full"></div>
+            <div className="z-10 flex flex-col justify-center gap-5">
+              <div>
+                <p className="text-4xl text-start text-TextRed whitespace-nowrap">
+                  04. 오름이
+                </p>
+              </div>
+              <div>
+                <p className="text-start text-2xl whitespace-nowrap">
+                  부족한 설명은
+                </p>
+                <p className="text-start text-2xl whitespace-nowrap">
+                  오름이가 함께할게요!
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          className="footersection"
+          ref={(el) => (sectionsRef.current[5] = el!)}
+        >
+          <footer className="footer m-auto w-[90vw] border-slate-200 border-t-2 z-50">
             <Footer></Footer>
           </footer>
         </section>
