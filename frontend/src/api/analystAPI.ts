@@ -70,12 +70,13 @@ export const fetchAnalystBoard = async (page?: number, size?: number, userNickNa
   }
 }
 
-export const fetchAnalystKeywordBoard = async (page?: number, size?: number, keyword?: string) => {
+export const fetchAnalystKeywordBoard = async (page?: number, size?: number, keyword?: string, userNickName?: string) => {
   try {
+    console.log(keyword)
     const response = await axiosTokenInstance.get(
       'analyst-board',
       {
-        params: { "page": page, "size": size, "stockname": keyword },
+        params: { "page": page, "size": size, "stockName": keyword, "searchAnalyst": userNickName },
       },
     );
 
