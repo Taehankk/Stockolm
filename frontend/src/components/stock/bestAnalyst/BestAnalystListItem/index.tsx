@@ -22,6 +22,18 @@ const BestAnalystListItem = ({ analyst }: BestAnalystListItemProps) => {
       });
     }
   };
+  const getOpinionColor = (opinion: string) => {
+    switch (opinion) {
+      case "매수":
+        return "bg-red-400"; // 매수: 진한 빨강색
+      case "매도":
+        return "bg-blue-400"; // 매도: 푸른색
+      case "유지":
+        return "bg-green-300"; // 유지: 연두색
+      default:
+        return "bg-green-300"; // 그 외: 연두색
+    }
+  };
 
   return (
     <div
@@ -41,8 +53,12 @@ const BestAnalystListItem = ({ analyst }: BestAnalystListItemProps) => {
           <span className="text-gray-400">신뢰도 {analyst.reliability}%</span>
         </div>
         <div className="flex-3 ml-10">
-          <span className="px-2 py-1 bg-red-400 rounded-lg text-white text-small ">
-            {analyst.opinion}의견
+          <span
+            className={`px-2 py-1 rounded-lg text-white text-small ${getOpinionColor(
+              analyst.opinion
+            )}`}
+          >
+            {analyst.opinion} 의견
           </span>
         </div>
       </div>

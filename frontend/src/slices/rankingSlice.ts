@@ -6,6 +6,7 @@ interface RankingItem {
   userNickname: string;
   userImagePath: string;
   totalAnalystRanking: number;
+  totalAnalystScore: number;
   totalBoardSize: number;
   reliability: number;
   accuracy: number;

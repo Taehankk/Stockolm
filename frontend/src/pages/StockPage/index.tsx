@@ -83,12 +83,19 @@ const StockPage = () => {
           <Summary searchCode={searchCode} searchTerm={searchTerm}></Summary>
         </div>
         <div className="right-nav">
-          <div>
+          <div className="relative">
             <img
               src={RedUp}
               alt={`투자상승이`}
               className="size-[10rem] ml-[3rem] mt-3 rounded-full"
             />
+            <div className="tooltip absolute left-1/2 transform -translate-x-1/3 mt-2  bg-gray-800 text-white text-lg rounded-lg py-2 px-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <span>분석 탭을 이용해보세요!.</span>
+              <br></br>
+              <span>
+                최고의 신뢰도를 가진 애널리스트의 분석데이터를 확인하세요!
+              </span>
+            </div>
           </div>
           <div className="navigator">
             <Button
