@@ -9,12 +9,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchAnalystKeywordBoard } from "../../../api/analystAPI";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 interface ModalProps {
   size?: string;
   context?: string;
   content?: string;
   name?: string;
+  userNickName?: string;
   file?: string;
   watch?: number;
   like?: number;
@@ -107,6 +110,7 @@ const Modal = ({
   const [role, setRole] = useState("");
   const [keywordCurrentPage, setKeywordCurrentPage] = useState(1);
   const [keywordItemsPerPage, setKeywordItemsPerPage] = useState(9999);
+  const { userNickName } = useSelector((state: RootState) => state.user);
 
   const nav = useNavigate();
 
@@ -126,15 +130,15 @@ const Modal = ({
     nav(`/analyst/${userNickName}/report/${analystBoardId}`);
   }
 
-  const { data: favoriteBoard, error: analystBoardError, isLoading: analystBoardIsLoading } = useQuery<FavoriteBoard, Error>({
+  const { data: favoriteBoard, error: analystBoardError, isLoading: analystBoardIsLoading } = useQuery<FavoriteBoard[], Error>({
     queryKey: ["favoriteBoard", stockNameProps], 
     queryFn: ({ queryKey }) => fetchFavoriteBoard(queryKey[1] as string),
     enabled: role === "USER" && !!stockNameProps,
   });
 
   const { data: analystKeywordBoard, error: analystKeywordBoardError, isLoading: analystKeywordBoardIsLoading } = useQuery<AnalystBoard, Error>({
-    queryKey: ["analystKeywordBoard", keywordCurrentPage, keywordItemsPerPage, stockNameProps], 
-    queryFn: ({ queryKey }) => fetchAnalystKeywordBoard(queryKey[1] as number - 1, queryKey[2] as number, queryKey[3] as string),
+    queryKey: ["analystKeywordBoard", keywordCurrentPage, keywordItemsPerPage, stockNameProps, userNickName], 
+    queryFn: ({ queryKey }) => fetchAnalystKeywordBoard(queryKey[1] as number - 1, queryKey[2] as number, queryKey[3] as string, queryKey[4] as string),
     enabled: role === "ANALYST" && !!stockNameProps,
   });
 
@@ -180,30 +184,43 @@ const Modal = ({
               <span className="text-[1.5rem] mb-[3rem]">내가 분석한 글</span>
             )}
             <div className="flex flex-col w-full h-[20rem] gap-[3rem] overflow-y-auto">
-              {role === "USER" ? [favoriteBoard].flat()?.map((item, index) => (
-                <div key={index} className="flex w-full px-[5rem] text-[1.25rem]">
-                  <span className="w-[33rem] cursor-pointer" onClick={() => handleClickFavoriteStock(item?.userNickName, item?.analystBoardId)}>{item?.title}</span>
-                  <div className="flex">
-                    <span className="w-[10rem]">{item?.userName}</span>
-                    <a href={item?.filePath} className="cursor-pointer">
-                      <span className="mr-2 flex items-center">
-                        <img src={pdf} className="w-[1rem] h-[1rem] mt-[0.2rem]"/>
+              {role === "USER" ? (
+                favoriteBoard && favoriteBoard.length > 0 ? (
+                  [favoriteBoard].flat().map((item, index) => (
+                    <div key={index} className="flex w-full px-[5rem] text-[1.25rem]">
+                      <span className="w-[33rem] cursor-pointer" onClick={() => handleClickFavoriteStock(item?.userNickName, item?.analystBoardId)}>
+                        {item?.title}
                       </span>
-                    </a>
+                      <div className="flex">
+                        <span className="w-[10rem]">{item?.userName}</span>
+                        <a href={item?.filePath} className="cursor-pointer">
+                          <span className="mr-2 flex items-center">
+                            <img src={pdf} className="w-[1rem] h-[1rem] mt-[0.2rem]" />
+                          </span>
+                        </a>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex justify-center items-center h-[20rem]">
+                    <span className="text-center text-[1.5rem]">해당 종목 관련 좋아한 분석글이 없습니다.</span>
                   </div>
-                </div>)) :
+                )
+              ) : (
                 analystKeywordBoard?.content?.map((item, index) => (
                   <div key={index} className="flex w-full px-[5rem] text-[1.25rem]">
-                    <span className="w-[26rem] pr-[2rem] cursor-pointer" onClick={() => handleClickAnalyzeStock(item.userNickName, item.analystBoardId)}>{item.title}</span>
+                    <span className="w-[26rem] pr-[2rem] cursor-pointer" onClick={() => handleClickAnalyzeStock(item.userNickName, item.analystBoardId)}>
+                      {item.title}
+                    </span>
                     <div className="flex">
                       <div className="flex w-[8rem] gap-[0.5rem]">
-                        <img src={watch} className="w-[1.25rem] h-[1.25rem] self-center"/>
+                        <img src={watch} className="w-[1.25rem] h-[1.25rem] self-center" />
                         <span className="h-[1.6rem] self-center">{item.viewCnt}</span>
                       </div>
                       <div className="flex w-[8rem] gap-[0.5rem]">
-                        <img src={like} className="w-[1.25rem] h-[1.25rem] self-center"/>
+                        <img src={like} className="w-[1.25rem] h-[1.25rem] self-center" />
                         <span className="h-[1.6rem] self-center">{item.likeCnt}</span>
-                      </div> 
+                      </div>
                       <a href={item?.filePath} className="cursor-pointer">
                         <span className="mr-2 flex items-center">
                           <img src={pdf} className="w-[1.5rem] h-[1.5rem] mt-[0.2rem]" />
@@ -211,12 +228,13 @@ const Modal = ({
                       </a>
                     </div>
                   </div>
-                  ))}
+                ))
+              )}
             </div>
           </div>
         </div>
       )}
-  </div>);
+    </div>);
 };
 
 export default Modal;

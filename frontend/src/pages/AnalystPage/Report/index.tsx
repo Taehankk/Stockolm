@@ -192,7 +192,7 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
               <CommunityCard
                 key={item.analystBoardId || index}
                 id={item.analystBoardId}
-                imagePath={item.userImagePath}
+                imagePath={item.companyImagePath}
                 nickname={item.userNickName}
                 stock={item.stockName}
                 title={item.title}
