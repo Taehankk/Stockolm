@@ -3,6 +3,7 @@ package com.example.stockolm.domain.analystBoard.repository;
 import com.example.stockolm.domain.analyst.entity.QAnalystInfo;
 import com.example.stockolm.domain.analystBoard.dto.response.AnalystBoardPageResponse;
 import com.example.stockolm.domain.analystBoard.dto.response.LikedAnalystBoardResponse;
+import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoardLike;
 import com.example.stockolm.domain.stock.dto.response.BestAnalystResponse;
@@ -10,10 +11,7 @@ import com.example.stockolm.domain.stock.entity.QStock;
 import com.example.stockolm.domain.user.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -105,14 +103,13 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
         QUser user = QUser.user;
 
         return queryFactory
-                .select(Projections.constructor(
-                        BestAnalystResponse.class,
+                .select(Projections.constructor(BestAnalystResponse.class,
                         analystBoard.analystBoardId,
                         analystBoard.goalDate,
                         analystBoard.opinion,
                         analystBoard.goalStock,
-                        getAnalystReliability(user.userId),
-                        getAnalystAccuracy(user.userId),
+                        getStockReliabilityPercent(analystBoard),
+                        getStockAccuracyPercent(analystBoard),
                         user.userName,
                         user.userImagePath,
                         user.userNickname
@@ -121,28 +118,38 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                 .join(analystInfo).on(analystBoard.user.userId.eq(analystInfo.user.userId))
                 .join(user).on(analystBoard.user.userId.eq(user.userId))
                 .where(analystBoard.stock.stockId.eq(stockId))
-                .orderBy(getAnalystReliability(user.userId).desc(), analystInfo.totalAnalystScore.desc())
+                .groupBy(analystBoard.analystBoardId, user.userName,
+                        analystInfo.reliability, analystInfo.accuracy,
+                        analystInfo.totalAnalystScore)
+                .orderBy(getStockReliabilityPercent(analystBoard).desc(), analystInfo.totalAnalystScore.desc())
                 .limit(15)
                 .fetch();
     }
 
 
-    private NumberExpression<Integer> getAnalystReliability(NumberPath<Long> userId) {
-        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
-        return analystInfo.reliability.divide(boardSize).multiply(100).floor();
+
+    private NumberExpression<Long> getStockReliabilityPercent(QAnalystBoard analystBoard) {
+        return getReliabilitySum(analystBoard)
+                .divide(getReliabilitySum(analystBoard)).multiply(100).coalesce(0L);
     }
 
-    private NumberExpression<Integer> getAnalystAccuracy(NumberPath<Long> userId) {
-        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
-        return analystInfo.accuracy.divide(boardSize).multiply(100).floor();
+    private NumberExpression<Long> getReliabilitySum(QAnalystBoard analystBoard) {
+        return new CaseBuilder()
+                .when(analystBoard.goalDate.lt(LocalDate.now()).and(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)))
+                .then(1L).otherwise(0L).sum();
     }
 
-    private JPAQuery<Long> getGoalBoardSize(NumberPath<Long> userId) {
-        return queryFactory
-                .select(analystBoard.countDistinct())
-                .from(analystBoard)
-                .where(analystBoard.goalDate.loe(LocalDate.now()).and(user.userId.eq(userId)));
+    private NumberExpression<Long> getStockAccuracyPercent(QAnalystBoard analystBoard) {
+        return getAccuracySum(analystBoard)
+                .divide(getAccuracySum(analystBoard)).multiply(100).coalesce(0L);
     }
+
+    private NumberExpression<Long> getAccuracySum(QAnalystBoard analystBoard) {
+        return new CaseBuilder()
+                .when(analystBoard.goalDate.lt(LocalDate.now()).and(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)))
+                .then(1L).otherwise(0L).sum();
+    }
+    
 
     @Override
     public Page<AnalystBoardPageResponse> getAnalystBoardPage(String searchWord, Pageable pageable, Long userId, String searchAnalyst, String stockName) {
