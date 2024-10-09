@@ -55,7 +55,6 @@ export const getRankings = createAsyncThunk<
         sort,
         analystName
       );
-      console.log("받아오는 ranking", data);
       return data;
     } catch (error: unknown) {
       if (error instanceof Error) {

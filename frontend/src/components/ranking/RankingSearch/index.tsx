@@ -9,6 +9,7 @@ const RankingSearch: React.FC<RankingSearchProps> = ({ onSearch }) => {
 
   const handleSearch = () => {
     onSearch(searchTerm);
+    setSearchTerm("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -26,6 +27,7 @@ const RankingSearch: React.FC<RankingSearchProps> = ({ onSearch }) => {
         placeholder="분석가 이름을 검색하세요"
         className="p-2 px-6 w-4/5 rounded outline-none"
         onKeyDown={handleKeyDown}
+        maxLength={15}
       />
       <button
         onClick={handleSearch}
