@@ -13,6 +13,7 @@ import com.example.stockolm.global.exception.custom.BoardNotFoundException;
 import com.example.stockolm.global.exception.custom.CommentNotFoundException;
 import com.example.stockolm.global.exception.custom.UnauthorizedAccessException;
 import com.example.stockolm.global.exception.custom.UserNotFoundException;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final EntityManager entityManager;
 
     @Override
     public List<CommentResponse> getCommentList(Long boardId) {
@@ -37,6 +39,10 @@ public class CommentServiceImpl implements CommentService {
     public void createComment(Long boardId, Long userId, CreateCommentRequest createCommentRequest) {
         Board board = boardRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        // Board 엔티티를 영속성 컨텍스트에서 분리하여 더티 체킹 방지
+        // - comment 생성시 board의 수정일까지 업데이트 되는 것을 방지하기 위함
+        entityManager.detach(board);
 
         Comment comment = Comment.builder()
                 .board(board)
@@ -56,6 +62,10 @@ public class CommentServiceImpl implements CommentService {
             throw new UnauthorizedAccessException();
         }
 
+        // Board 더티체킹 방지
+        Board board = comment.getBoard();
+        entityManager.detach(board);
+
         comment.update(modifyCommentRequest.getContent());
     }
 
@@ -67,6 +77,10 @@ public class CommentServiceImpl implements CommentService {
         if (!userId.equals(comment.getUser().getUserId())) {
             throw new UnauthorizedAccessException();
         }
+
+        // Board 더티체킹 방지
+        Board board = comment.getBoard();
+        entityManager.detach(board);
 
         commentRepository.deleteById(commentId);
     }
