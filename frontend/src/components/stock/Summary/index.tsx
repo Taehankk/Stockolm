@@ -28,6 +28,7 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
   const [isFollowed, setIsFollowed] = useState(false);
   const [stockData, setStockData] = useState<StockData | null>(null);
   const getToken = () => sessionStorage.getItem("access_token");
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -55,11 +56,15 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
   }, [searchCode, searchTerm]);
 
   const toggleFollow = async () => {
+    if (isLoading) return; // 이미 로딩 중이면 함수 종료
+    setIsLoading(true);
     try {
       await toggleFollowAPI(searchTerm);
       setIsFollowed(!isFollowed); // 상태 업데이트
     } catch (error) {
       console.error("관심 종목 상태를 변경하지 못했습니다.", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,7 +111,7 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
             src={isFollowed ? StockLikeON : StockLikeOFF}
             alt={isFollowed ? "관심 종목 설정됨" : "관심 종목 아님"}
             onClick={toggleFollow}
-            className="cursor-pointer"
+            className={`cursor-pointer ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
           />
         )}
       </div>
