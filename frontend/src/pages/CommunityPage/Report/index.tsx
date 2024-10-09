@@ -115,6 +115,7 @@ const Report = () => {
               {reportList.map((report, index) => (
                 <CommunityCard
                   id={report.analystBoardId}
+                  imagePath={report.companyImagePath}
                   stock={report.stockName}
                   title={report.title}
                   key={index}
