@@ -19,8 +19,8 @@ const Search = ({ searchValue, handleSearchValue, searchList }: Props) => {
         value={searchValue}
         onChange={handleSearchValue}
         onKeyDown={handleKeyDown} // Enter 키 감지하는 핸들러 추가
-        placeholder="검색어를 검색하세요"
-        className="p-2 px-6 h-full rounded outline-none"
+        placeholder="검색어를 입력하세요"
+        className="flex p-2 px-6 h-[2rem] rounded outline-none"
       />
       <span onClick={searchList} className="cursor-pointer">
         검색

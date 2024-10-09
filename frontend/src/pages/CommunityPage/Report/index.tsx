@@ -69,6 +69,7 @@ const Report = () => {
 
   const searchReport = () => {
     getReportList();
+    dispatch(setCurrentPage(1));
   };
 
   const getReportList = async () => {
@@ -88,10 +89,15 @@ const Report = () => {
 
   useEffect(() => {
     getReportList();
-  }, [currentPage, sort]);
+  }, [currentPage]);
+
+  useEffect(() => {
+    getReportList();
+    dispatch(setCurrentPage(1));
+  }, [sort]);
 
   return (
-    <div className="mt-10">
+    <div className="w-[90%] mt-10">
       <div>
         <span className="text-3xl">종목분석게시판</span>
         <div className="flex mt-4 mb-2 justify-between items-center">
@@ -103,26 +109,28 @@ const Report = () => {
           />
         </div>
         <hr />
-        {reportList[0] ? (
-          <div className="grid grid-cols-3 mt-4 gap-y-4">
-            {reportList.map((report, index) => (
-              <CommunityCard
-                id={report.analystBoardId}
-                stock={report.stockName}
-                title={report.title}
-                key={index}
-                nickname={report.userNickName}
-                writer={report.userName}
-                writeTime={report.createAt.split("T")[0]}
-                represent={false}
-              />
-            ))}
-          </div>
-        ) : (
-          <span className="mt-[10rem] text-[1.5rem]">
-            등록된 글이 없습니다.
-          </span>
-        )}
+        <div className="">
+          {reportList[0] ? (
+            <div className="grid grid-cols-[repeat(3,minmax(0,300px))] justify-items-center inset-full mt-4 mx-auto gap-y-4">
+              {reportList.map((report, index) => (
+                <CommunityCard
+                  id={report.analystBoardId}
+                  stock={report.stockName}
+                  title={report.title}
+                  key={index}
+                  nickname={report.userNickName}
+                  writer={report.userName}
+                  writeTime={report.createAt.split("T")[0]}
+                  represent={false}
+                />
+              ))}
+            </div>
+          ) : (
+            <span className="mt-[10rem] text-[1.5rem]">
+              등록된 글이 없습니다.
+            </span>
+          )}
+        </div>
 
         <Pagination
           currentPage={currentPage}
@@ -136,7 +144,7 @@ const Report = () => {
         <div className="flex justify-end">
           <div
             onClick={toReportWrite}
-            className="w-16 h-10 mb-10 text-center content-center text-xs border border-black rounded-md"
+            className="w-16 h-8 mb-10 text-center content-center text-xs border border-black rounded-md"
           >
             글쓰기
           </div>

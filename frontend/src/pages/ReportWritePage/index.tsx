@@ -10,7 +10,6 @@ import {
 
 import WriteForm from "../../components/boardWrite/WriteForm";
 import Button from "../../components/elements/Button";
-import Input from "../../components/elements/Input";
 import BasicLayout from "../../layouts/BasicLayout";
 
 import { RootState, useAppDispatch } from "../../store";
@@ -49,6 +48,10 @@ const ReportWritePage = () => {
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
+
+  const [fileName, setFileName] = useState(
+    "STOCKOLM 에서 제공한 PDF를 작성하여 업로드 해주세요."
+  );
 
   const [base64File, setBase64File] = useState("");
 
@@ -125,11 +128,13 @@ const ReportWritePage = () => {
       const extension = files.name.substring(lastIndex + 1).toLocaleLowerCase();
 
       if (!(ALLOW_FILW_EXTENSION.indexOf(extension) > -1)) {
+        e.target.value = "";
         alert("PDF 만 업로드 가능합니다.");
         return;
+      } else {
+        setFileName(e.target.value);
+        fileUploadHandler(files);
       }
-
-      fileUploadHandler(files);
     }
   };
 
@@ -164,7 +169,7 @@ const ReportWritePage = () => {
         // console.log(marketCapitalization);
 
         dispatch(setReportTitle(""));
-        dispatch(setStockName(""));
+        dispatch(setStockName("PDF 파일을 업로드 해주세요."));
         dispatch(setGoalDate(""));
         dispatch(setCurrentStock(0));
         dispatch(setGoalStock(0));
@@ -172,6 +177,7 @@ const ReportWritePage = () => {
         dispatch(setMarketCapitalization(0));
         dispatch(setFilePath(""));
         dispatch(setReportContent(""));
+        setFileName("STOCKOLM 에서 제공한 PDF를 작성하여 업로드 해주세요.");
 
         navigate("/community/report");
       } catch {
@@ -183,7 +189,7 @@ const ReportWritePage = () => {
 
   const cancelReportWrite = () => {
     dispatch(setReportTitle(""));
-    dispatch(setStockName(""));
+    dispatch(setStockName("PDF 파일을 업로드 해주세요."));
     dispatch(setGoalDate(""));
     dispatch(setCurrentStock(0));
     dispatch(setGoalStock(0));
@@ -191,6 +197,8 @@ const ReportWritePage = () => {
     dispatch(setMarketCapitalization(0));
     dispatch(setFilePath(""));
     dispatch(setReportContent(""));
+    setFileName("STOCKOLM 에서 제공한 PDF를 작성하여 업로드 해주세요.");
+
     navigate("/community/report");
   };
 
@@ -246,7 +254,7 @@ const ReportWritePage = () => {
 
   return (
     <BasicLayout>
-      <div className="w-[90vw] max-w-6xl mx-auto flex justify-center mt-10">
+      <div className="w-[60%] mx-auto flex justify-center content-center mt-10">
         <div className="w-full flex flex-col">
           <div
             onClick={backToReportList}
@@ -257,30 +265,37 @@ const ReportWritePage = () => {
           </div>
           <div className="flex mb-4 items-center">
             <span className="mr-4">주식종목</span>
-            <span className="text-center content-center rounded-full border border-black px-4 min-w-[4rem] min-h-[2rem]">
+            <span className="text-[0.8rem] text-center content-center rounded-lg border border-black px-4 min-w-[4rem] min-h-[2rem]">
               {stockName}
             </span>
           </div>
-          <div className="flex mb-4">
-            <span className="mr-2">파일</span>
-            <div>
+          <div className="flex mb-4 items-center">
+            <span className="mr-12">파일</span>
+            <div className="flex">
+              <label
+                htmlFor="pdfUpload"
+                className="cursor-pointer text-[0.9rem] text-center content-center p-2 min-h-[2rem] border border-black border-opacity-50 opacity-50"
+              >
+                {fileName}
+              </label>
               <input
                 type="file"
+                id="pdfUpload"
                 onChange={fileUploadValidHandler}
-                placeholder="PDF 파일 업로드"
-                className=""
+                className="hidden"
               />
             </div>
           </div>
-          <Input
+          <input
+            type="text"
             value={reportTitle}
             onChange={handleReportTitle}
             placeholder="제목을 입력해주세요"
-            className="border-none p-2 mb-4"
+            className="flex text-lg border-none w-full min-h-[3rem] p-2 mb-4"
           />
 
           {/* 글 작성 라이브러리 칸 */}
-          <div className="h-40 mb-20">
+          <div className="h-40 mb-20 w-full">
             <WriteForm />
           </div>
 
