@@ -88,7 +88,7 @@ public class KoreaInvestWebClientUtil {
 
     public Flux<List<GetChartResponse>> getChart(String stockCode) {
         HttpHeaders headers = createHeader();
-        int range = getCurrent30MinuteRange();
+        int range = Math.abs(getCurrent30MinuteRange());
 
         // 30분 간격으로 9시부터 현재 시각까지 호출
         return Flux.range(0, range + 1)
@@ -124,7 +124,6 @@ public class KoreaInvestWebClientUtil {
         try {
             List<GetChartResponse> responseDataList = new ArrayList<>();
             JsonNode rootNode = objectMapper.readTree(response);
-            LocalTime currentTime = LocalTime.now().minusMinutes(1);  // 현재 시각을 저장
 
             // output2 필드가 있는지 확인 (상세 데이터)
             if (rootNode.has("output2")) {
@@ -151,8 +150,8 @@ public class KoreaInvestWebClientUtil {
                             String stckCntgHourStr = responseData.getStckCntgHour();
                             LocalTime stckCntgHour = LocalTime.parse(stckCntgHourStr, DateTimeFormatter.ofPattern("HHmmss"));
 
-                            // stck_cntg_hour가 현재 시각보다 크면 데이터 추가 중단
-                            if (stckCntgHour.isAfter(currentTime)) {
+                            // stck_cntg_hour가 3시 30분보다 크면 중단
+                            if (stckCntgHour.isAfter(LocalTime.of(15, 30))) {
                                 continue;
                             }
 
