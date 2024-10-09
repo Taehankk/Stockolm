@@ -28,7 +28,7 @@ const AuthPage = () => {
       <div className="absolute top-0 left-1/2 transform -translate-x-2/3 mt-4 flex text-PrimaryRed font-bold text-3xl items-start">
         <Link to={"/"}>STOCKOLM</Link>
       </div>
-      <div className="absolute border border-[#D9D9D9] flex justify-center h-[80%] w-[70%]">
+      <div className="absolute border border-[#D9D9D9] top-[4rem] flex justify-center h-[87%] w-[70%]">
         <div
           className={`bg-[url('/src/assets/RedUp.webp')] bg-center bg-cover h-full w-1/2 object-cover transition-transform duration-300 z-10 ${
             imgLocation === 0 ? "translate-x-0" : "translate-x-full"
