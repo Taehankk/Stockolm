@@ -113,6 +113,23 @@ const CommentList = ({ handleCommentCount }: Props) => {
   //   }
   // };
 
+  // onKeyDown 핸들러에서 Enter 키 감지
+  const handleKeyDown = (
+    commentID: number,
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (e.key === "Enter") {
+      if (e.shiftKey) {
+        // Shift + Enter인 경우 줄 바꿈 허용
+        return;
+      } else {
+        // Enter만 누르면 댓글 등록
+        e.preventDefault(); // Enter 입력에 따른 기본 동작(줄 바꿈)을 막음
+        updateComment(commentID); // 댓글 등록 함수 호출
+      }
+    }
+  };
+
   const cancelUpdateComment = async (commentID: number, comment: string) => {
     setCommentData((prevComments) =>
       prevComments.map((item) =>
@@ -144,7 +161,7 @@ const CommentList = ({ handleCommentCount }: Props) => {
   }, [getCommentList]);
 
   return (
-    <div className="flex flex-col mt-4 items-center">
+    <div className="flex flex-col w-full mt-4 items-center">
       {commentData[0] ? (
         commentData.map((comment, index) => {
           const isExpanded = expandedComments.includes(comment.commentId);
@@ -166,88 +183,82 @@ const CommentList = ({ handleCommentCount }: Props) => {
                   </span>
                 </div>
               </div>
-              <div className="flex flex-col mt-4">
-                <div className="flex items-center w-full">
-                  {!comment.isCommentInputOpen ? (
-                    <div className="flex items-center w-full">
+              <div className="flex flex-col w-full mt-4">
+                {!comment.isCommentInputOpen ? (
+                  <div className="flex items-start w-full">
+                    <div className="flex flex-col w-[80%]">
                       <span
                         dangerouslySetInnerHTML={{
                           __html: sanitizer(
                             comment?.content.replace(/\n/g, "<br>")
                           ), // \n을 <br>로 변환
                         }}
-                        className={`text-lg min-h-[2rem] w-[70%] mr-20 ${
+                        className={`text-lg min-h-[2rem] w-[80%] mr-20 whitespace-pre-wrap word-break break-all ${
                           !isExpanded ? "line-clamp-3 overflow-hidden" : ""
                         }`}
-                      >
-                        {/* {comment.content} */}
-                      </span>
+                      ></span>
                       {comment.content.split("\n").length > 3 && ( // 3줄 이상인 경우에만 더보기/간략히 버튼 보여줌
                         <div
-                          className="cursor-pointer text-blue-500 mt-2"
+                          className="flex w-[20%] cursor-pointer text-blue-500 mt-2"
                           onClick={() => toggleExpand(comment.commentId)}
                         >
                           {isExpanded ? "간략히" : "더보기"}
                         </div>
                       )}
-                      {comment.userNickname === nickName && (
-                        <div className="flex opacity-50">
-                          <span
-                            onClick={() =>
-                              openCommentInput(
-                                comment.commentId,
-                                comment.content
-                              )
-                            }
-                            children="수정"
-                            className="flex cursor-pointer bg-white text-sm w-10"
-                          />
-                          <span
-                            onClick={() =>
-                              handleDeleteComment(comment.commentId)
-                            }
-                            children="삭제"
-                            className="flex cursor-pointer bg-white text-sm w-10"
-                          />
-                        </div>
-                      )}
                     </div>
-                  ) : (
-                    <div className="w-full">
-                      <div className="flex-col w-full min-h-[6rem] max-h-[6rem] items-center border border-black border-opacity-50 rounded-md p-1">
-                        <div className="flex w-full h-full items-center">
-                          <textarea
-                            ref={textareaRef}
-                            value={newCommentValue}
-                            onChange={handleNewCommentValue}
-                            // onKeyUp={(e) => handleKeyUp(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
-                            rows={3}
-                            className="flex w-full h-full min-h-[5rem] max-h-[5rem] focus:outline-none focus:border-none text-lg rounded-md p-1 resize-none overflow-hidden"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex gap-x-2 mt-2 justify-end">
-                        <span
-                          onClick={() => updateComment(comment.commentId)}
-                          className="flex cursor-pointer text-sm bg-red-400 rounded-md justify-center text-center items-center w-10 h-8"
-                        >
-                          수정
-                        </span>
+
+                    {comment.userNickname === nickName && (
+                      <div className="flex w-[20%] opacity-50">
                         <span
                           onClick={() =>
-                            cancelUpdateComment(
-                              comment.commentId,
-                              comment.content
-                            )
+                            openCommentInput(comment.commentId, comment.content)
                           }
-                          className="flex cursor-pointer text-sm w-10 h-8 justify-center text-center items-center"
-                        >
-                          취소
-                        </span>
+                          children="수정"
+                          className="flex cursor-pointer bg-white text-sm w-10"
+                        />
+                        <span
+                          onClick={() => handleDeleteComment(comment.commentId)}
+                          children="삭제"
+                          className="flex cursor-pointer bg-white text-sm w-10"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="w-full">
+                    <div className="flex-col w-full min-h-[6rem] max-h-[6rem] items-center border border-black border-opacity-50 rounded-md p-1">
+                      <div className="flex w-full h-full items-center">
+                        <textarea
+                          ref={textareaRef}
+                          value={newCommentValue}
+                          onChange={handleNewCommentValue}
+                          onKeyDown={(e) => handleKeyDown(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
+                          rows={3}
+                          className="flex w-full h-full min-h-[5rem] max-h-[5rem] focus:outline-none focus:border-none text-lg rounded-md p-1 resize-none overflow-auto scrollbar-hide"
+                        />
                       </div>
                     </div>
-                  )}
-                </div>
+                    <div className="flex gap-x-2 mt-2 justify-end">
+                      <span
+                        onClick={() => updateComment(comment.commentId)}
+                        className="flex cursor-pointer text-sm text-white bg-red-400 rounded-md justify-center text-center items-center w-10 h-8"
+                      >
+                        수정
+                      </span>
+                      <span
+                        onClick={() =>
+                          cancelUpdateComment(
+                            comment.commentId,
+                            comment.content
+                          )
+                        }
+                        className="flex cursor-pointer text-sm w-10 h-8 justify-center text-center items-center"
+                      >
+                        취소
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           );
