@@ -60,7 +60,7 @@ export const validateCommentInputLength = (value: string) => {
 export const validateEditorInputLength = (value: string) => {
   if (value.length > 1000) {
     alert("최대 1000자 입력만 가능합니다.");
-    return value.slice(0, 1001);
+    return value.slice(0, 1000);
   }
   return value;
 };

@@ -103,16 +103,6 @@ const CommentList = ({ handleCommentCount }: Props) => {
     }
   };
 
-  // 핸들러에서 Enter 키 감지
-  // const handleKeyUp = (
-  //   commentID: number,
-  //   e: React.KeyboardEvent<HTMLTextAreaElement>
-  // ) => {
-  //   if (e.key === "Enter") {
-  //     updateComment(commentID); // Enter 키 입력 시 searchList 함수 호출
-  //   }
-  // };
-
   // onKeyDown 핸들러에서 Enter 키 감지
   const handleKeyDown = (
     commentID: number,
@@ -234,6 +224,7 @@ const CommentList = ({ handleCommentCount }: Props) => {
                           onChange={handleNewCommentValue}
                           onKeyDown={(e) => handleKeyDown(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
                           rows={3}
+                          maxLength={100}
                           className="flex w-full h-full min-h-[5rem] max-h-[5rem] focus:outline-none focus:border-none text-lg rounded-md p-1 resize-none overflow-auto scrollbar-hide"
                         />
                       </div>
