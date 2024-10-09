@@ -45,7 +45,7 @@ export const getFollowStatus = async (stockName: string): Promise<boolean> => {
     });
     return response.data.isFollowed;
   } catch (error) {
-    console.error("Error fetching follow status:", error);
+    console.error("비로그인시 follow호출안함", error);
     throw error;
   }
 };
