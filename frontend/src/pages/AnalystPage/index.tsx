@@ -56,14 +56,14 @@ interface AnalystInfo {
 }
 
 const Analyst: React.FC = () => {
-
   const { nickname } = useParams<{ nickname: string }>();
-  const [ isFollow, setIsFollow ] = useState(false);
+  const [isFollow, setIsFollow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 추가: 로딩 상태 관리
   const queryClient = useQueryClient();
 
   const { data: analystInfo, error: analystInfoError, isLoading: analystInfoIsLoading } = useQuery<AnalystInfo, Error>({
-    queryKey: ["analystInfo", nickname], 
-    queryFn: ({ queryKey }) => fetchAnalystInfo(queryKey[1] as string)
+    queryKey: ["analystInfo", nickname],
+    queryFn: ({ queryKey }) => fetchAnalystInfo(queryKey[1] as string),
   });
 
   const { data: favoriteAnalysts, error: analystError, isLoading: analystIsLoading } = useQuery<Analyst[], Error>({
@@ -76,24 +76,22 @@ const Analyst: React.FC = () => {
     favoriteAnalysts?.map((analyst) => {
       if (analyst.userNickName === nickname) {
         setIsFollow(true);
-
         flag = true;
       }
-
       if (!flag) {
         setIsFollow(false);
       }
+    });
+  }, [favoriteAnalysts]);
 
-    })
-  },[favoriteAnalysts])
-
-  useEffect(() => {
-  }, [nickname]);
+  useEffect(() => {}, [nickname]);
 
   const handleClickFollow = async (nickname: string) => {
+    if (isLoading) return; // 추가: 로딩 중이면 함수 종료
+    setIsLoading(true); // 추가: 로딩 상태 true로 설정
+
     try {
       await postAnalystFollow(nickname);
-
       setIsFollow(!isFollow);
 
       if (nickname) {
@@ -103,7 +101,9 @@ const Analyst: React.FC = () => {
         });
       }
     } catch (error) {
-       console.error("팔로우 처리 중 오류 발생:", error);
+      console.error("팔로우 처리 중 오류 발생:", error);
+    } finally {
+      setIsLoading(false); // 추가: 로딩 상태 false로 설정
     }
   };
 
@@ -121,7 +121,7 @@ const Analyst: React.FC = () => {
         <div className="w-[23rem] mr-[2rem] pr-[3rem] border-b-black border-r">
           <div className="flex justify-center items-center pb-[0.3rem] border-b-black border-b-[0.0625rem]">
             <div>
-              <img className="w-[6rem] h-[6rem] rounded-full" src={analystInfo?.userImagePath}></img>
+              <img className="w-[6rem] h-[6rem] rounded-full" src={analystInfo?.userImagePath} />
             </div>
             <span className="self-end ml-[4rem] text-[1.625rem]">{analystInfo?.userName}</span>
           </div>
@@ -139,19 +139,36 @@ const Analyst: React.FC = () => {
               <span>{analystInfo?.totalAnalystRank}</span>
             </div>
           </div>
-          {isFollow ?
-          <Button className="w-[13.8125rem] h-[3rem] flex justify-center items-center mx-auto bg-white rounded-lg border-[1px]" border="black" onClick={() => handleClickFollow(nickname!)}>
-            <img className="w-[1.875rem] h-[1.75rem]" src={unfollow} />
-          </Button>:
-          <Button className="w-[13.8125rem] h-[3rem] flex justify-center items-center mx-auto" onClick={() => handleClickFollow(nickname!)}>
-            <img className="w-[1.875rem] h-[1.75rem]" src={follow} />
-          </Button>}
+          {isFollow ? (
+            <Button
+              className={`w-[13.8125rem] h-[3rem] flex justify-center items-center mx-auto bg-white rounded-lg border-[1px] ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              border="black"
+              onClick={() => handleClickFollow(nickname!)}
+            >
+              <img className="w-[1.875rem] h-[1.75rem]" src={unfollow} />
+            </Button>
+          ) : (
+            <Button
+              className={`w-[13.8125rem] h-[3rem] flex justify-center items-center mx-auto ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={() => handleClickFollow(nickname!)}
+            >
+              <img className="w-[1.875rem] h-[1.75rem]" src={follow} />
+            </Button>
+          )}
           <div className="flex flex-col items-center gap-[1.5rem] mx-auto w-[7rem] mt-[5rem] border-[#B4B4B4] border-y-[1px] py-[1.3rem] text-[1.25rem]">
             <div>
-              <Link to={"statistic"} className="cursor-pointer">통계보기</Link>
+              <Link to={"statistic"} className="cursor-pointer">
+                통계보기
+              </Link>
             </div>
             <div>
-              <Link to={"report"} className="cursor-pointer">작성글보기</Link>
+              <Link to={"report"} className="cursor-pointer">
+                작성글보기
+              </Link>
             </div>
           </div>
         </div>
