@@ -92,14 +92,28 @@ const Report = () => {
   }, [currentPage]);
 
   useEffect(() => {
+    if (searchWord === "") {
+      getReportList(); 
+    }
+  }, [searchWord]);
+
+  useEffect(() => {
     getReportList();
     dispatch(setCurrentPage(1));
   }, [sort]);
 
+  const handleClickInitSearch = async () => {
+    setSearchWord("");
+    dispatch(setCurrentPage(1));
+  }
+
   return (
-    <div className="w-[90%] mt-10">
+    <div className="w-[100%] mt-10">
       <div>
-        <span className="text-3xl">종목분석게시판</span>
+        <div className="h-[2rem] flex justify-between items-end">
+          <span className="text-3xl">종목분석게시판</span>
+          <span className="w-[8rem] h-[2rem] inline-flex justify-center items-center border-black border rounded-full cursor-pointer" onClick={handleClickInitSearch}>검색 초기화</span>
+        </div>
         <div className="flex mt-4 mb-2 justify-between items-center">
           <Filter sort={sort} handleSort={handleSort} />
           <Search
@@ -111,7 +125,7 @@ const Report = () => {
         <hr />
         <div className="">
           {reportList[0] ? (
-            <div className="grid grid-cols-[repeat(3,minmax(0,300px))] justify-items-center inset-full mt-4 mx-auto gap-y-4">
+            <div className="grid grid-cols-[repeat(3,minmax(0,600px))] justify-items-center inset-full my-[3rem] mx-auto gap-y-[3rem]">
               {reportList.map((report, index) => (
                 <CommunityCard
                   id={report.analystBoardId}

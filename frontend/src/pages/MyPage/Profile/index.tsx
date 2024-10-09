@@ -83,7 +83,7 @@ const Profile: React.FC= () => {
   });
 
   useEffect(() => {
-    console.log(analystStock);
+    console.log(favoriteAnalysts,"dd");
   },[favoriteStock, favoriteAnalysts, analystStock])
 
   if (stockIsLoading || analystInfoIsLoading || analystIsLoading || analystBoardIsLoading) {

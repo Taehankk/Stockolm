@@ -84,28 +84,26 @@ const MyPage: React.FC = () => {
     setIsModal(true);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const fileType = file.type;
-  
+
       if (fileType === 'image/jpeg') {
         setSelectedFile(file);
         setImagePreview(URL.createObjectURL(file));
+
+        console.log(selectedFile);
+        try {
+          await postProfileImage(file);
+          alert("프로필 이미지가 성공적으로 변경되었습니다.");
+        } catch (error) {
+          console.error("이미지 업로드 실패:", error);
+          alert("이미지 업로드에 실패했습니다.");
+        }
       } else {
         alert("JPG 파일만 업로드할 수 있습니다.");
         e.target.value = '';
-      }
-    }
-  };
-
-  const handleClickUploadImage = async () => {
-    if (selectedFile) {
-      try {
-        await postProfileImage(selectedFile);
-        alert("프로필 이미지가 성공적으로 변경되었습니다.");
-      } catch (error) {
-        console.error("이미지 업로드 실패:", error);
       }
     }
   };
@@ -135,8 +133,8 @@ const MyPage: React.FC = () => {
               {isHovered && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
                   <div className="cursor-pointer text-white flex flex-col items-center">
-                    <span onClick={() => document.getElementById('profileImage')?.click()}>
-                      미리 보기
+                    <span className="text-center" onClick={() => document.getElementById('profileImage')?.click()}>
+                      이미지 변경
                     </span>
                   </div>
                 </div>
@@ -146,15 +144,6 @@ const MyPage: React.FC = () => {
 
           <div className="pl-[3rem] h-full flex items-end text-[2.25rem]">
             {role === "USER" ? nickName : userName}님, 안녕하세요!
-          </div>
-
-          <div className="absolute left-[-7rem] top-[10rem]">
-            <button
-              className="bg-blue-500 text-white text-sm ml-6 px-3 py-1 rounded"
-              onClick={handleClickUploadImage}
-            >
-              이미지 변경
-            </button>
           </div>
 
           <div className="flex h-full">

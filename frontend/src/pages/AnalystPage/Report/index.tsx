@@ -185,7 +185,7 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
         </div>
         <div className="mx-[4rem]"></div>
         <div>
-          <div className="flex justify-center items-center gap-[4rem] flex-wrap mt-[3rem]">
+          <div className="flex justify-center items-center gap-[4rem] flex-wrap my-[3rem]">
           {currentCards && currentCards.length > 0 
           ? currentCards.map((item, index) => 
             item ? (

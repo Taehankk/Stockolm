@@ -219,7 +219,7 @@ const BoardDetailPage = () => {
                 <img
                   src={boardData?.userImagePath}
                   alt="프로필사진"
-                  className="w-6 h-6 mr-2 object-cover border rounded-full border-black"
+                  className="w-6 h-6 mr-2 object-cover rounded-full border-black"
                 />
                 {boardData?.userNickname}
               </div>
@@ -275,7 +275,7 @@ const BoardDetailPage = () => {
             <hr />
             <div className="flex flex-col p-4 w-full justify-center mb-10">
               {token ? (
-                <div className="flex w-full items-center">
+                <div className="flex justify-between w-full items-center">
                   <textarea
                     ref={textareaRef}
                     value={commentValue}
@@ -283,12 +283,12 @@ const BoardDetailPage = () => {
                     onKeyDown={handleKeyDown} // Enter 키 감지하는 핸들러 추가
                     placeholder="댓글을 입력하세요 (Shift + Enter : 줄 바꿈)"
                     rows={1}
-                    className="flex border border-black rounded-3xl w-[80%] mr-2 p-2 resize-none overflow-hidden"
+                    className="flex border pl-5 border-black rounded-3xl w-[80%] mr-2 p-2 resize-none overflow-hidden"
                   />
                   <Button
                     onClick={registComment}
                     children="등록"
-                    className="w-[15%]"
+                    className="w-[10%] h-[2.5rem]"
                   />
                 </div>
               ) : (
