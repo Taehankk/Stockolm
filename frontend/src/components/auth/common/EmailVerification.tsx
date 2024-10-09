@@ -56,8 +56,8 @@ const EmailVerification = ({ location }: Props) => {
 
   return (
     <div className="flex-col">
-      <div className="flex mb-2 w-full justify-between">
-        <span className="w-full">이메일</span>
+      <div className="flex mb-1.5 w-[24vw] justify-between min-h-[3rem]">
+        <span className="mt-1.5 w-full">이메일</span>
         <Input
           onChange={handleEmailInputChange}
           value={emailInput}
@@ -68,16 +68,16 @@ const EmailVerification = ({ location }: Props) => {
         <Button
           onClick={sendEmail}
           children="이메일 인증"
-          className="mb-2 text-[0.85rem]"
+          className="mb-1.5 text-[0.85rem]"
         />
       </div>
-      <div className="flex items-center justify-end mb-2">
+      <div className="flex items-center justify-end mb-1.5 ">
         <Input
-          size="small"
+          size="medium"
           placeholder="인증 코드 입력"
           onChange={handleValidateNumInputChange}
           value={validateNumInput}
-          className="mr-12 w-32 text-sm"
+          className="mr-2 text-sm w-[135px]"
         />
         <Button
           size="small"
