@@ -49,8 +49,8 @@
 
     return (
         <div className={`w-[${w}] h-[${h}] flex relative pointer-events-none`} style={{ width: w, height: h }}>
-          <ReactApexChart options={options} series={options.series} type="donut" width="100%" height="100%"/>
-          <div className={`w-full h-[${textHeight}] absolute inset-0 flex flex-col gap-[0.5rem] justify-center items-center text-[${textSize}]`}>
+          <ReactApexChart options={options} series={options.series} type="donut" width="100%" height="100%" />
+          <div className={`w-full h-[${textHeight}] absolute inset-0 flex flex-col gap-[0.5rem] justify-center items-center `} style={{ fontSize: textSize }}>
             {content ? <span>{content}</span> : <></>}
             {value !== 101 ? <span className="pl-[0.3rem]">{roundedValue}%</span> : <></>}
           </div>
