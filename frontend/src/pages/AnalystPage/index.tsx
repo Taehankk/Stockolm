@@ -87,8 +87,8 @@ const Analyst: React.FC = () => {
   useEffect(() => {}, [nickname]);
 
   const handleClickFollow = async (nickname: string) => {
-    if (isLoading) return; // 추가: 로딩 중이면 함수 종료
-    setIsLoading(true); // 추가: 로딩 상태 true로 설정
+    if (isLoading) return;
+    setIsLoading(true);
 
     try {
       await postAnalystFollow(nickname);
@@ -103,7 +103,7 @@ const Analyst: React.FC = () => {
     } catch (error) {
       console.error("팔로우 처리 중 오류 발생:", error);
     } finally {
-      setIsLoading(false); // 추가: 로딩 상태 false로 설정
+      setIsLoading(false);
     }
   };
 
