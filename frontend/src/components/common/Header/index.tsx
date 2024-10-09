@@ -52,7 +52,7 @@ const Header = () => {
           <FontAwesomeIcon
             icon={faBars}
             onClick={handleMenuOpen}
-            className="text-2xl text-center"
+            className="text-2xl text-center cursor-pointer"
           />
           {isMenuOpen && (
             <div className="absolute flex flex-col gap-2 justify-center top-[100%] right-0 mt-2 border border-black rounded-lg w-[8rem] h-[6rem] bg-white">
