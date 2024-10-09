@@ -20,7 +20,7 @@
     textHeight = "80%",
   }: DonutChartProps) => {
 
-    const roundedValue = value ? Math.round(value) : 100;
+    const roundedValue = value !== null && value !== undefined ? Math.round(value) : 100;
 
     const options = {
       chart: {
