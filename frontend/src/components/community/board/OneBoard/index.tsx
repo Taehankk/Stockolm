@@ -36,7 +36,7 @@ const OneBoard = ({ board }: Props) => {
         <img
           src={board.userImagePath}
           alt="프로필사진"
-          className="w-24 h-24 object-cover border rounded-full border-black"
+          className="w-24 h-24 object-cover rounded-full border-black"
         />
         <div className="ml-4 w-[80%]">
           <div className="mt-2">{board.title}</div>
