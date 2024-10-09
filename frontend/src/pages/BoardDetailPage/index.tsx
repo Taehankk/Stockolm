@@ -1,9 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dompurify from "dompurify";
 
 import BasicLayout from "../../layouts/BasicLayout";
-import Input from "../../components/elements/Input";
 import Button from "../../components/elements/Button";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,6 +33,7 @@ import {
   setBoardTitle,
 } from "../../slices/boardSlice";
 import CommentList from "../../components/community/board/CommentList";
+import { validateCommentInputLength } from "../../utils/validation";
 
 interface BoardData {
   userNickname: string;
@@ -51,6 +51,7 @@ interface BoardData {
 const BoardDetailPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
   // 사용자 접속시 그 악성코드가 실행되는 것을 XSS, 보안을 위해 sanitize 추가
@@ -93,6 +94,7 @@ const BoardDetailPage = () => {
   const getBoard = async () => {
     try {
       const res = await getBoardAPI(token, boardID!);
+
       setBoardData(res);
       setLike(res.like);
       setBoardLike(res.likeCnt);
@@ -123,27 +125,37 @@ const BoardDetailPage = () => {
     }
   };
 
-  const handleCommentValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCommentValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    setCommentValue(value);
+    setCommentValue(validateCommentInputLength(value));
+
+    // 입력할 때마다 높이 조절
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // 높이를 자동으로 맞추기 위해 초기화
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 입력된 내용에 따라 높이 조정
+    }
   };
 
   const registComment = async () => {
     if (commentValue !== "") {
-      await writeCommentAPI(boardID!, commentValue);
-      alert("댓글 등록 완료");
-      window.location.reload();
+      try {
+        await writeCommentAPI(Number(boardID!), commentValue);
+        alert("댓글 등록 완료");
+        window.location.reload();
+      } catch {
+        alert("댓글 등록 실패");
+      }
     } else {
       alert("댓글을 입력하세요");
     }
   };
 
   // onKeyDown 핸들러에서 Enter 키 감지
-  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      registComment(); // Enter 키 입력 시 searchList 함수 호출
-    }
-  };
+  // const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  //   if (e.key === "Enter") {
+  //     registComment(); // Enter 키 입력 시 searchList 함수 호출
+  //   }
+  // };
 
   useEffect(() => {
     getBoard();
@@ -169,7 +181,7 @@ const BoardDetailPage = () => {
           {/* 시간, 좋아요, 조회수 */}
           <div className="w-full">
             <div className="flex text-sm mt-3">
-              <span className="mr-12">
+              <span className="mr-24">
                 #
                 {boardData?.category === "CHAT"
                   ? "잡담"
@@ -196,7 +208,7 @@ const BoardDetailPage = () => {
             </div>
 
             <div className="flex items-center my-2 w-full h-fit">
-              <div className="flex items-center w-full">
+              <div className="flex min-w-[6rem] items-center mr-10">
                 <img
                   src={boardData?.userImagePath}
                   alt="프로필사진"
@@ -204,12 +216,12 @@ const BoardDetailPage = () => {
                 />
                 {boardData?.userNickname}
               </div>
-              <div className="flex w-full">
-                <div className="mr-4">
-                  <span className="mr-2">작성일</span>
+              <div className="flex mr-10">
+                <div className="min-w-[10rem] mr-4">
+                  <span className=" mr-2">작성일</span>
                   <span>{boardData?.createAt.split("T")[0]}</span>
                 </div>
-                <div>
+                <div className="min-w-[10rem] ">
                   <span className="mr-2">수정일</span>
                   {boardData?.updateAt ? (
                     <span>{boardData?.updateAt.split("T")[0]}</span>
@@ -232,7 +244,10 @@ const BoardDetailPage = () => {
                   />
                 </div>
               ) : (
-                <div onClick={handleLike} className="flex mb-1 text-2xl">
+                <div
+                  onClick={handleLike}
+                  className="flex mb-1 text-2xl cursor-pointer justify-end w-full"
+                >
                   {isLike ? (
                     <FontAwesomeIcon icon={like} className="text-PrimaryRed" />
                   ) : (
@@ -251,19 +266,22 @@ const BoardDetailPage = () => {
               className="text-lg p-4 min-h-64"
             ></div>
             <hr />
-            <div className="flex flex-col p-4">
+            <div className="flex flex-col p-4 w-full justify-center mb-10">
               {token ? (
-                <div className="flex">
-                  <Input
+                <div className="flex w-full items-center">
+                  <textarea
+                    ref={textareaRef}
                     value={commentValue}
                     onChange={handleCommentValue}
-                    onKeyUp={handleKeyUp} // Enter 키 감지하는 핸들러 추가
-                    className="rounded-3xl w-[40rem] mr-2"
+                    // onKeyUp={handleKeyUp} // Enter 키 감지하는 핸들러 추가
+                    placeholder="댓글을 입력하세요"
+                    rows={1}
+                    className="flex border border-black rounded-3xl w-[80%] mr-2 p-2 resize-none overflow-hidden"
                   />
                   <Button
-                    size="small"
                     onClick={registComment}
                     children="등록"
+                    className="w-[15%]"
                   />
                 </div>
               ) : (

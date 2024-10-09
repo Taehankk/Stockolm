@@ -191,15 +191,10 @@ export const getCommentListAPI = async (
   return res.data;
 };
 
-export const writeCommentAPI = async (boardID: string, comment: string) => {
-  try {
-    await axiosTokenInstance.post(`/comment/${boardID}`, {
-      content: comment,
-    });
-  } catch (e) {
-    console.log(e);
-    console.log("댓글 등록 실패");
-  }
+export const writeCommentAPI = async (boardId: number, comment: string) => {
+  await axiosTokenInstance.post(`/comment/${boardId}`, {
+    content: comment,
+  });
 };
 
 export const updateCommentAPI = async (commentID: number, comment: string) => {
@@ -217,7 +212,7 @@ export const deleteCommentAPI = async (commentID: number) => {
 };
 
 export const changeReportLikeStateAPI = async (reportID: string) => {
-  await axiosTokenInstance.post(`analyst-board/like/${reportID}`);
+  await axiosTokenInstance.post(`/analyst-board/like/${reportID}`);
 };
 
 export const getReportListAPI = async (
@@ -241,10 +236,15 @@ export const getReportListAPI = async (
   return res.data;
 };
 
-export const getReportAPI = async (reportID: string) => {
-  const res = await axiosTokenInstance.get(`/analyst-board/${reportID}`);
-  console.log(res.data);
-  return res.data;
+export const getReportAPI = async (reportID: string, nickname: string) => {
+  try {
+    const res = await axiosTokenInstance.get(`/analyst-board/${reportID}`);
+    console.log(res.data);
+    return res.data;
+  } catch {
+    window.location.href = `/analyst/${nickname}/report`;
+    alert("게시글 가져오기 실패");
+  }
 };
 
 export const writeReportAPI = async (report: Report) => {

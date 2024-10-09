@@ -20,6 +20,7 @@ import {
 import { RootState, useAppDispatch } from "../../../store";
 import { getUserInfo } from "../../../slices/userSlice";
 import { useSelector } from "react-redux";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 interface Report {
   content: string; // 요약 내용
@@ -41,6 +42,8 @@ interface Report {
 }
 
 const ReportDetail = () => {
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -49,20 +52,22 @@ const ReportDetail = () => {
   const sanitizer = dompurify.sanitize;
 
   const token = sessionStorage.getItem("access_token");
-  const nickName = useSelector((state: RootState) => state.user.userNickName);
+  const loginUser = useSelector((state: RootState) => state.user.userNickName);
 
   const { nickname, id: reportID } = useParams();
 
   const [report, setReport] = useState<Report>();
 
   const [isLike, setLike] = useState(false);
+  const [reportLike, setReportLike] = useState(0);
 
   const getReport = async () => {
     try {
-      const res = await getReportAPI(reportID!);
+      const res = await getReportAPI(reportID!, nickname!);
       setReport(res);
+      setLoading(false);
     } catch {
-      alert("게시글 가져오기 실패");
+      setLoading(false);
     }
   };
 
@@ -72,9 +77,14 @@ const ReportDetail = () => {
 
   const handleLike = async () => {
     try {
-      if (nickName !== report?.userNickName) {
-        await changeReportLikeStateAPI(reportID!);
+      if (loginUser !== report?.userNickName) {
         setLike(!isLike);
+        if (isLike) {
+          setReportLike(reportLike - 1);
+        } else {
+          setReportLike(reportLike + 1);
+        }
+        await changeReportLikeStateAPI(reportID!);
       }
     } catch {
       alert("좋아요 변경 실패");
@@ -88,13 +98,14 @@ const ReportDetail = () => {
   useEffect(() => {
     if (report) {
       setLike(report.like);
+      setReportLike(report.likeCnt);
     }
 
     if (report && report.userNickName && report.userNickName !== nickname) {
+      navigate(`/analyst/${nickname}/report`);
       alert(
         `해당 애널리스트가 작성한 게시글이 아닙니다. ${nickname} 의 페이지로 이동합니다.`
       );
-      navigate(`/analyst/${nickname}/report`);
     }
   }, [report, nickname, reportID, navigate]);
 
@@ -104,41 +115,38 @@ const ReportDetail = () => {
     }
   }, [token]);
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <div className="flex justify-items-center w-[80%]">
-      <div className="">
+    <div className="">
+      <div className="w-[90%] flex-col justify-center items-center">
         <div
           onClick={backToReportList}
-          className="cursor-pointer text-3xl mb-10"
+          className="cursor-pointer text-3xl mb-8"
         >
           <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
           작성글보기
         </div>
 
-        <div className="border border-black border-opacity-10 rounded-lg p-10">
+        <div className="flex-col ml-4 min-h-[40rem] justify-center items-center border border-black border-opacity-10 rounded-lg p-10">
           {/* 제목 */}
           <div className="text-4xl">{report?.title}</div>
 
           {/* 시간, 좋아요, 조회수, pdf */}
           <div className="flex text-sm mt-3">
-            <div className="flex w-full gap-2 justify-between">
+            <div className="flex w-full gap-2 items-center justify-between">
               <div className="flex justify-between">
                 <div className="mr-20 w-full opacity-50">
                   <span className="">{report?.createAt.split("T")[0]}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="flex w-full gap-2 mr-2">
-                    <div onClick={handleLike}>
-                      {isLike ? (
-                        <FontAwesomeIcon
-                          icon={like}
-                          className="text-PrimaryRed"
-                        />
-                      ) : (
-                        <FontAwesomeIcon icon={unlike} className="opacity-50" />
-                      )}
+                    <div>
+                      <FontAwesomeIcon icon={unlike} className="opacity-50" />
                     </div>
-                    <span className="opacity-50">{report?.likeCnt}</span>
+                    <span className="opacity-50">{reportLike}</span>
                   </span>
                   <span className="flex w-full gap-2 mr-2 opacity-50">
                     <FontAwesomeIcon icon={faEye} className="" />
@@ -146,12 +154,31 @@ const ReportDetail = () => {
                   </span>
                 </div>
               </div>
-              <a href={report?.filePath} className="cursor-pointer">
-                <span className="mr-2">
-                  <FontAwesomeIcon icon={faFilePdf} />
-                </span>
-                <span className="opacity-50">보고서 다운로드</span>
-              </a>
+              <div className="flex items-center">
+                <a href={report?.filePath} className="cursor-pointer mr-4">
+                  <span className="mr-2">
+                    <FontAwesomeIcon icon={faFilePdf} />
+                  </span>
+                  <span className="opacity-50">보고서 다운로드</span>
+                </a>
+                {report?.userNickName !== loginUser ? (
+                  <div
+                    onClick={handleLike}
+                    className="flex mb-1 text-2xl cursor-pointer"
+                  >
+                    {isLike ? (
+                      <FontAwesomeIcon
+                        icon={like}
+                        className="text-PrimaryRed"
+                      />
+                    ) : (
+                      <FontAwesomeIcon icon={unlike} className="text-2xl" />
+                    )}
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           </div>
 

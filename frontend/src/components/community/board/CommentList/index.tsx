@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-
-import Input from "../../../elements/Input";
 
 import {
   getCommentListAPI,
   updateCommentAPI,
   deleteCommentAPI,
 } from "../../../../api/communityAPI";
+import { validateCommentInputLength } from "../../../../utils/validation";
 
 interface Comment {
   commentId: number;
@@ -26,6 +25,8 @@ interface Props {
   handleCommentCount: (value: number) => void;
 }
 const CommentList = ({ handleCommentCount }: Props) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const token = sessionStorage.getItem("access_token");
   const { id: boardID } = useParams();
   const nickName = useSelector((state: RootState) => state.user.userNickName);
@@ -44,9 +45,15 @@ const CommentList = ({ handleCommentCount }: Props) => {
     }
   };
 
-  const handleNewCommentValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNewCommentValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    setNewCommentValue(value);
+    setNewCommentValue(validateCommentInputLength(value));
+
+    // 입력할 때마다 높이 조절
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // 높이를 자동으로 맞추기 위해 초기화
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // 입력된 내용에 따라 높이 조정
+    }
   };
 
   const openCommentInput = (commentID: number, comment: string) => {
@@ -82,14 +89,14 @@ const CommentList = ({ handleCommentCount }: Props) => {
   };
 
   // onKeyDown 핸들러에서 Enter 키 감지
-  const handleKeyUp = (
-    commentID: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Enter") {
-      updateComment(commentID); // Enter 키 입력 시 searchList 함수 호출
-    }
-  };
+  // const handleKeyUp = (
+  //   commentID: number,
+  //   e: React.KeyboardEvent<HTMLTextAreaElement>
+  // ) => {
+  //   if (e.key === "Enter") {
+  //     updateComment(commentID); // Enter 키 입력 시 searchList 함수 호출
+  //   }
+  // };
 
   const cancelUpdateComment = async (commentID: number, comment: string) => {
     setCommentData((prevComments) =>
@@ -132,62 +139,78 @@ const CommentList = ({ handleCommentCount }: Props) => {
               />
             </div>
             <div className="flex w-[80%] flex-col mt-2">
-              <div className="flex justify-between items-center mb-5">
-                <span className="text-2xl">{comment.userNickname}</span>
-                <span className="text-sm opacity-50">
-                  {comment.createAt?.slice(0, 16).replace("T", " ")}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
+              <div className="flex items-center w-full">
                 {!comment.isCommentInputOpen ? (
-                  <span className="text-lg">{comment.content}</span>
-                ) : (
-                  <div className="flex w-[80%] justify-between items-center">
-                    <Input
-                      size="large"
-                      value={newCommentValue}
-                      onChange={handleNewCommentValue}
-                      onKeyUp={(e) => handleKeyUp(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
-                    />
-                    <div className="flex gap-x-2">
-                      <span
-                        onClick={() => updateComment(comment.commentId)}
-                        className="cursor-pointer w-10"
-                      >
-                        수정
-                      </span>
-                      <span
-                        onClick={() =>
-                          cancelUpdateComment(
-                            comment.commentId,
-                            comment.content
-                          )
-                        }
-                        className="cursor-pointer w-10"
-                      >
-                        취소
+                  <div className="flex-col w-full">
+                    <div className="flex w-full items-center mb-5 justify-between">
+                      <span className="text-2xl">{comment.userNickname}</span>
+                      <span className="flex text-sm opacity-50">
+                        {comment.createAt?.slice(0, 16).replace("T", " ")}
                       </span>
                     </div>
-                  </div>
-                )}
-                {comment.userNickname === nickName &&
-                !comment.isCommentInputOpen ? (
-                  <div className="flex opacity-50">
-                    <span
-                      onClick={() =>
-                        openCommentInput(comment.commentId, comment.content)
-                      }
-                      children="수정"
-                      className="cursor-pointer bg-white text-sm w-10"
-                    />
-                    <span
-                      onClick={() => handleDeleteComment(comment.commentId)}
-                      children="삭제"
-                      className="cursor-pointer bg-white text-sm w-10"
-                    />
+                    <div className="flex items-center">
+                      <span className="text-lg min-h-[2rem] w-[70%] mr-20">
+                        {comment.content}
+                      </span>
+                      {comment.userNickname === nickName && (
+                        <div className="flex opacity-50 w-[20%]">
+                          <span
+                            onClick={() =>
+                              openCommentInput(
+                                comment.commentId,
+                                comment.content
+                              )
+                            }
+                            children="수정"
+                            className="flex cursor-pointer bg-white text-sm w-10"
+                          />
+                          <span
+                            onClick={() =>
+                              handleDeleteComment(comment.commentId)
+                            }
+                            children="삭제"
+                            className="flex cursor-pointer bg-white text-sm w-10"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ) : (
-                  ""
+                  <div className="flex-col w-full min-h-[6rem] items-center border border-black border-opacity-50 rounded-md p-1">
+                    <span className="flex text-2xl mb-5">
+                      {comment.userNickname}
+                    </span>
+                    <div className="flex items-center">
+                      <textarea
+                        ref={textareaRef}
+                        value={newCommentValue}
+                        onChange={handleNewCommentValue}
+                        // onKeyUp={(e) => handleKeyUp(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
+                        rows={1}
+                        className="flex w-[70%] max-w-[70%] focus:outline-none focus:border-none text-lg rounded-md h-full mr-20 p-1 resize-none overflow-hidden"
+                      />
+
+                      <div className="flex gap-x-2 w-[20%] items-center justify-center">
+                        <span
+                          onClick={() => updateComment(comment.commentId)}
+                          className="flex cursor-pointer text-sm bg-red-400 rounded-md justify-center text-center items-center w-10 h-8"
+                        >
+                          수정
+                        </span>
+                        <span
+                          onClick={() =>
+                            cancelUpdateComment(
+                              comment.commentId,
+                              comment.content
+                            )
+                          }
+                          className="flex cursor-pointer text-sm w-10 h-8 justify-center text-center items-center"
+                        >
+                          취소
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
