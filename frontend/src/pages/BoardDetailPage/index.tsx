@@ -291,6 +291,7 @@ const BoardDetailPage = () => {
                     placeholder="댓글을 입력하세요 (Shift + Enter : 줄 바꿈)"
                     rows={1}
                     className="flex w-[50rem] border content-center pl-5 pt-7 min-h-[5rem] max-h-[5rem] border-black rounded-3xl mr-2 p-2 resize-none overflow-auto scrollbar-hide"
+                    maxLength={100}
                   />
                   <Button
                     onClick={registComment}
