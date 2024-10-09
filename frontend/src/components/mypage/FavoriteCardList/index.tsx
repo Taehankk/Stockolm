@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import FavoriteCard from "../../elements/FavoriteCard";
+import { useQueryClient } from "@tanstack/react-query";
+import { postAnalystFollow } from "../../../api/analystAPI";
 
-import CardArrow from "/src/assets/cardArrow.svg"
-import CardArrowReverse from "/src/assets/cardArrowReverse.svg"
+import CardArrow from "/src/assets/cardArrow.svg";
+import CardArrowReverse from "/src/assets/cardArrowReverse.svg";
 
 interface Analyst {
   userName: string;
@@ -12,17 +14,16 @@ interface Analyst {
   reliability: number;
   totalAnalystRanking: number;
 }
-    
+
 interface FavoriteCardProps {
-    dataProps: Analyst[];
+  dataProps: Analyst[];
 }
 
 const FavoriteCardList = ({
-    dataProps,
+  dataProps,
 }: FavoriteCardProps) => {
-
+  const queryClient = useQueryClient();
   const [dataList, setDataList] = useState<Analyst[]>([]);
-
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 3;
 
@@ -36,47 +37,94 @@ const FavoriteCardList = ({
   };
 
   const handleNextPage = () => {
-    if (startIdx + itemsPerPage < dataProps.length) {
+    if (startIdx + itemsPerPage < dataList.length) {
       setCurrentPage(currentPage + 1);
     }
   };
 
-    const fetchData = async (dataProps: Analyst[]) => {
-      try {
-        let updatedData = [...dataProps];
-  
+  const fetchData = (dataProps: Analyst[]) => {
+    let updatedData = [...dataProps];
+
+    const remainder = updatedData.length % itemsPerPage;
+    if (remainder !== 0) {
+      const emptySlots = itemsPerPage - remainder;
+      updatedData = [...updatedData, ...Array(emptySlots).fill(null)];
+    }
+
+    setDataList(updatedData);
+  };
+
+  const handleClickFollow = async (nickname: string) => {
+    try {
+      await postAnalystFollow(nickname);
+
+      setDataList((prevData) => {
+        const updatedData = prevData.filter(
+          (analyst) => analyst && analyst.userNickName !== nickname
+        );
+
+        if (updatedData.length === 0 && currentPage > 0) {
+          setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+        }
+
         const remainder = updatedData.length % itemsPerPage;
         if (remainder !== 0) {
           const emptySlots = itemsPerPage - remainder;
-          updatedData = [...updatedData, ...Array(emptySlots).fill(null)];
+          return [...updatedData, ...Array(emptySlots).fill(null)];
         }
-        setDataList(updatedData);
 
-      } catch (error) {
-        console.error("분석가 리스트를 불러오지 못함", error);
-      } finally {
-        console.log(dataProps);
-      }
-    };
+        return updatedData;
+      });
 
-    useEffect(() =>  {
-      if (dataProps.length > 0) {
-        fetchData(dataProps);
-      }
-      console.log(dataProps,"Dd")
-    }, [dataProps]);
+      await queryClient.invalidateQueries({ queryKey: ["favoriteAnalysts"] });
 
-  return(
+      await queryClient.refetchQueries({ queryKey: ["favoriteAnalysts"], exact: true });
+
+    } catch (error) {
+      console.error("팔로우 처리 중 오류 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (dataProps.length > 0) {
+      fetchData(dataProps);
+    }
+  }, [dataProps]);
+
+  useEffect(() => {
+    if (paginatedData.length === 0 && currentPage > 0) {
+      setCurrentPage((prevPage) => Math.max(prevPage - 1, 0));
+    }
+  }, [paginatedData, currentPage]);
+
+  return (
     <div className="flex justify-center items-center gap-[4rem] w-full mt-[3rem]">
-        {dataList.length > 4 ? <img src={CardArrow} className="cursor-pointer" onClick={handlePrevPage}/> : <></>}
-        <div className="flex justify-start items-center gap-[3rem]">
-          {paginatedData.length > 0 ? paginatedData.map((data, index) => (
-            data ?
-             <FavoriteCard  key={index} userNickName={data.userNickName} userImagePath={data.userImagePath} userName={data.userName} reliability={data.reliability} accuracy={data.accuracy} totalAnalystRanking={data.totalAnalystRanking} /> 
-            : <div className="w-[16.5rem] h-[200px]"></div>
-          )) : <span className="mt-[5rem] text-[1.5rem]">좋아하는 분석가가 없습니다.</span>}
-        </div>
-        {dataList.length > 4 ? <img src={CardArrowReverse} className="cursor-pointer" onClick={handleNextPage}/> : <></>}
+      {dataList.length > 4 && (
+        <img src={CardArrow} className="cursor-pointer" onClick={handlePrevPage} />
+      )}
+      <div className="flex justify-start items-center gap-[3rem]">
+        {paginatedData.length > 0 ? paginatedData.map((data, index) => (
+          data ? (
+            <FavoriteCard
+              key={index}
+              userNickName={data.userNickName}
+              userImagePath={data.userImagePath}
+              userName={data.userName}
+              reliability={data.reliability}
+              accuracy={data.accuracy}
+              totalAnalystRanking={data.totalAnalystRanking}
+              onClickFollow={() => handleClickFollow(data.userNickName)}
+            />
+          ) : (
+            <div key={index} className="w-[16.5rem] h-[200px]"></div>
+          )
+        )) : (
+          <span className="mt-[5rem] text-[1.5rem]">좋아하는 분석가가 없습니다.</span>
+        )}
+      </div>
+      {dataList.length > 4 && (
+        <img src={CardArrowReverse} className="cursor-pointer" onClick={handleNextPage} />
+      )}
     </div>
   );
 };
