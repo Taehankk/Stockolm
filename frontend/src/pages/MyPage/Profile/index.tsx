@@ -209,11 +209,11 @@ const Profile: React.FC= () => {
         <div className="flex w-full gap-[4rem]">
             <div className="flex flex-col justify-center items-center gap-[1rem]">
               <span className="text-[1.3rem]">신뢰도</span>
-              <DonutChart color="#FFD2D2" value={analystInfo?.reliability}></DonutChart>
+              <DonutChart color="#FFD2D2" textHeight="11rem" value={analystInfo?.reliability}></DonutChart>
             </div>
             <div className="flex flex-col justify-center items-center gap-[1rem]">
               <span className="text-[1.3rem] text-center ">정확도</span>
-              <DonutChart color="#FFF3CB" value={analystInfo?.accuracy}></DonutChart>
+              <DonutChart color="#FFF3CB" textHeight="11rem" value={analystInfo?.accuracy}></DonutChart>
             </div>
               <div className="flex flex-col items-center gap-[0.4rem] ml-[1rem]">
                 <span className="text-[1.3rem]">산업군</span>

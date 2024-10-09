@@ -66,7 +66,7 @@ const RankingPage: React.FC = () => {
                 alt={`투자상승이`}
                 className="size-[5rem] mt-3 rounded-full"
               />
-              <div className="tooltip absolute left-1/2 transform -translate-x-1/3 mt-2 px-6 bg-gray-800 text-white text-lg rounded-lg py-2 px-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <div className="tooltip absolute left-1/2 transform -translate-x-[50%] mt-2 px-6 bg-gray-800 text-white text-lg rounded-lg py-2 px-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
                 <span>최고의 애널리스트를 만나보세요!</span>
                 <br />
                 <span>
