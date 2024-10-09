@@ -1,5 +1,6 @@
 package com.example.stockolm.domain.analyst.repository;
 
+import com.example.stockolm.domain.analyst.dto.AccuracyDTO;
 import com.example.stockolm.domain.analyst.dto.AnalystGoalInfoDTO;
 import com.example.stockolm.domain.analyst.dto.IndustryDTO;
 import com.example.stockolm.domain.analyst.dto.StockInfoDTO;
@@ -44,7 +45,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         int followerCount = getFollowerCount(analystId).intValue();
         int analystRank = getAnalystRank(analystId);
         List<StockInfoDTO> topReliabilityStocks = getTopReliabilityStocks(analystId);
-        List<StockInfoDTO> topAccuracyStocks = getTopAccuracyStocks(analystId);
+        List<AccuracyDTO> topAccuracyStocks = getTopAccuracyStocks(analystId);
         List<IndustryDTO> industryInfo = getTop3Industries(analystId);
 
         return AnalystInfoResponse.builder()
@@ -182,12 +183,12 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
     }
 
     // 정확도가 높은 상위 3개의 종목을 반환하는 함수
-    private List<StockInfoDTO> getTopAccuracyStocks(Long analystId) {
+    private List<AccuracyDTO> getTopAccuracyStocks(Long analystId) {
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
         QStock stock = QStock.stock;
 
         return queryFactory
-                .select(Projections.constructor(StockInfoDTO.class,
+                .select(Projections.constructor(AccuracyDTO.class,
                         stock.stockName,                        // 종목 이름
                         analystBoard.analystBoardId.count(),    // 종목에 대해 작성한 총 게시글 수
                         getAccuracySum(analystBoard),           // 정확성 있는 글 수
