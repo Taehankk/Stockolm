@@ -61,6 +61,7 @@ const BoardDetailPage = () => {
 
   const [isLike, setLike] = useState(false);
   const [boardLike, setBoardLike] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const nickName = useSelector((state: RootState) => state.user.userNickName);
 
@@ -77,6 +78,8 @@ const BoardDetailPage = () => {
 
   const handleLike = async () => {
     if (boardData?.userNickname !== nickName) {
+      if (isLoading) return;
+      setIsLoading(true);
       try {
         setLike(!isLike);
         if (isLike) {
@@ -87,6 +90,8 @@ const BoardDetailPage = () => {
         await changeLikeStateAPI(boardID!);
       } catch {
         alert("좋아요 변경 실패");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -258,13 +263,13 @@ const BoardDetailPage = () => {
                     <FontAwesomeIcon
                       onClick={handleLike}
                       icon={like}
-                      className="text-PrimaryRed cursor-pointer"
+                      className={`text-PrimaryRed cursor-pointer ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                     />
                   ) : (
                     <FontAwesomeIcon
                       onClick={handleLike}
                       icon={unlike}
-                      className="text-2xl cursor-pointer"
+                      className={`text-2xl cursor-pointer ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                     />
                   )}
                 </div>
