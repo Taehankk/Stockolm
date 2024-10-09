@@ -32,29 +32,23 @@ interface AnalystInfo {
   follower: number,
   totalAnalystRank: number,
   reliability: number,
-  reliabilityStock: [
-    {
-      stockName: string,
-      stockSize: number,
-      stockReliabilitySize: number
-      stockReliabilityValue: number
-    },
-  ],
-  accuracy: number
-  accuracyStock: [
-    {
-      stockName: string,
-      stockSize: number,
-      stockAccuracySize: number
-      stockAccuracyValue: number 
-    },
-  ],	
-  industry: [
-    {
-      industryName: string,
-      industryValue: number
-    },
-  ]
+  reliabilityStock: {
+    stockName: string,
+    stockSize: number,
+    stockReliabilitySize: number,
+    stockReliabilityValue: number
+  }[],
+  accuracy: number,
+  accuracyStock: {
+    stockName: string,
+    stockSize: number,
+    stockAccuracySize: number,
+    stockAccuracyValue: number 
+  }[],
+  industry: {
+    industryName: string,
+    industryValue: number
+  }[]
 }
 
 const Profile: React.FC= () => {
@@ -143,11 +137,19 @@ const Profile: React.FC= () => {
               <span className="text-[1.3rem] text-center ">정확도</span>
               <DonutChart color="#FFF3CB" value={analystInfo?.accuracy}></DonutChart>
             </div>
-            <div className="flex flex-col items-center gap-[0.4rem] ml-[1rem]">
-              <span className="text-[1.3rem]">산업군</span>
-              <BarChart color="#FFABAB" value={60} children="반도체"></BarChart>
-              <BarChart color="#FFABAB" value={20} children="IT"></BarChart>
-              <BarChart color="#FFABAB" value={20} children="자동차"></BarChart>
+              <div className="flex flex-col items-center gap-[0.4rem] ml-[1rem]">
+                <span className="text-[1.3rem]">산업군</span>
+                <div className="flex flex-col mt-[0.5rem]">
+                  {analystInfo?.industry?.[0] && (
+                    <BarChart color="#FFABAB" value={analystInfo.industry[0].industryValue} children={analystInfo.industry[0].industryName.split(" ")[1]} />
+                  )}
+                  {analystInfo?.industry?.[1] ? (
+                    <BarChart color="#FFABAB" value={analystInfo.industry[1].industryValue} children={analystInfo.industry[1].industryName.split(" ")[1]} />
+                  ) : <BarChart color="#FFABAB" value={0} children={"분석없음"} />}
+                  {analystInfo?.industry?.[2] ? (
+                    <BarChart color="#FFABAB" value={analystInfo.industry[2].industryValue} children={analystInfo.industry[2].industryName.split(" ")[1]} />
+                  ) : <BarChart color="#FFABAB" value={0} children={"분석없음"} />}
+              </div>
             </div>
           </div>
         </div> 

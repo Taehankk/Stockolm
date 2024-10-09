@@ -20,8 +20,8 @@ interface AnalystInfo {
   accuracyStock: {
     stockName: string;
     stockSize: number;
-    stockAccuracySize: number;
-    stockAccuracyValue: number;
+    stockReliabilitySize: number;
+    stockReliabilityValue: number;
   }[];
   industry: {
     industryName: string;
@@ -37,6 +37,10 @@ const Statistic: React.FC = () => {
     queryKey: ["analystInfo", nickname], 
     queryFn: ({ queryKey }) => fetchAnalystInfo(queryKey[1] as string)
   });
+
+  useEffect(() => {
+    console.log(analystInfo)
+  }, [analystInfo])
 
   useEffect(() => {
   }, [nickname]);
@@ -56,7 +60,7 @@ const Statistic: React.FC = () => {
 
         <div className="flex gap-[3rem] w-full h-[11rem]">
           <DonutChart color="#FFF5D2" value={analystInfo?.reliability ?? 0} content="신뢰도"></DonutChart>
-          <div className="flex flex-col mt-[-1.5rem]">
+          <div className="flex flex-col" style={{marginBottom: '8rem'}}>
             {analystInfo?.reliabilityStock?.[0] && (
               <BarChart color="#FFE2B1" value={analystInfo.reliabilityStock[0].stockReliabilityValue} children={analystInfo.reliabilityStock[0].stockName} />
             )}
@@ -71,23 +75,23 @@ const Statistic: React.FC = () => {
         </div>
 
         <div className="flex gap-[3rem] w-full justify-end h-[11rem] ml-[3rem]">
-          <div className="flex flex-col mt-[-1.5rem]">
+          <div className="flex flex-col" style={{marginBottom: '8rem'}}>
             {analystInfo?.accuracyStock?.[0] && (
-              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[0].stockAccuracyValue} children={analystInfo.accuracyStock[0].stockName} />
+              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[0].stockReliabilityValue} children={analystInfo.accuracyStock[0].stockName} />
             )}
             {analystInfo?.accuracyStock?.[1] ? (
-              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockAccuracyValue} children={analystInfo.accuracyStock[1].stockName} />
+              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockReliabilityValue} children={analystInfo.accuracyStock[1].stockName} />
             ) : <BarChart color="#61A9FB" value={0} children={"분석없음"} />}
             {analystInfo?.accuracyStock?.[2] ? (
-              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[2].stockAccuracyValue} children={analystInfo.accuracyStock[2].stockName} />
+              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[2].stockReliabilityValue} children={analystInfo.accuracyStock[2].stockName} />
             ) : <BarChart color="#61A9FB" value={0} children={"분석없음"} />}
           </div>
           <DonutChart color="#61A9FB" value={analystInfo?.accuracy} content="정확도"></DonutChart>
         </div>
 
-        <div className="flex gap-[3rem] w-full h-[11rem]">
+        <div className="flex gap-[3rem] w-full h-[11rem]" style={{marginBottom: '8rem'}}>
           <DonutChart color="#FFABAB" value={101} content="산업군"></DonutChart>
-          <div className="flex flex-col mt-[-1.5rem]">
+          <div className="flex flex-col">
             {analystInfo?.industry?.[0] && (
               <BarChart color="#FFABAB" value={analystInfo.industry[0].industryValue} children={analystInfo.industry[0].industryName.split(" ")[1]} />
             )}
