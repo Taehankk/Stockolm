@@ -133,7 +133,7 @@ const MyPage: React.FC = () => {
               {isHovered && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
                   <div className="cursor-pointer text-white flex flex-col items-center">
-                    <span className="text-center" onClick={() => document.getElementById('profileImage')?.click()}>
+                    <span className="text-center">
                       이미지 변경
                     </span>
                   </div>
