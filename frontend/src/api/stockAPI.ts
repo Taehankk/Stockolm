@@ -42,7 +42,6 @@ export const getChartData = async (stockName: string) => {
     const response = await axios.get(`${baseURL}/stock/${stockName}`, {
       headers,
     });
-    console.log("chart정보 요청 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching stock data:", error);
@@ -80,7 +79,6 @@ export const getBestAnalysts = async (stockId: string) => {
     const response = await axios.get(`${baseURL}/stock/rank/${stockId}`, {
       headers,
     });
-    console.log("BestAnalyst정보", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching best analysts:", error);
@@ -98,7 +96,6 @@ export const toggleFollowAPI = async (stockName: string): Promise<void> => {
       headers,
     }
   );
-  console.log("좋아요 버튼 호출완료");
 };
 
 export const getStockInfo = async (stockCode: string) => {
@@ -118,6 +115,5 @@ export const getMinuteChartData = async (stockCode: string) => {
   const response = await axios.get(`${baseURL}/stock/time-chart/${stockCode}`, {
     headers,
   });
-  console.log("분봉데이터", response.data);
   return response.data;
 };
