@@ -364,7 +364,7 @@ const ReportWritePage = () => {
           value={reportTitle}
           onChange={handleReportTitle}
           placeholder="제목을 입력해주세요"
-          className="flex text-lg border-b  border-black border-opacity-2 0 w-full min-h-[3rem] p-2 mb-4"
+          className="flex text-lg border-b  border-black w-full min-h-[3rem] p-2 mb-4"
         />
 
         {/* FORM 데이터 */}
