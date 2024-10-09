@@ -2,6 +2,7 @@ package com.example.stockolm.domain.rank.repository;
 
 
 import com.example.stockolm.domain.analyst.entity.QAnalystInfo;
+import com.example.stockolm.domain.analystBoard.entity.GoalCategory;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.rank.dto.response.AnalystRankInfoResponse;
 import com.example.stockolm.domain.user.entity.QUser;
@@ -47,8 +48,8 @@ public class RankCustomRepository {
                         Expressions.numberTemplate(Integer.class, ROW_NUM_QUERY, getRankExpression(rankValue, user.userId)),
                         analystBoard.countDistinct(),
                         analystInfo.totalAnalystScore,
-                        getAnalystReliability(user.userId),
-                        getAnalystAccuracy(user.userId)
+                        getStockReliabilityPercent(analystBoard),
+                        getStockAccuracyPercent(analystBoard)
                 ))
                 .from(analystBoard)
                 .join(user).on(user.userId.eq(analystBoard.user.userId))
@@ -80,6 +81,29 @@ public class RankCustomRepository {
         return analystInfo.totalAnalystScore;
     }
 
+
+    private NumberExpression<Long> getStockReliabilityPercent(QAnalystBoard analystBoard) {
+        return getReliabilitySum(analystBoard)
+                .divide(getReliabilitySum(analystBoard)).multiply(100).coalesce(0L);
+    }
+
+    private NumberExpression<Long> getReliabilitySum(QAnalystBoard analystBoard) {
+        return new CaseBuilder()
+                .when(analystBoard.goalDate.lt(LocalDate.now()).and(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)))
+                .then(1L).otherwise(0L).sum();
+    }
+
+    private NumberExpression<Long> getStockAccuracyPercent(QAnalystBoard analystBoard) {
+        return getAccuracySum(analystBoard)
+                .divide(getAccuracySum(analystBoard)).multiply(100).coalesce(0L);
+    }
+
+    private NumberExpression<Long> getAccuracySum(QAnalystBoard analystBoard) {
+        return new CaseBuilder()
+                .when(analystBoard.goalDate.lt(LocalDate.now()).and(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)))
+                .then(1L).otherwise(0L).sum();
+    }
+
     private NumberExpression<Integer> getAnalystReliability(NumberPath<Long> userId) {
         JPAQuery<Long> boardSize = getGoalBoardSize(userId);
         return analystInfo.reliability.divide(boardSize).multiply(100).floor();
@@ -94,7 +118,7 @@ public class RankCustomRepository {
         return queryFactory
                 .select(analystBoard.countDistinct())
                 .from(analystBoard)
-                .where(analystBoard.goalDate.loe(LocalDate.now()).and(user.userId.eq(userId)));
+                .where(analystBoard.goalDate.lt(LocalDate.now()).and(user.userId.eq(userId)));
     }
 
     private BooleanExpression userNameContains(String userName) {

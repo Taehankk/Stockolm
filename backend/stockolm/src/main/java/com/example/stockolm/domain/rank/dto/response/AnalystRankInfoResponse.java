@@ -13,14 +13,14 @@ public class AnalystRankInfoResponse {
     private int totalAnalystRanking;
     private Long totalBoardSize;
     private int totalAnalystScore;
-    private Double reliability;
-    private Double accuracy;
+    private Long reliability;
+    private Long accuracy;
 
     @Builder
     public AnalystRankInfoResponse(String userName, String userNickname,
                                    String userImagePath, int totalAnalystRanking,
                                    Long totalBoardSize, int totalAnalystScore,
-                                   Double reliability, Double accuracy) {
+                                   Long reliability, Long accuracy) {
         this.userName = userName;
         this.userNickname = userNickname;
         this.userImagePath = userImagePath;
