@@ -1,4 +1,4 @@
-import { fetchAnalyzeStock, fetchFavoriteAnalysts, fetchFavoriteStock } from "../../../api/mypageAPI";
+import { fetchAnalystsRank, fetchAnalyzeStock, fetchFavoriteAnalysts, fetchFavoriteStock } from "../../../api/mypageAPI";
 import { useQuery } from "@tanstack/react-query";
 
 import person from "/src/assets/person.svg"
@@ -51,12 +51,52 @@ interface AnalystInfo {
   }[]
 }
 
+interface AnalystRank {
+  content: {
+    userName: string;
+    userNickname: string;
+    userImagePath: string;
+    totalAnalystRanking: number;
+    totalBoardSize: number;
+    totalAnalystScore: number;
+    reliability: number;
+    accuracy: number;
+  }[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  first: boolean;
+  numberOfElements: number;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  empty: boolean;
+}
+
+
 const Profile: React.FC= () => {
 
   const { userNickName } = useSelector((state: RootState) => state.user);
   const [role, setRole] = useState("");
   const [isModal, setIsModal] = useState(false);
   const [stockName, setStockName] = useState("");
+  const [updatedFavoriteAnalysts, setUpdatedFavoriteAnalysts] = useState<Analyst[]>([]);
 
 
   useEffect(() => {
@@ -76,6 +116,11 @@ const Profile: React.FC= () => {
     queryFn: fetchFavoriteAnalysts,
   });
 
+  const { data: analystsRank, error: analystsRankError, isLoading: analystsRankIsLoading } = useQuery<AnalystRank, Error>({
+    queryKey: ["analystsRank"],
+    queryFn: fetchAnalystsRank,
+  });
+
   const { data: analystInfo, error: analystInfoError, isLoading: analystInfoIsLoading } = useQuery<AnalystInfo, Error>({
     queryKey: ["analystInfo", userNickName], 
     queryFn: ({ queryKey }) => fetchAnalystInfo(queryKey[1] as string)
@@ -91,14 +136,39 @@ const Profile: React.FC= () => {
   }, []);
 
   useEffect(() => {
-    console.log(favoriteAnalysts,"dd");
-  },[favoriteStock, favoriteAnalysts, analystStock])
+    if (favoriteAnalysts && analystsRank) {
+      const updatedAnalysts = favoriteAnalysts.map(favAnalyst => {
+        const matchedAnalyst = analystsRank.content.find(
+          rankAnalyst => rankAnalyst.userNickname.trim().toLowerCase() === favAnalyst.userNickName.trim().toLowerCase()
+        );
 
-  if (stockIsLoading || analystInfoIsLoading || analystIsLoading || analystBoardIsLoading) {
+        if (matchedAnalyst) {
+          return {
+            ...favAnalyst,
+            totalAnalystRanking: matchedAnalyst.totalAnalystRanking,
+            reliability: matchedAnalyst.reliability,
+            accuracy: matchedAnalyst.accuracy,
+          };
+        }
+        return favAnalyst;
+      });
+
+      setUpdatedFavoriteAnalysts(updatedAnalysts);
+
+      // 상태가 정상적으로 업데이트 되었는지 확인
+      console.log("갱신된 분석가 리스트:", updatedAnalysts);
+    }
+  }, [favoriteAnalysts, analystsRank]);
+
+  useEffect(() => {
+    console.log(analystsRank,"dd");
+  },[favoriteStock, favoriteAnalysts, analystStock, analystsRank])
+
+  if (stockIsLoading || analystInfoIsLoading || analystIsLoading || analystBoardIsLoading || analystsRankIsLoading) {
     return <p>Loading...</p>;
   }
 
-  if (analystError || analystInfoError || stockError || analystBoardError) {
+  if (analystError || analystInfoError || stockError || analystBoardError || analystsRankError) {
     return <p>Error</p>;
   }
 
@@ -129,7 +199,7 @@ const Profile: React.FC= () => {
               <img src={person} className="flex h-[1.7rem] self-end"></img>
               <div className="text-[1.75rem] ml-[1rem] mb-[2rem]">관심 분석가</div>
             </div>
-            <FavoriteCardList dataProps={favoriteAnalysts || []} />
+            <FavoriteCardList dataProps={updatedFavoriteAnalysts || []} />
         </div> :
         <div className="w-full h-[200px] mb-[4rem]">
         <div className="h-[2rem] flex mb-[2rem]">

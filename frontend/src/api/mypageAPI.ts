@@ -12,6 +12,45 @@ interface Analyst {
     accuracy: number;
     reliability: number;
     totalAnalystRanking: number;
+    totalAnalystRank: string;
+}
+
+interface AnalystRank {
+  content: {
+    userName: string;
+    userNickname: string;
+    userImagePath: string;
+    totalAnalystRanking: number;
+    totalBoardSize: number;
+    totalAnalystScore: number;
+    reliability: number;
+    accuracy: number;
+  }[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  first: boolean;
+  numberOfElements: number;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  empty: boolean;
 }
 
 export const fetchUser = async () => {
@@ -44,6 +83,22 @@ export const fetchFavoriteAnalysts = async (): Promise<Analyst[]> => {
       throw error;
 
     }
+}
+
+export const fetchAnalystsRank = async (): Promise<AnalystRank> => {
+  try {
+    const response = await axiosTokenInstance.get(
+      '/rank'
+    );
+
+    console.log(response);
+    return response.data;
+
+  } catch (error) {
+    console.error("Error fetching search results:", error);
+    throw error;
+
+  }
 }
 
 export const fetchFavoriteStock = async (): Promise<Stock[]> => {
