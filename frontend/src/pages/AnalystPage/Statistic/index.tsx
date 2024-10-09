@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAnalystInfo } from "../../../api/analystAPI";
 import { useEffect } from "react";
 
+import RedUp from "/src/assets/RedUp.webp"
+
 interface AnalystInfo {
   boardSize: number,
   follower: number,
@@ -57,6 +59,20 @@ const Statistic: React.FC = () => {
     <div className="w-full">
       <div className="w-full text-[2rem] mb-[2rem] border-b-black border-b-[0.0625rem]">통계</div>
       <div className="flex flex-col gap-[1.5rem] mx-[2rem]">
+      <div className="absolute right-[10rem] top-[13.5rem]">
+            <img
+              src={RedUp}
+              alt={`투자상승이`}
+              className="size-[4rem] mt-3 rounded-full"
+            />
+            <div className="tooltip absolute left-1/2 transform -translate-x-1/3 mt-2  bg-gray-800 text-white text-lg rounded-lg py-2 px-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <span>신뢰도 : 종목 별 매수, 매도 포지션 예상 적중</span>
+              <br />
+              <span>정확도 : 종목 별 목표 주가에 ±5% 이내 적중</span>
+              <br />
+              <span>산업군 : 산업군 별 매수, 매도 포지션 예상 적중</span>
+            </div>
+          </div>
 
         <div className="flex gap-[3rem] w-full h-[11rem]">
           <DonutChart color="#FFF5D2" value={analystInfo?.reliability ?? 0} content="신뢰도"></DonutChart>
