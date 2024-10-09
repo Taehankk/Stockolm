@@ -5,13 +5,9 @@ import com.example.stockolm.domain.analyst.entity.QAnalystInfo;
 import com.example.stockolm.domain.analystBoard.entity.QAnalystBoard;
 import com.example.stockolm.domain.rank.dto.response.AnalystRankInfoResponse;
 import com.example.stockolm.domain.user.entity.QUser;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.example.stockolm.domain.analyst.entity.QAnalystInfo.analystInfo;
@@ -47,11 +44,11 @@ public class RankCustomRepository {
                         user.userName,
                         user.userNickname,
                         user.userImagePath,
-                        Expressions.numberTemplate(Integer.class, ROW_NUM_QUERY, getRankExpression(rankValue)),
+                        Expressions.numberTemplate(Integer.class, ROW_NUM_QUERY, getRankExpression(rankValue, user.userId)),
                         analystBoard.countDistinct(),
                         analystInfo.totalAnalystScore,
-                        analystInfo.reliability.divide(analystBoard.countDistinct()).multiply(100).floor(),
-                        analystInfo.accuracy.divide(analystBoard.countDistinct()).multiply(100).floor()
+                        getAnalystReliability(user.userId),
+                        getAnalystAccuracy(user.userId)
                 ))
                 .from(analystBoard)
                 .join(user).on(user.userId.eq(analystBoard.user.userId))
@@ -59,7 +56,7 @@ public class RankCustomRepository {
                 .where(userNameContains(analystName))
                 .groupBy(user.userId, user.userName, user.userNickname, user.userImagePath,
                         analystInfo.totalAnalystScore, analystInfo.reliability, analystInfo.accuracy)
-                .orderBy(getRankExpression(rankValue).desc())
+                .orderBy(getRankExpression(rankValue, user.userId).desc(), analystInfo.totalAnalystScore.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -73,14 +70,31 @@ public class RankCustomRepository {
         return new PageImpl<>(totalRank, pageable, total);
     }
 
-    private ComparableExpressionBase<?> getRankExpression(String rankValue) {
+    private ComparableExpressionBase<?> getRankExpression(String rankValue, NumberPath<Long> userId) {
 
         if (rankValue != null && rankValue.equals(RELIABILITY)) {
-            return analystInfo.reliability.divide(analystBoard.countDistinct()).multiply(100).floor();
+            return getAnalystReliability(userId);
         } else if (rankValue != null && rankValue.equals(ACCURACY)) {
-            return analystInfo.accuracy.divide(analystBoard.countDistinct()).multiply(100).floor();
+            return getAnalystAccuracy(userId);
         }
         return analystInfo.totalAnalystScore;
+    }
+
+    private NumberExpression<Integer> getAnalystReliability(NumberPath<Long> userId) {
+        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
+        return analystInfo.reliability.divide(boardSize).multiply(100).floor();
+    }
+
+    private NumberExpression<Integer> getAnalystAccuracy(NumberPath<Long> userId) {
+        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
+        return analystInfo.accuracy.divide(boardSize).multiply(100).floor();
+    }
+
+    private JPAQuery<Long> getGoalBoardSize(NumberPath<Long> userId) {
+        return queryFactory
+                .select(analystBoard.countDistinct())
+                .from(analystBoard)
+                .where(analystBoard.goalDate.loe(LocalDate.now()).and(user.userId.eq(userId)));
     }
 
     private BooleanExpression userNameContains(String userName) {
