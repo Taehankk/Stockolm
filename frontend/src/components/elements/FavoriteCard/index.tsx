@@ -73,16 +73,16 @@ const FavoriteCard = ({
         <div className="relative flex justify-around w-full h-[5rem]">
             <div className="flex flex-col w-[6rem] h-[5rem] text-[0.8rem]">
                 <span className="w-full text-center">신뢰도</span>
-                <DonutChart w="6rem" h="6rem" textHeight="60%" textSize="0.6rem" color="#FFF5D2" value={reliability}></DonutChart>
+                <DonutChart w="6rem" h="5.8rem" textHeight="3rem" textSize="0.6rem" color="#FFF5D2" value={reliability}></DonutChart>
             </div>
             <div className="flex flex-col w-[6rem] h-[6rem] text-[0.8rem]">
                 <span className="w-full text-center">정확도</span>
-                <DonutChart w="6rem" h="6rem" textHeight="60%" textSize="0.6rem" color="#61A9FB" value={accuracy}></DonutChart>
+                <DonutChart w="6rem" h="5.8rem" textHeight="3rem" textSize="0.6rem" color="#61A9FB" value={accuracy}></DonutChart>
             </div>
             
             <div className="flex flex-col w-[6rem] h-[6rem] text-[0.84rem]">
                 <span className="w-full text-center mb-[1rem]">순위</span>
-                <span className="w-full text-center">{totalAnalystRanking}등</span>
+                <span className="w-full text-center">{totalAnalystRanking + 1}등</span>
             </div>
         </div>
         <div className="absolute flex left-[11.5rem] cursor-pointer" >

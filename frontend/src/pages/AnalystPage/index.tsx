@@ -29,6 +29,7 @@ interface AnalystInfo {
   follower: number,
   totalAnalystRank: number,
   reliability: number,
+  userImagePath: string,
   reliabilityStock: [
     {
       stockName: string,
@@ -57,7 +58,6 @@ interface AnalystInfo {
 const Analyst: React.FC = () => {
 
   const { nickname } = useParams<{ nickname: string }>();
-  const [imagePath, setImagePath] = useState("");
   const [ isFollow, setIsFollow ] = useState(false);
   const queryClient = useQueryClient();
 
@@ -76,8 +76,7 @@ const Analyst: React.FC = () => {
     favoriteAnalysts?.map((analyst) => {
       if (analyst.userNickName === nickname) {
         setIsFollow(true);
-        setImagePath(analyst.userImagePath);
-        
+
         flag = true;
       }
 
@@ -122,7 +121,7 @@ const Analyst: React.FC = () => {
         <div className="w-[23rem] mr-[2rem] pr-[3rem] border-b-black border-r">
           <div className="flex justify-center items-center pb-[0.3rem] border-b-black border-b-[0.0625rem]">
             <div>
-              <img className="w-[6rem] h-[6rem] rounded-full" src={imagePath}></img>
+              <img className="w-[6rem] h-[6rem] rounded-full" src={analystInfo?.userImagePath}></img>
             </div>
             <span className="self-end ml-[4rem] text-[1.625rem]">{analystInfo?.userName}</span>
           </div>
