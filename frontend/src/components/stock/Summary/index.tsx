@@ -27,6 +27,7 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
   const dispatch = useDispatch();
   const { isFollow } = useSelector((state: RootState) => state.stock);
   const [stockData, setStockData] = useState<StockData | null>(null);
+  const getToken = () => sessionStorage.getItem("access_token");
 
   const fetchData = async () => {
     try {
@@ -90,12 +91,14 @@ const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
             )}
           </div>
         </div>
-        <img
-          src={isFollow ? StockLikeON : StockLikeOFF}
-          alt={isFollow ? "관심 종목 설정됨" : "관심 종목 아님"}
-          onClick={toggleFollow}
-          className="cursor-pointer"
-        />
+        {getToken() && (
+          <img
+            src={isFollow ? StockLikeON : StockLikeOFF}
+            alt={isFollow ? "관심 종목 설정됨" : "관심 종목 아님"}
+            onClick={toggleFollow}
+            className="cursor-pointer"
+          />
+        )}
       </div>
       {/* 중단 : 구체적인 수치 */}
       <div className="flex w-4/5 flex-row gap-8 justify-between pt-3">
