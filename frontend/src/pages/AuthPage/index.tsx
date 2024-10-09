@@ -7,6 +7,7 @@ import ChangePassword from "./ChangePassword";
 // import StockOlm from "../../assets/STOCKOLM.jpg";
 import { useLocation } from "react-router-dom";
 import { AuthContextProvider } from "../../components/auth/AuthContext";
+import { Link } from "react-router-dom";
 
 const AuthPage = () => {
   const location = useLocation();
@@ -24,6 +25,9 @@ const AuthPage = () => {
 
   return (
     <div className="flex justify-center items-center h-[95vh] w-[95vw]">
+      <div className="absolute top-0 left-1/2 transform -translate-x-2/3 mt-4 flex text-PrimaryRed font-bold text-3xl items-start">
+        <Link to={"/"}>STOCKOLM</Link>
+      </div>
       <div className="absolute border border-[#D9D9D9] flex justify-center h-[80%] w-[70%]">
         <div
           className={`bg-[url('/src/assets/RedUp.webp')] bg-center bg-cover h-full w-1/2 object-cover transition-transform duration-300 z-10 ${
