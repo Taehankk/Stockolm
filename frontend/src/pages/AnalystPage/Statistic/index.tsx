@@ -22,8 +22,8 @@ interface AnalystInfo {
   accuracyStock: {
     stockName: string;
     stockSize: number;
-    stockReliabilitySize: number;
-    stockReliabilityValue: number;
+    stockAccuracySize: number;
+    stockAccuracyValue: number;
   }[];
   industry: {
     industryName: string;
@@ -93,13 +93,13 @@ const Statistic: React.FC = () => {
         <div className="flex gap-[3rem] w-full justify-end h-[11rem] ml-[3rem]">
           <div className="flex flex-col" style={{marginBottom: '8rem'}}>
             {analystInfo?.accuracyStock?.[0] ? (
-              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockReliabilityValue} children={analystInfo.accuracyStock[0].stockName} />
+              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockAccuracyValue} children={analystInfo.accuracyStock[0].stockName} />
             ) : <BarChart color="#61A9FB" value={0} children={"분석없음"} />}
             {analystInfo?.accuracyStock?.[1] ? (
-              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockReliabilityValue} children={analystInfo.accuracyStock[1].stockName} />
+              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[1].stockAccuracyValue} children={analystInfo.accuracyStock[1].stockName} />
             ) : <BarChart color="#61A9FB" value={0} children={"분석없음"} />}
             {analystInfo?.accuracyStock?.[2] ? (
-              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[2].stockReliabilityValue} children={analystInfo.accuracyStock[2].stockName} />
+              <BarChart color="#61A9FB" value={analystInfo.accuracyStock[2].stockAccuracyValue} children={analystInfo.accuracyStock[2].stockName} />
             ) : <BarChart color="#61A9FB" value={0} children={"분석없음"} />}
           </div>
           <DonutChart color="#61A9FB" value={analystInfo?.accuracy} content="정확도"></DonutChart>
