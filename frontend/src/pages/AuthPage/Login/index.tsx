@@ -14,14 +14,18 @@ const Login = ({ handleImgLocation }: Props) => {
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setEmailInput(value);
+    if (value.length <= 30) {
+      setEmailInput(value);
+    }
   };
 
   const handlePasswordInputChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
-    setPasswordInput(value);
+    if (value.length <= 20) {
+      setPasswordInput(value);
+    }
   };
 
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -59,7 +63,7 @@ const Login = ({ handleImgLocation }: Props) => {
         </div>
         <span
           onClick={() => handleImgLocation(2)}
-          className="flex justify-end text-xs opacity-50"
+          className="flex justify-end text-xs opacity-50 cursor-pointer"
         >
           비밀번호 찾기
         </span>
@@ -69,7 +73,7 @@ const Login = ({ handleImgLocation }: Props) => {
       <div className="text-sm text-center opacity-50">
         <div className="flex justify-between text-sm">
           <span className="mr-3">회원이 아니신가요?</span>
-          <span onClick={() => handleImgLocation(1)}>회원가입</span>
+          <span className="cursor-pointer" onClick={() => handleImgLocation(1)}>회원가입</span>
         </div>
       </div>
     </div>

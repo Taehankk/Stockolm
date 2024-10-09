@@ -24,12 +24,16 @@ const AnalystSignUp = () => {
 
   const handleCodeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setCodeInput(value);
+    if (value.length <= 8) {  // 글자 수가 8자 이하일 때만 상태 업데이트
+      setCodeInput(value);
+    }
   };
 
   const handleNameInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setNameInput(value);
+    if (value.length <= 15) {  // 글자 수가 8자 이하일 때만 상태 업데이트
+      setNameInput(value);
+    }
   };
 
   const checkAnalyst = () => {
@@ -56,22 +60,20 @@ const AnalystSignUp = () => {
       {/* 애널리스트 확인 */}
       <div className="flex mb-2 items-center justify-center text-sm text-gray-500">
         <span className="mr-6">애널리스트 이신가요?</span>
-        <div className="flex mr-5 items-center">
-          <span>예</span>
+        <div className="flex mr-5 items-center cursor-pointer" onClick={checkAnalyst}>
+          <span className={`${isAnalyst ? "text-[#26F030]" : ""}`}>예</span>
           {/* 체크버튼 하나 */}
           <FontAwesomeIcon
             icon={faCircleCheck}
-            onClick={checkAnalyst}
-            className={`${isAnalyst ? "text-[#26F030]" : ""}`}
+            className={`${isAnalyst ? "text-[#26F030]" : ""} ml-1 mb-[0.1rem]`}
           />
         </div>
-        <div className="flex items-center">
-          <span>아니오</span>
+        <div className="flex items-center cursor-pointer" onClick={checkCommon}>
+          <span className={`${isAnalyst ? "" : "text-[#26F030]"}`}>아니오</span>
           {/* 체크버튼 하나 */}
           <FontAwesomeIcon
             icon={faCircleCheck}
-            onClick={checkCommon}
-            className={`${isAnalyst ? "" : "text-[#26F030]"}`}
+            className={`${isAnalyst ? "" : "text-[#26F030]"} ml-1 mb-[0.1rem]`}
           />
         </div>
       </div>
@@ -96,7 +98,7 @@ const AnalystSignUp = () => {
                 size="small"
                 onClick={checkCode}
                 children="확인"
-                className="text-[0.8rem] w-20"
+                className="text-[0.8rem] w-20 cursor-pointer"
               />
             </div>
           </div>
