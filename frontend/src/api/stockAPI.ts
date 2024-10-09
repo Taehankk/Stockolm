@@ -35,6 +35,21 @@ export const getStockData = async (stockCode: string) => {
   }
 };
 
+export const getFollowStatus = async (stockName: string): Promise<boolean> => {
+  const token = getToken();
+  try {
+    const response = await axios.get(`${baseURL}/stock/follow/${stockName}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.isFollowed;
+  } catch (error) {
+    console.error("Error fetching follow status:", error);
+    throw error;
+  }
+};
+
 export const getChartData = async (stockName: string) => {
   const token = getToken();
   const headers = token ? { Authorization: `Bearer ${token}` } : {};

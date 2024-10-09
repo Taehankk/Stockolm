@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getChartData, getStockInfo, getBestAnalysts } from "../api/stockAPI";
+import {
+  getChartData,
+  getStockInfo,
+  getBestAnalysts,
+  getFollowStatus,
+} from "../api/stockAPI";
 
 interface StockDataItem {
   stockDate: string;
@@ -48,6 +53,7 @@ interface StockState {
   stockData: StockDataItem[];
   stockInfo: StockInfo | null;
   isFollow: boolean;
+  isFollowed: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -60,6 +66,7 @@ const initialState: StockState = {
   bestAnalysts: [],
   stockInfo: null,
   isFollow: false,
+  isFollowed: false,
   loading: false,
   error: null,
 };
@@ -88,6 +95,14 @@ export const fetchBestAnalysts = createAsyncThunk(
   }
 );
 
+export const fetchFollowStatus = createAsyncThunk(
+  "stock/fetchFollowStatus",
+  async (searchTerm: string) => {
+    const isFollowed = await getFollowStatus(searchTerm);
+    return isFollowed;
+  }
+);
+
 const stockSlice = createSlice({
   name: "stock",
   initialState,
@@ -102,7 +117,7 @@ const stockSlice = createSlice({
       state.stockId = action.payload;
     },
     updateFollowStatus: (state, action: PayloadAction<boolean>) => {
-      state.isFollow = action.payload;
+      state.isFollowed = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -112,7 +127,6 @@ const stockSlice = createSlice({
       })
       .addCase(fetchStockData.fulfilled, (state, action) => {
         state.loading = false;
-        state.isFollow = action.payload.isFollow;
         state.stockData = action.payload.stockData;
       })
       .addCase(fetchStockData.rejected, (state, action) => {
@@ -124,7 +138,7 @@ const stockSlice = createSlice({
       })
       .addCase(fetchStockInfo.fulfilled, (state, action) => {
         state.loading = false;
-        state.stockInfo = action.payload; // 받아온 회사 및 투자 정보를 저장
+        state.stockInfo = action.payload;
       })
       .addCase(fetchStockInfo.rejected, (state, action) => {
         state.loading = false;
@@ -141,6 +155,17 @@ const stockSlice = createSlice({
         state.loading = false;
         state.error =
           action.error.message || "베스트 애널리스트 데이터 호출 실패";
+      })
+      .addCase(fetchFollowStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchFollowStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isFollowed = action.payload;
+      })
+      .addCase(fetchFollowStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "관심 종목 상태 호출 실패";
       });
   },
 });
