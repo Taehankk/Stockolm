@@ -24,14 +24,18 @@ const EmailVerification = ({ location }: Props) => {
 
   const handleEmailInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setEmailInput(value);
+    if (value.length <= 30) {
+      setEmailInput(value);
+    }
   };
 
   const handleValidateNumInputChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
-    setValidateNumInput(value);
+    if (value.length <= 8) {
+      setValidateNumInput(value);
+    }
   };
 
   const sendEmail = async () => {
