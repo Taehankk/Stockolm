@@ -120,7 +120,7 @@ const WriteForm = () => {
         }
         onChange={handleChange}
         ref={quillRef}
-        className="h-40 w-full"
+        className="h-60 w-full"
       />
     </div>
   );
