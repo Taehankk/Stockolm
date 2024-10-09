@@ -153,7 +153,7 @@ const CommentList = ({ handleCommentCount }: Props) => {
               <div className="flex items-center">
                 <div className="mr-4">
                   <img
-                    className="h-[4rem] w-[4rem] object-cover rounded-full border border-black"
+                    className="h-[4rem] w-[4rem] object-cover rounded-full border-black"
                     src={comment.userImagePath}
                   />
                 </div>

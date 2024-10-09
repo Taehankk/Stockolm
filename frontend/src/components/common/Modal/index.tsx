@@ -48,7 +48,7 @@ interface FavoriteBoard {
 	userName?: string;
 	userNickName?: string;
 	goal_stock?: number;
-	filePath?: string;
+	userImagePath?: string;
 }
 
 interface AnalystBoard {
@@ -193,7 +193,7 @@ const Modal = ({
                       </span>
                       <div className="flex">
                         <span className="w-[10rem]">{item?.userName}</span>
-                        <a href={item?.filePath} className="cursor-pointer">
+                        <a href={item?.userImagePath} className="cursor-pointer">
                           <span className="mr-2 flex items-center">
                             <img src={pdf} className="w-[1rem] h-[1rem] mt-[0.2rem]" />
                           </span>
