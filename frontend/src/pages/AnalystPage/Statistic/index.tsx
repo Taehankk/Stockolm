@@ -59,13 +59,13 @@ const Statistic: React.FC = () => {
     <div className="w-full">
       <div className="w-full text-[2rem] mb-[2rem] border-b-black border-b-[0.0625rem]">통계</div>
       <div className="flex flex-col gap-[1.5rem] mx-[2rem]">
-      <div className="absolute right-[10rem] top-[13.5rem]">
+              <div className="absolute right-[10rem] top-[13.5rem]">
             <img
               src={RedUp}
-              alt={`투자상승이`}
+              alt="투자상승이"
               className="size-[4rem] mt-3 rounded-full"
             />
-            <div className="tooltip absolute left-1/2 transform -translate-x-1/3 mt-2  bg-gray-800 text-white text-lg rounded-lg py-2 px-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
+            <div className="tooltip absolute left-1/2 transform -translate-x-[50%] mt-2  bg-gray-800 text-white text-lg rounded-lg py-2 px-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
               <span>신뢰도 : 종목 별 매수, 매도 포지션 예상 적중</span>
               <br />
               <span>정확도 : 종목 별 목표 주가에 ±5% 이내 적중</span>
@@ -75,7 +75,7 @@ const Statistic: React.FC = () => {
           </div>
 
         <div className="flex gap-[3rem] w-full h-[11rem]">
-          <DonutChart color="#FFF5D2" value={analystInfo?.reliability ?? 0} content="신뢰도"></DonutChart>
+          <DonutChart color="#FFF5D2" textHeight="11rem" value={analystInfo?.reliability ?? 0} content="신뢰도"></DonutChart>
           <div className="flex flex-col" style={{marginBottom: '8rem'}}>
             {analystInfo?.reliabilityStock?.[0] ? (
               <BarChart color="#FFE2B1" value={analystInfo.reliabilityStock[0].stockReliabilityValue} children={analystInfo.reliabilityStock[0].stockName} />
@@ -102,11 +102,11 @@ const Statistic: React.FC = () => {
               <BarChart color="#61A9FB" value={analystInfo.accuracyStock[2].stockAccuracyValue} children={analystInfo.accuracyStock[2].stockName} />
             ) : <BarChart color="#61A9FB" value={0} children={"분석없음"} />}
           </div>
-          <DonutChart color="#61A9FB" value={analystInfo?.accuracy} content="정확도"></DonutChart>
+          <DonutChart color="#61A9FB" textHeight="11rem" value={analystInfo?.accuracy} content="정확도"></DonutChart>
         </div>
 
         <div className="flex gap-[3rem] w-full h-[11rem]" style={{marginBottom: '8rem'}}>
-          <DonutChart color="#FFABAB" value={101} content="산업군"></DonutChart>
+          <DonutChart color="#FFABAB" textHeight="11rem" value={101} content="산업군"></DonutChart>
           <div className="flex flex-col">
             {analystInfo?.industry?.[0] ? (
               <BarChart color="#FFABAB" value={analystInfo.industry[0].industryValue} children={analystInfo.industry[0].industryName.split(" ")[1]} />
