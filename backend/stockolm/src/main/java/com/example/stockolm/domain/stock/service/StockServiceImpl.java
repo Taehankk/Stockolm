@@ -172,7 +172,10 @@ public class StockServiceImpl implements StockService {
 
         Stock stock = stockRepository.findByStockName(stockName);
 
-        Boolean existFavoriteStockUser = favoriteStockRepository.existsByUser_UserIdAndStock_StockId(userId, stock.getStockId());
+        Boolean existFavoriteStockUser = false;
+
+        if (userId != null)
+            existFavoriteStockUser = favoriteStockRepository.existsByUser_UserIdAndStock_StockId(userId, stock.getStockId());
 
         return StockIsFollowedResponse.builder()
                 .isFollowed(existFavoriteStockUser)
