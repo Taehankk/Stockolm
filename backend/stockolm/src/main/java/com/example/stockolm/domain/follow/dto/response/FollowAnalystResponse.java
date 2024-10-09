@@ -8,13 +8,13 @@ public class FollowAnalystResponse {
     private String userName;
     private String userNickName;
     private String userImagePath;
-    private Double reliability;
-    private Double accuracy;
+    private Long reliability;
+    private Long accuracy;
     private Integer totalAnalystRanking;
 
     @Builder
     public FollowAnalystResponse(String userName, String userNickName, String userImagePath,
-                                 Double reliability, Double accuracy, Integer totalAnalystRanking) {
+                                 Long reliability, Long accuracy, Integer totalAnalystRanking) {
         this.userName = userName;
         this.userNickName = userNickName;
         this.userImagePath = userImagePath;
