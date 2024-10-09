@@ -5,6 +5,10 @@
   import { fetchAnalystBoard, fetchAnalystInfo, patchRepresentWrite } from "../../../api/analystAPI";
   import { useParams } from "react-router-dom";
 import RepresentModal from "../../../components/analyst/RepresentModal";
+import { AppDispatch, RootState } from "../../../store";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { getUserInfo } from "../../../slices/userSlice";
 
   interface AnalystBoard {
     content: {
@@ -94,10 +98,17 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
     const [currentCard, setCurrentCard] = useState<AnalystBoard["content"]>([]);
     const [currentCards, setCurrentCards] = useState<AnalystBoard["content"]>([]);
 
+      const dispatch: AppDispatch = useDispatch();
+      const { userNickName } = useSelector((state: RootState) => state.user);
+
     useEffect(() => {
       setRole(sessionStorage.getItem("role") || "USER");
       setItemsPerPage(6);
     },[])
+
+    useEffect(() => {
+      dispatch(getUserInfo());
+    }, [dispatch]);
 
     const onPageChange = (page: number) => {
       console.log(role)
@@ -179,7 +190,7 @@ import RepresentModal from "../../../components/analyst/RepresentModal";
       <div className="w-full">
         <div className="flex h-[3rem] justify-between w-full border-b-black border-b-[0.0625rem]">
           <span className="text-[2rem]">작성글보기</span>
-          <span className="h-full flex items-end cursor-pointer" onClick={handleClickRepresentWrite}>대표글 설정</span>
+          {userNickName === nickname && <span className="h-full flex items-end cursor-pointer" onClick={handleClickRepresentWrite}>대표글 설정</span>}
           {isModal && <RepresentModal onCloseClick={handleClickClose} onContentClick={handleClickCentent} />}
           {isConfirmModal && <RepresentModal size="small" onConfirmClick={handleClickConfirm} />}
         </div>
