@@ -163,7 +163,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                 ))
                 .from(analystBoard)
                 .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
-                .where(analystBoard.user.userId.eq(analystId))
+                .where(analystBoard.user.userId.eq(analystId).and(analystBoard.goalDate.lt(LocalDate.now())))
                 .groupBy(stock.stockName)
                 .orderBy(getStockReliabilityPercent(analystBoard).desc())
                 .limit(3)
@@ -172,12 +172,13 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
 
     private NumberExpression<Long> getStockReliabilityPercent(QAnalystBoard analystBoard) {
         return getReliabilitySum(analystBoard)
-                .divide(analystBoard.analystBoardId.count()).multiply(100);
+                .divide(getReliabilitySum(analystBoard)).multiply(100).coalesce(0L);
     }
 
     private NumberExpression<Long> getReliabilitySum(QAnalystBoard analystBoard) {
         return new CaseBuilder()
-                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum();
+                .when(analystBoard.goalDate.lt(LocalDate.now()).and(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)))
+                .then(1L).otherwise(0L).sum();
     }
 
     // 정확도가 높은 상위 3개의 종목을 반환하는 함수
@@ -194,7 +195,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                 ))
                 .from(analystBoard)
                 .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
-                .where(analystBoard.user.userId.eq(analystId))
+                .where(analystBoard.user.userId.eq(analystId).and(analystBoard.goalDate.lt(LocalDate.now())))
                 .groupBy(stock.stockName)
                 .orderBy(getStockAccuracyPercent(analystBoard).desc())
                 .limit(3)
@@ -203,12 +204,13 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
 
     private NumberExpression<Long> getStockAccuracyPercent(QAnalystBoard analystBoard) {
         return getAccuracySum(analystBoard)
-                .divide(analystBoard.analystBoardId.count()).multiply(100);
+                .divide(getAccuracySum(analystBoard)).multiply(100).coalesce(0L);
     }
 
     private NumberExpression<Long> getAccuracySum(QAnalystBoard analystBoard) {
         return new CaseBuilder()
-                .when(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum();
+                .when(analystBoard.goalDate.lt(LocalDate.now()).and(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)))
+                .then(1L).otherwise(0L).sum();
     }
 
     // 가장 신뢰도 높은 산업군 상위 3개를 반환하는 함수
@@ -219,7 +221,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         return queryFactory
                 .select(Projections.constructor(
                         IndustryDTO.class,
-                        stock.industryName,            // 종목 이름
+                        stock.industryName,            // 산업군 이름
                         getStockReliabilityPercent(analystBoard) // 신뢰성 있는 글 / 총 게시글 수 비율
                 ))
                 .from(analystBoard)
@@ -265,7 +267,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         return queryFactory
                 .select(analystBoard.countDistinct())
                 .from(analystBoard)
-                .where(analystBoard.goalDate.loe(LocalDate.now()).and(user.userId.eq(userId)));
+                .where(analystBoard.goalDate.lt(LocalDate.now()).and(user.userId.eq(userId)));
     }
 
 }

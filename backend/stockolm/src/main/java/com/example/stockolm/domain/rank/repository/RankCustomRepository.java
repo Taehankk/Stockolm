@@ -32,7 +32,7 @@ public class RankCustomRepository {
     private static final String RELIABILITY = "reliability";
     private static final String ACCURACY = "accuracy";
 
-    private static final String ROW_NUM_QUERY = "ROW_NUMBER() OVER (ORDER BY {0} DESC)";
+    public static final String ROW_NUM_QUERY = "ROW_NUMBER() OVER (ORDER BY {0} DESC)";
 
     public Page<AnalystRankInfoResponse> getTotalRank(String rankValue, String analystName, Pageable pageable) {
         QAnalystInfo analystInfo = QAnalystInfo.analystInfo;
