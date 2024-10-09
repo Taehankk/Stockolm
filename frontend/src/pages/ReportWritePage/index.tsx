@@ -96,7 +96,13 @@ const ReportWritePage = () => {
       // dispatch(setMarketCapitalization(form[2]?.mentionText.replace(/,/g, "")));
       // setPredictDate(form[0].mentionText);
       dispatch(setStockName(form[5]));
-      dispatch(setGoalDate(form[13]));
+      if (form[14].includes("투자")) {
+        console.log(form[13]);
+        dispatch(setGoalDate(form[13])); // form[14]가 '투자'일 경우 form[13] 값을 사용
+      } else if (form[13].includes("투자")) {
+        console.log(form[14]);
+        dispatch(setGoalDate(form[14])); // 그렇지 않으면 원래 form[14] 값을 사용
+      }
       dispatch(setCurrentStock(form[9]?.replace(/,/g, "")));
       dispatch(setGoalStock(form[11]?.replace(/,/g, "")));
       dispatch(setOpinion(form[15]));
@@ -165,7 +171,7 @@ const ReportWritePage = () => {
         };
 
         await writeReportAPI(report);
-        // console.log(report);
+        console.log(report);
         // console.log(marketCapitalization);
 
         dispatch(setReportTitle(""));
@@ -295,7 +301,7 @@ const ReportWritePage = () => {
           />
 
           {/* 글 작성 라이브러리 칸 */}
-          <div className="h-40 mb-20 w-full">
+          <div className="h-40 mb-48 w-full">
             <WriteForm />
           </div>
 
