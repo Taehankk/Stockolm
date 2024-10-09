@@ -167,4 +167,17 @@ public class StockServiceImpl implements StockService {
         return analystBoardRepository.findBestAnalystByStockId(stockId);
     }
 
+    @Override
+    public StockIsFollowedResponse isFollowed(Long userId, String stockName) {
+
+        Stock stock = stockRepository.findByStockName(stockName);
+
+        Boolean existFavoriteStockUser = favoriteStockRepository.existsByUser_UserIdAndStock_StockId(userId, stock.getStockId());
+
+        return StockIsFollowedResponse.builder()
+                .isFollowed(existFavoriteStockUser)
+                .build();
+
+    }
+
 }
