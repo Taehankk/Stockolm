@@ -2,7 +2,7 @@
 
 const widthSize = {
   small: "6rem",
-  medium: "11rem",
+  medium: "8.4375rem",
   large: "15rem",
 };
 

@@ -42,8 +42,8 @@ const Login = ({ handleImgLocation }: Props) => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="my-16 text-[2.4rem]">로그인</div>
-      <div className="flex flex-col gap-2 w-[24vw]">
+      <div className="my-20 text-[2.4rem]">로그인</div>
+      <div className="flex flex-col gap-4 w-[24vw]">
         <div className="flex items-center justify-between">
           <span className="">이메일</span>
           <Input onChange={handleEmailInputChange} value={emailInput} />
@@ -64,7 +64,7 @@ const Login = ({ handleImgLocation }: Props) => {
           비밀번호 찾기
         </span>
       </div>
-      <Button onClick={login} children="로그인" className="mt-10 mb-4" />
+      <Button onClick={login} children="로그인" className="mt-8 mb-4" />
 
       <div className="text-sm text-center opacity-50">
         <div className="flex justify-between text-sm">
