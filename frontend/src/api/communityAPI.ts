@@ -66,10 +66,11 @@ export const pdfFormAPI = async (file: string | undefined) => {
       }
     );
 
-    console.log(res.data.document.text.split("\n"));
+    // console.log(res.data.document.text.split("\n"));
+    console.log(res.data.document.entities[0].properties);
 
-    // return res.data.document.entities[0].properties;
-    return res.data.document.text.split("\n");
+    return res.data.document.entities[0].properties;
+    // return res.data.document.text.split("\n");
   } catch (e) {
     console.log(e);
   }

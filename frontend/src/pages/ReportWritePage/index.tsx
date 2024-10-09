@@ -88,26 +88,28 @@ const ReportWritePage = () => {
   const summaryPdfFile = async (file: string) => {
     try {
       const form = await pdfFormAPI(file);
-      // dispatch(setStockName(form[1].mentionText));
-      // dispatch(setGoalDate(form[5].mentionText));
-      // dispatch(setCurrentStock(form[3]?.mentionText.replace(/,/g, "")));
-      // dispatch(setGoalStock(form[4]?.mentionText.replace(/,/g, "")));
-      // dispatch(setOpinion(form[6].mentionText));
-      // dispatch(setMarketCapitalization(form[2]?.mentionText.replace(/,/g, "")));
-      // setPredictDate(form[0].mentionText);
-      dispatch(setStockName(form[5]));
-      if (form[14].includes("투자")) {
-        console.log(form[13]);
-        dispatch(setGoalDate(form[13])); // form[14]가 '투자'일 경우 form[13] 값을 사용
-      } else if (form[13].includes("투자")) {
-        console.log(form[14]);
-        dispatch(setGoalDate(form[14])); // 그렇지 않으면 원래 form[14] 값을 사용
-      }
-      dispatch(setCurrentStock(form[9]?.replace(/,/g, "")));
-      dispatch(setGoalStock(form[11]?.replace(/,/g, "")));
-      dispatch(setOpinion(form[15]));
-      dispatch(setMarketCapitalization(form[7]?.replace(/,/g, "")));
-      setPredictDate(form[4]);
+      dispatch(setStockName(form[1].mentionText || ""));
+      dispatch(setGoalDate(form[5].mentionText || ""));
+      dispatch(setCurrentStock(form[3]?.mentionText.replace(/,/g, "") || 0));
+      dispatch(setGoalStock(form[4]?.mentionText.replace(/,/g, "") || 0));
+      dispatch(setOpinion(form[6].mentionText) || "");
+      dispatch(
+        setMarketCapitalization(form[2]?.mentionText.replace(/,/g, "") || 0)
+      );
+      setPredictDate(form[0].mentionText || "");
+      // dispatch(setStockName(form[5]));
+      // if (form[13].includes("24")) {
+      //   console.log(form[13]);
+      //   dispatch(setGoalDate(form[13])); // form[14]가 '투자'일 경우 form[13] 값을 사용
+      // } else if (form[14].includes("24")) {
+      //   console.log(form[14]);
+      //   dispatch(setGoalDate(form[14])); // 그렇지 않으면 원래 form[14] 값을 사용
+      // }
+      // dispatch(setCurrentStock(form[9]?.replace(/,/g, "")));
+      // dispatch(setGoalStock(form[11]?.replace(/,/g, "")));
+      // dispatch(setOpinion(form[15]));
+      // dispatch(setMarketCapitalization(form[7]?.replace(/,/g, "")));
+      // setPredictDate(form[4]);
     } catch {
       alert("STOCKOLM 제공 파일 양식인지 확인해주세요");
     }
@@ -175,7 +177,7 @@ const ReportWritePage = () => {
         // console.log(marketCapitalization);
 
         dispatch(setReportTitle(""));
-        dispatch(setStockName("PDF 파일을 업로드 해주세요."));
+        dispatch(setStockName("PDF 업로드 시 자동 업데이트"));
         dispatch(setGoalDate(""));
         dispatch(setCurrentStock(0));
         dispatch(setGoalStock(0));
@@ -195,7 +197,7 @@ const ReportWritePage = () => {
 
   const cancelReportWrite = () => {
     dispatch(setReportTitle(""));
-    dispatch(setStockName("PDF 파일을 업로드 해주세요."));
+    dispatch(setStockName("PDF 업로드 시 자동 업데이트"));
     dispatch(setGoalDate(""));
     dispatch(setCurrentStock(0));
     dispatch(setGoalStock(0));
@@ -269,18 +271,24 @@ const ReportWritePage = () => {
             <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
             종목분석게시판
           </div>
+          <span className="text-lg opacity-90 mb-5 text-red-600">
+            ※ PDF 파일 업로드 후 내용을 확인해주세요.
+          </span>
           <div className="flex mb-4 items-center">
             <span className="mr-4">주식종목</span>
-            <span className="text-[0.8rem] text-center content-center rounded-lg border border-black px-4 min-w-[4rem] min-h-[2rem]">
-              {stockName}
-            </span>
+            <input
+              type="text"
+              value={stockName}
+              onChange={(e) => dispatch(setStockName(e.target.value))}
+              className="text-[0.8rem] text-center content-center rounded-lg border border-black px-4 min-w-[4rem] min-h-[2rem]"
+            />
           </div>
           <div className="flex mb-4 items-center">
             <span className="mr-12">파일</span>
             <div className="flex">
               <label
                 htmlFor="pdfUpload"
-                className="cursor-pointer text-[0.9rem] text-center content-center p-2 min-h-[2rem] border border-black border-opacity-50 opacity-50"
+                className="cursor-pointer text-[0.9rem] text-center content-center p-2 min-h-[2rem] border border-black border-opacity-50 rounded-md opacity-50"
               >
                 {fileName}
               </label>
@@ -297,22 +305,121 @@ const ReportWritePage = () => {
             value={reportTitle}
             onChange={handleReportTitle}
             placeholder="제목을 입력해주세요"
-            className="flex text-lg border-none w-full min-h-[3rem] p-2 mb-4"
+            className="flex text-lg border-b  border-black border-opacity-2 0 w-full min-h-[3rem] p-2 mb-4"
           />
+
+          {/* FORM 데이터 */}
+          <div className="flex flex-col border border-black border-opacity-20 rounded-md p-4 mb-4">
+            {/* 시가총액 */}
+            <div className="flex w-full mb-2">
+              <div className="flex w-full text-sm justify-between mr-8">
+                <div className="flex-col w-full mr-2">
+                  <span className="flex w-full">시가 총액</span>
+                  <span className="flex w-full">(단위 : 백만원)</span>
+                </div>
+                <input
+                  type="text"
+                  value={marketCapitalization}
+                  onChange={(e) =>
+                    dispatch(setMarketCapitalization(Number(e.target.value)))
+                  }
+                  className="border border-black border-opacity-50 p-2"
+                />
+              </div>
+
+              {/* 투자 의견 */}
+              <div className="flex w-full text-sm justify-between">
+                <div className="flex w-full flex-col mr-2">
+                  <span className="flex w-full">투자 의견</span>
+                  <span className="flex w-full">(매수/매도/중립)</span>
+                </div>
+                <input
+                  type="text"
+                  value={opinion}
+                  onChange={(e) => dispatch(setOpinion(e.target.value))}
+                  className="border border-black border-opacity-50 p-2"
+                />
+              </div>
+            </div>
+
+            <div className="flex w-full mb-2">
+              {/* 현재 주가 */}
+              <div className="flex w-full text-sm justify-between mr-8">
+                <div className="flex-col w-full mr-2">
+                  <span className="flex w-full">현재 주가</span>
+                  <span className="flex w-full">(단위 : 원)</span>
+                </div>
+                <input
+                  type="text"
+                  value={currentStock}
+                  onChange={(e) =>
+                    dispatch(setCurrentStock(Number(e.target.value)))
+                  }
+                  className="border border-black border-opacity-50 p-2"
+                />
+              </div>
+
+              {/* 목표 주가 */}
+              <div className="flex w-full text-sm justify-between">
+                <div className="flex-col w-full mr-2">
+                  <span className="flex w-full">목표 주가</span>
+                  <span className="flex w-full">(단위 : 원)</span>
+                </div>
+                <input
+                  type="number"
+                  value={goalStock}
+                  onChange={(e) =>
+                    dispatch(setGoalStock(Number(e.target.value)))
+                  }
+                  className="border border-black border-opacity-50 p-2"
+                />
+              </div>
+            </div>
+
+            <div className="flex w-full">
+              {/* 오늘 날짜 */}
+              <div className="flex w-full text-sm justify-between mr-8">
+                <div className="flex-col w-full mr-2">
+                  <span className="flex w-full">오늘 날짜</span>
+                  <span className="flex w-full">(YY.MM.DD)</span>
+                </div>
+                <input
+                  type="text"
+                  value={predictDate}
+                  onChange={(e) => setPredictDate(e.target.value)}
+                  className="border border-black border-opacity-50 p-2"
+                />
+              </div>
+
+              {/* 목표 일정 */}
+              <div className="flex w-full text-sm justify-between">
+                <div className="flex-col w-full mr-2">
+                  <span className="flex w-full">목표 일정</span>
+                  <span className="flex w-full">(YY.MM.DD)</span>
+                </div>
+                <input
+                  type="text"
+                  value={goalDate}
+                  onChange={(e) => dispatch(setGoalDate(e.target.value))}
+                  className="border border-black border-opacity-50 p-2"
+                />
+              </div>
+            </div>
+          </div>
 
           {/* 글 작성 라이브러리 칸 */}
           <div className="h-40 mb-48 w-full">
             <WriteForm />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mb-10">
             <Button
               onClick={cancelReportWrite}
               size="small"
               color="black"
               border="black"
               children="취소"
-              className="bg-white"
+              className="bg-white mr-2"
             />
             <Button size="small" children="등록" onClick={writeReport} />
           </div>

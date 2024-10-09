@@ -42,7 +42,7 @@ interface ReportState {
 const initialState: ReportState = {
   currentPage: 1,
   analystBoardId: 0,
-  stockName: "PDF 파일을 업로드 해주세요.",
+  stockName: "PDF 업로드 시 자동 업데이트",
   title: "",
   userName: "", // 애널리스트 실명
   userNickname: "",
