@@ -122,7 +122,7 @@ public class AnalystBoardCustomRepositoryImpl implements AnalystBoardCustomRepos
                 .join(user).on(analystBoard.user.userId.eq(user.userId))
                 .where(analystBoard.stock.stockId.eq(stockId))
                 .orderBy(getAnalystReliability(user.userId).desc(), analystInfo.totalAnalystScore.desc())
-                .limit(5)
+                .limit(15)
                 .fetch();
     }
 
