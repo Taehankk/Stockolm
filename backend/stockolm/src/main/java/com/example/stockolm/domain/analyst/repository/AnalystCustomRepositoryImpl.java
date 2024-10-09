@@ -50,6 +50,7 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         return AnalystInfoResponse.builder()
                 .userName(analyst.getUserName())
                 .userNickName(analyst.getUserNickname())
+                .userImagePath(analyst.getUserImagePath())
                 .boardSize(boardSize)
                 .follower(followerCount)
                 .totalAnalystRank(analystRank)

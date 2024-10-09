@@ -11,6 +11,7 @@ import java.util.List;
 public class AnalystInfoResponse {
     private String userName;
     private String userNickName;
+    private String userImagePath;
     private int boardSize;
     private int follower;
     private int totalAnalystRank;
@@ -24,7 +25,8 @@ public class AnalystInfoResponse {
     public AnalystInfoResponse(List<IndustryDTO> industry, List<StockInfoDTO> accuracyStock,
                                Double accuracy, List<StockInfoDTO> reliabilityStock,
                                Double reliability, int totalAnalystRank, int follower,
-                               int boardSize, String userNickName, String userName) {
+                               int boardSize, String userNickName, String userName,
+                               String userImagePath) {
         this.industry = industry;
         this.accuracyStock = accuracyStock;
         this.accuracy = accuracy;
@@ -35,5 +37,6 @@ public class AnalystInfoResponse {
         this.boardSize = boardSize;
         this.userNickName = userNickName;
         this.userName = userName;
+        this.userImagePath = userImagePath;
     }
 }
