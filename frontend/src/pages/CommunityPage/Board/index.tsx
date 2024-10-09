@@ -104,10 +104,24 @@ const Board = () => {
     dispatch(setCurrentPage(1));
   }, [sort]);
 
+  useEffect(() => {
+    if (searchWord === "") {
+      getBoardList(); 
+    }
+  }, [searchWord]);
+
+  const handleClickInitSearch = async () => {
+    setSearchWord("");
+    dispatch(setCurrentPage(1));
+  }
+
   return (
-    <div className="w-[90%] mt-10">
+    <div className="w-[100%] mt-10">
       <div>
-        <span className="text-3xl">자유게시판</span>
+        <div className="h-[2rem] flex justify-between items-end">
+          <span className="text-3xl">자유게시판</span>
+          <span className="w-[8rem] h-[2rem] inline-flex justify-center items-center border-black border rounded-full cursor-pointer" onClick={handleClickInitSearch}>검색 초기화</span>
+        </div>
         <div className="flex mt-4 mb-2 justify-between items-center">
           <Filter sort={sort} handleSort={handleSort} />
           <Search
@@ -136,7 +150,7 @@ const Board = () => {
         <div className="flex justify-end mt-6">
           <div
             onClick={toBoardWrite}
-            className="w-16 h-8 mb-10 text-center content-center text-xs border border-black rounded-md"
+            className="w-16 h-8 mb-10 text-center content-center text-md border border-black rounded-md cursor-pointer"
           >
             글쓰기
           </div>

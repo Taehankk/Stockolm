@@ -38,7 +38,7 @@ const NicknameModal = ({
 
   const handleClickConfirmButton = async () => {
     if (newNickname.length === 0) {
-      alert("닉네임을 입력해주세요.");
+      alert("변경할 닉네임을 입력해주세요.");
     return;
   }
     try {
@@ -54,6 +54,12 @@ const NicknameModal = ({
     }
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleClickConfirmButton();
+    }
+  }
+
   return(
     <div>
       <div className="fixed z-50 top-0 left-0 w-[100vw] h-[100vh] bg-black bg-opacity-[0.3]">
@@ -62,7 +68,7 @@ const NicknameModal = ({
             <img src={close} className="absolute w-[1rem] h-[1rem] top-[1rem] right-[1rem] self-end cursor-pointer" onClick={handleClickCloseButton} />
             <span>{context}</span>
             <div className="flex flex-col gap-[0.5rem]">
-              <Input className="w-[5rem]" value={newNickname} onChange={handleChangeValue}></Input>
+              <Input className="w-[5rem]" value={newNickname} onChange={handleChangeValue} onKeyUp={handleKeyPress}></Input>
               <Button onClick={handleClickConfirmButton}>확인</Button>
             </div>
           </div>

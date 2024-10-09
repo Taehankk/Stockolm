@@ -4,7 +4,6 @@ import FavoriteCard from "../../elements/FavoriteCard";
 import CardArrow from "/src/assets/cardArrow.svg"
 import CardArrowReverse from "/src/assets/cardArrowReverse.svg"
 
-
 interface Analyst {
   userName: string;
   userNickName: string;
@@ -64,6 +63,7 @@ const FavoriteCardList = ({
       if (dataProps.length > 0) {
         fetchData(dataProps);
       }
+      console.log(dataProps,"Dd")
     }, [dataProps]);
 
   return(

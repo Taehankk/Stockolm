@@ -22,7 +22,7 @@ const Search = ({ searchValue, handleSearchValue, searchList }: Props) => {
         placeholder="검색어를 입력하세요"
         className="flex p-2 px-6 h-[2rem] rounded outline-none"
       />
-      <span onClick={searchList} className="cursor-pointer">
+      <span onClick={searchList} className="cursor-pointer pr-3">
         검색
       </span>
     </div>
