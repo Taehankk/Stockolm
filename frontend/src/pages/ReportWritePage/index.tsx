@@ -33,6 +33,8 @@ import {
   validateTitleInputLength,
 } from "../../utils/validation";
 
+import RedUp from "../../assets/RedUp.webp";
+
 interface Report {
   title: string;
   stockName: string;
@@ -92,13 +94,13 @@ const ReportWritePage = () => {
     try {
       const form = await pdfFormAPI(file);
 
-      if (form[0].type !== "date_time" || form[1].type !== "organization") {
-        setFileName("STOCKOLM 에서 제공한 PDF를 작성하여 업로드 해주세요.");
-        throw new Error("STOCKOLM 제공 파일 양식인지 확인해주세요"); // 에러 발생
-      }
+      // if (form[0].type !== "date_time" || form[1].type !== "organization") {
+      //   setFileName("STOCKOLM 에서 제공한 PDF를 작성하여 업로드 해주세요.");
+      //   throw new Error("STOCKOLM 제공 파일 양식인지 확인해주세요"); // 에러 발생
+      // }
 
       if (form[0]) {
-        setPredictDate(form[0].mentionText);
+        setPredictDate(form[0].mentionText.split(".").join("-"));
       } else {
         setPredictDate("");
       }
@@ -130,7 +132,7 @@ const ReportWritePage = () => {
       }
 
       if (form[5]) {
-        dispatch(setGoalDate(form[5].mentionText));
+        dispatch(setGoalDate("20" + form[5].mentionText.split(".").join("-")));
       } else {
         dispatch(setGoalDate(""));
       }
@@ -198,7 +200,7 @@ const ReportWritePage = () => {
           goalStock: goalStock,
           currentStock: currentStock,
           marketCapitalization: marketCapitalization,
-          goalDate: new Date("20" + goalDate.replace(/\./g, "-")),
+          goalDate: new Date(goalDate),
           filePath: filePath,
         };
 
@@ -292,193 +294,213 @@ const ReportWritePage = () => {
 
   return (
     <BasicLayout>
-      <div className="w-[60%] mx-auto flex justify-center content-center mt-10">
-        <div className="w-full flex flex-col">
-          <div
-            onClick={backToReportList}
-            className="cursor-pointer text-3xl mb-10 items-center"
-          >
-            <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
-            종목분석게시판
-          </div>
-          <span className="text-lg opacity-90 mb-5 text-red-600">
-            ※ PDF 파일 업로드 후 내용을 확인해주세요.
-          </span>
-          <div className="flex mb-4 items-center">
-            <span className="mr-4">주식종목</span>
-            <input
-              type="text"
-              value={stockName}
-              onChange={(e) => {
-                dispatch(
-                  setStockName(validateSearchInputLength(e.target.value))
-                );
-              }}
-              className="text-[0.8rem] text-center content-center rounded-lg border border-black px-4 min-w-[4rem] min-h-[2rem]"
-            />
-          </div>
-          <div className="flex mb-4 items-center">
-            <span className="mr-12">파일</span>
-            <div className="flex">
-              <label
-                htmlFor="pdfUpload"
-                className="cursor-pointer text-[0.9rem] text-center content-center p-2 min-h-[2rem] border border-black border-opacity-50 rounded-md opacity-50"
-              >
-                {fileName}
-              </label>
+      <div className="flex flex-col w-[60%] mx-auto justify-center content-center mt-10">
+        <div className="flex w-full">
+          <div className="flex flex-col w-[80%]">
+            <div
+              onClick={backToReportList}
+              className="flex w-full cursor-pointer text-3xl mb-10 items-center"
+            >
+              <FontAwesomeIcon icon={faChevronLeft} className="mr-4" />
+              종목분석게시판
+            </div>
+            <span className="text-lg opacity-90 mb-5 text-red-600">
+              ※ PDF 파일 업로드 후 내용을 확인해주세요.
+            </span>
+            <div className="flex w-full mb-4 items-center">
+              <span className="mr-4">주식종목</span>
               <input
-                type="file"
-                id="pdfUpload"
-                onChange={fileUploadValidHandler}
-                className="hidden"
+                type="text"
+                value={stockName}
+                onChange={(e) => {
+                  dispatch(
+                    setStockName(validateSearchInputLength(e.target.value))
+                  );
+                }}
+                className="text-[0.8rem] text-center content-center rounded-lg border border-black px-4 min-w-[4rem] min-h-[2rem]"
+              />
+            </div>
+            <div className="flex w-full mb-4 items-center">
+              <span className="flex w-[10%] mr-4">파일</span>
+              <div className="flex w-[80%]">
+                <label
+                  htmlFor="pdfUpload"
+                  className="flex w-full cursor-pointer text-[0.9rem] text-center content-center p-2 min-h-[2rem] border border-black border-opacity-50 rounded-md opacity-50"
+                >
+                  {fileName}
+                </label>
+                <input
+                  type="file"
+                  id="pdfUpload"
+                  onChange={fileUploadValidHandler}
+                  className="hidden"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex w-[20%] relative content-start justify-end">
+            <img
+              src={RedUp}
+              alt={`투자상승이`}
+              className="size-[10rem] ml-[3rem] mt-3 rounded-full"
+            />
+            <div className="tooltip absolute left-1/2 transform -translate-x-1/2  bg-gray-800 text-white text-lg rounded-lg py-2 px-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
+              <span>분석글을 작성해주세요!</span>
+              <br />
+              <span>
+                작성하신 PDF 파일을 기반으로 내용이 자동으로 작성됩니다!
+              </span>
+              <br />
+              <span className="text-red-600">
+                신뢰도, 정확도와 직결되는 데이터이니 주의해서 정확하게
+                작성해주세요!
+              </span>
+            </div>
+          </div>{" "}
+        </div>
+
+        <input
+          type="text"
+          value={reportTitle}
+          onChange={handleReportTitle}
+          placeholder="제목을 입력해주세요"
+          className="flex text-lg border-b  border-black border-opacity-2 0 w-full min-h-[3rem] p-2 mb-4"
+        />
+
+        {/* FORM 데이터 */}
+        <div className="flex flex-col border border-black border-opacity-20 rounded-md p-4 mb-4">
+          {/* 시가총액 */}
+          <div className="flex w-full mb-2">
+            <div className="flex w-full text-sm justify-between mr-8">
+              <div className="flex-col w-full mr-2">
+                <span className="flex w-full">시가 총액</span>
+                <span className="flex w-full">(단위 : 백만원)</span>
+              </div>
+              <input
+                type="text"
+                value={marketCapitalization}
+                onChange={(e) =>
+                  dispatch(
+                    setMarketCapitalization(
+                      Number(validateSearchInputLength(e.target.value))
+                    )
+                  )
+                }
+                className="border border-black border-opacity-50 p-2"
+              />
+            </div>
+
+            {/* 투자 의견 */}
+            <div className="flex w-full text-sm justify-between">
+              <div className="flex w-full flex-col mr-2">
+                <span className="flex w-full">투자 의견</span>
+                <span className="flex w-full">(매수/매도/중립)</span>
+              </div>
+              <input
+                type="text"
+                value={opinion}
+                onChange={(e) => {
+                  dispatch(
+                    setOpinion(validateSearchInputLength(e.target.value))
+                  );
+                }}
+                className="border border-black border-opacity-50 p-2"
               />
             </div>
           </div>
-          <input
-            type="text"
-            value={reportTitle}
-            onChange={handleReportTitle}
-            placeholder="제목을 입력해주세요"
-            className="flex text-lg border-b  border-black border-opacity-2 0 w-full min-h-[3rem] p-2 mb-4"
+
+          <div className="flex w-full mb-2">
+            {/* 현재 주가 */}
+            <div className="flex w-full text-sm justify-between mr-8">
+              <div className="flex-col w-full mr-2">
+                <span className="flex w-full">현재 주가</span>
+                <span className="flex w-full">(단위 : 원)</span>
+              </div>
+              <input
+                type="text"
+                value={currentStock}
+                onChange={(e) =>
+                  dispatch(
+                    setCurrentStock(
+                      Number(validateSearchInputLength(e.target.value))
+                    )
+                  )
+                }
+                className="border border-black border-opacity-50 p-2"
+              />
+            </div>
+
+            {/* 목표 주가 */}
+            <div className="flex w-full text-sm justify-between">
+              <div className="flex-col w-full mr-2">
+                <span className="flex w-full">목표 주가</span>
+                <span className="flex w-full">(단위 : 원)</span>
+              </div>
+              <input
+                type="text"
+                value={goalStock}
+                onChange={(e) =>
+                  dispatch(
+                    setGoalStock(
+                      Number(validateSearchInputLength(e.target.value))
+                    )
+                  )
+                }
+                className="border border-black border-opacity-50 p-2"
+              />
+            </div>
+          </div>
+
+          <div className="flex w-full">
+            {/* 오늘 날짜 */}
+            <div className="flex w-full text-sm justify-between mr-8">
+              <div className="flex-col w-full">
+                <span className="flex w-full">오늘 날짜</span>
+                <span className="flex w-full">(YY.MM.DD)</span>
+              </div>
+              <input
+                type="date"
+                value={predictDate}
+                onChange={(e) => {
+                  setPredictDate(e.target.value);
+                }}
+                className="border w-full border-black border-opacity-50 p-2"
+              />
+            </div>
+
+            {/* 목표 일정 */}
+            <div className="flex w-full text-sm justify-between">
+              <div className="flex-col w-full">
+                <span className="flex w-full">목표 일정</span>
+                <span className="flex w-full">(YY.MM.DD)</span>
+              </div>
+              <input
+                type="date"
+                value={goalDate}
+                onChange={(e) => {
+                  dispatch(setGoalDate(e.target.value));
+                }}
+                className="border w-full border-black border-opacity-50 p-2"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 글 작성 라이브러리 칸 */}
+        <div className="h-40 mb-48 w-full">
+          <WriteForm />
+        </div>
+
+        <div className="flex justify-end mb-10">
+          <Button
+            onClick={cancelReportWrite}
+            size="small"
+            color="black"
+            border="black"
+            children="취소"
+            className="bg-white mr-2"
           />
-
-          {/* FORM 데이터 */}
-          <div className="flex flex-col border border-black border-opacity-20 rounded-md p-4 mb-4">
-            {/* 시가총액 */}
-            <div className="flex w-full mb-2">
-              <div className="flex w-full text-sm justify-between mr-8">
-                <div className="flex-col w-full mr-2">
-                  <span className="flex w-full">시가 총액</span>
-                  <span className="flex w-full">(단위 : 백만원)</span>
-                </div>
-                <input
-                  type="text"
-                  value={marketCapitalization}
-                  onChange={(e) =>
-                    dispatch(
-                      setMarketCapitalization(
-                        Number(validateSearchInputLength(e.target.value))
-                      )
-                    )
-                  }
-                  className="border border-black border-opacity-50 p-2"
-                />
-              </div>
-
-              {/* 투자 의견 */}
-              <div className="flex w-full text-sm justify-between">
-                <div className="flex w-full flex-col mr-2">
-                  <span className="flex w-full">투자 의견</span>
-                  <span className="flex w-full">(매수/매도/중립)</span>
-                </div>
-                <input
-                  type="text"
-                  value={opinion}
-                  onChange={(e) =>
-                    dispatch(
-                      setOpinion(validateSearchInputLength(e.target.value))
-                    )
-                  }
-                  className="border border-black border-opacity-50 p-2"
-                />
-              </div>
-            </div>
-
-            <div className="flex w-full mb-2">
-              {/* 현재 주가 */}
-              <div className="flex w-full text-sm justify-between mr-8">
-                <div className="flex-col w-full mr-2">
-                  <span className="flex w-full">현재 주가</span>
-                  <span className="flex w-full">(단위 : 원)</span>
-                </div>
-                <input
-                  type="text"
-                  value={currentStock}
-                  onChange={(e) =>
-                    dispatch(
-                      setCurrentStock(
-                        Number(validateSearchInputLength(e.target.value))
-                      )
-                    )
-                  }
-                  className="border border-black border-opacity-50 p-2"
-                />
-              </div>
-
-              {/* 목표 주가 */}
-              <div className="flex w-full text-sm justify-between">
-                <div className="flex-col w-full mr-2">
-                  <span className="flex w-full">목표 주가</span>
-                  <span className="flex w-full">(단위 : 원)</span>
-                </div>
-                <input
-                  type="text"
-                  value={goalStock}
-                  onChange={(e) =>
-                    dispatch(
-                      setGoalStock(
-                        Number(validateSearchInputLength(e.target.value))
-                      )
-                    )
-                  }
-                  className="border border-black border-opacity-50 p-2"
-                />
-              </div>
-            </div>
-
-            <div className="flex w-full">
-              {/* 오늘 날짜 */}
-              <div className="flex w-full text-sm justify-between mr-8">
-                <div className="flex-col w-full mr-2">
-                  <span className="flex w-full">오늘 날짜</span>
-                  <span className="flex w-full">(YY.MM.DD)</span>
-                </div>
-                <input
-                  type="text"
-                  value={predictDate}
-                  onChange={(e) =>
-                    setPredictDate(validateSearchInputLength(e.target.value))
-                  }
-                  className="border border-black border-opacity-50 p-2"
-                />
-              </div>
-
-              {/* 목표 일정 */}
-              <div className="flex w-full text-sm justify-between">
-                <div className="flex-col w-full mr-2">
-                  <span className="flex w-full">목표 일정</span>
-                  <span className="flex w-full">(YY.MM.DD)</span>
-                </div>
-                <input
-                  type="text"
-                  value={goalDate}
-                  onChange={(e) =>
-                    dispatch(
-                      setGoalDate(validateSearchInputLength(e.target.value))
-                    )
-                  }
-                  className="border border-black border-opacity-50 p-2"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 글 작성 라이브러리 칸 */}
-          <div className="h-40 mb-48 w-full">
-            <WriteForm />
-          </div>
-
-          <div className="flex justify-end mb-10">
-            <Button
-              onClick={cancelReportWrite}
-              size="small"
-              color="black"
-              border="black"
-              children="취소"
-              className="bg-white mr-2"
-            />
-            <Button size="small" children="등록" onClick={writeReport} />
-          </div>
+          <Button size="small" children="등록" onClick={writeReport} />
         </div>
       </div>
     </BasicLayout>
