@@ -40,7 +40,7 @@ const Header = () => {
       </ul>
       <ul className="flex gap-[1.2rem]">
         <li className="flex text-xl items-center">
-          <Link to={"/ranking"}>분석가</Link>
+          <Link to={"/ranking"}>랭킹</Link>
         </li>
         <li className="flex text-xl items-center">
           <Link to={"/community/"}>커뮤니티</Link>
