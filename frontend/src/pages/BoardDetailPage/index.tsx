@@ -101,6 +101,8 @@ const BoardDetailPage = () => {
       const res = await getBoardAPI(token, boardID!);
 
       setBoardData(res);
+
+      console.log(boardData);
       setLike(res.like);
       setBoardLike(res.likeCnt);
     } catch {
@@ -277,13 +279,13 @@ const BoardDetailPage = () => {
             </div>
 
             <hr />
-
             <div
               dangerouslySetInnerHTML={{
                 __html: sanitizer(`${boardData?.content}`),
               }}
-              className="flex w-full text-lg p-4 min-h-64 whitespace-pre-wrap word-break break-all"
+              className="w-full text-lg p-4 min-h-64 whitespace-pre-wrap word-break break-all"
             ></div>
+
             <hr />
             <div className="flex flex-col p-4 w-full justify-center mb-10">
               {token ? (
