@@ -15,7 +15,7 @@ const Footer = () => {
           </p>
         </div>
         <div>
-          <p className="text-left text-xl">대표: 김태한</p>
+          <p className="text-left text-xl">대표: B201</p>
         </div>
       </div>
       <div className="w-[60%] text-end mr-11 align-top">
