@@ -41,11 +41,6 @@ public class Board {
         this.createAt = LocalDateTime.now();
     }
 
-    @PreUpdate
-    public void preUpdate() {
-        this.updateAt = LocalDateTime.now();
-    }
-
     public void incrementViewCnt() {
         this.viewCnt++;
     }
@@ -72,5 +67,6 @@ public class Board {
         this.title = title;
         this.content = content;
         this.category = category;
+        this.updateAt = LocalDateTime.now();
     }
 }
