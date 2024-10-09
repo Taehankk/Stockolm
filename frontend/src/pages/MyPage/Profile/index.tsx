@@ -58,13 +58,17 @@ const Profile: React.FC= () => {
   const [isModal, setIsModal] = useState(false);
   const [stockName, setStockName] = useState("");
 
+
   useEffect(() => {
     setRole(sessionStorage.getItem("role") || "USER");
   },[])
 
-  const { data: favoriteStock, error: stockError, isLoading: stockIsLoading } = useQuery<Stock[], Error>({
+  const { data: favoriteStock, error: stockError, refetch: refetchFavoriteStock, isLoading: stockIsLoading } = useQuery<Stock[], Error>({
     queryKey: ["favoriteStock"],
     queryFn: fetchFavoriteStock,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const { data: favoriteAnalysts, error: analystError, isLoading: analystIsLoading } = useQuery<Analyst[], Error>({
@@ -81,6 +85,10 @@ const Profile: React.FC= () => {
     queryKey: ["analystStock"], 
     queryFn: fetchAnalyzeStock,
   });
+
+  useEffect(() => {
+    refetchFavoriteStock();
+  }, []);
 
   useEffect(() => {
     console.log(favoriteAnalysts,"dd");
