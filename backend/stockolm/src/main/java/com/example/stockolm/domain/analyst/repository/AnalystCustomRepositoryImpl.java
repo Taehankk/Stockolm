@@ -14,10 +14,17 @@ import com.example.stockolm.domain.user.entity.QUser;
 import com.example.stockolm.domain.user.entity.User;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import static com.example.stockolm.domain.analyst.entity.QAnalystInfo.analystInfo;
+import static com.example.stockolm.domain.analystBoard.entity.QAnalystBoard.analystBoard;
+import static com.example.stockolm.domain.user.entity.QUser.user;
 
 public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
 
@@ -120,10 +127,9 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         QAnalystBoard analystBoard = QAnalystBoard.analystBoard;
 
         AnalystGoalInfoDTO analystGoalInfoDTO = queryFactory
-                .select(Projections.constructor(
-                        AnalystGoalInfoDTO.class,
-                        analystInfo.reliability.divide(analystBoard.countDistinct()).multiply(100).floor(),
-                        analystInfo.accuracy.divide(analystBoard.countDistinct()).multiply(100).floor()
+                .select(Projections.constructor(AnalystGoalInfoDTO.class,
+                        getReliability(analystId),
+                        getAccuracy(analystId)
                 ))
                 .from(analystInfo)
                 .join(analystBoard).on(analystBoard.user.userId.eq(analystId))
@@ -148,25 +154,29 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         QStock stock = QStock.stock;
 
         return queryFactory
-                .select(Projections.constructor(
-                        StockInfoDTO.class,
-                        stock.stockName,            // 종목 이름
+                .select(Projections.constructor(StockInfoDTO.class,
+                        stock.stockName,                        // 종목 이름
                         analystBoard.analystBoardId.count(),    // 종목에 대해 작성한 총 게시글 수
-                        new CaseBuilder()
-                                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum(), // 신뢰성 있는 글을 쓴 게시글 수
-                        new CaseBuilder()
-                                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
-                                .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
+                        getReliabilitySum(analystBoard),        // 신뢰성 있는 글 수
+                        getStockReliabilityPercent(analystBoard) // 신뢰성 있는 글 수 / 예측한 총 게시글 수 비율
                 ))
                 .from(analystBoard)
                 .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
                 .where(analystBoard.user.userId.eq(analystId))
                 .groupBy(stock.stockName)
-                .orderBy(new CaseBuilder()
-                        .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
-                        .divide(analystBoard.analystBoardId.count()).multiply(100).desc())
+                .orderBy(getStockReliabilityPercent(analystBoard).desc())
                 .limit(3)
                 .fetch();
+    }
+
+    private NumberExpression<Long> getStockReliabilityPercent(QAnalystBoard analystBoard) {
+        return getReliabilitySum(analystBoard)
+                .divide(analystBoard.analystBoardId.count()).multiply(100);
+    }
+
+    private NumberExpression<Long> getReliabilitySum(QAnalystBoard analystBoard) {
+        return new CaseBuilder()
+                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum();
     }
 
     // 정확도가 높은 상위 3개의 종목을 반환하는 함수
@@ -175,25 +185,29 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
         QStock stock = QStock.stock;
 
         return queryFactory
-                .select(Projections.constructor(
-                        StockInfoDTO.class,
-                        stock.stockName,
+                .select(Projections.constructor(StockInfoDTO.class,
+                        stock.stockName,                        // 종목 이름
                         analystBoard.analystBoardId.count(),    // 종목에 대해 작성한 총 게시글 수
-                        new CaseBuilder()
-                                .when(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum(), // 신뢰성 있는 글을 쓴 게시글 수
-                        new CaseBuilder()
-                                .when(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
-                                .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
+                        getAccuracySum(analystBoard),           // 정확성 있는 글 수
+                        getStockAccuracyPercent(analystBoard)   // 정확성 있는 글 수 / 예측한 총 게시글 수 비율
                 ))
                 .from(analystBoard)
                 .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
                 .where(analystBoard.user.userId.eq(analystId))
                 .groupBy(stock.stockName)
-                .orderBy(new CaseBuilder()
-                        .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
-                        .divide(analystBoard.analystBoardId.count()).multiply(100).desc())
+                .orderBy(getStockAccuracyPercent(analystBoard).desc())
                 .limit(3)
                 .fetch();
+    }
+
+    private NumberExpression<Long> getStockAccuracyPercent(QAnalystBoard analystBoard) {
+        return getAccuracySum(analystBoard)
+                .divide(analystBoard.analystBoardId.count()).multiply(100);
+    }
+
+    private NumberExpression<Long> getAccuracySum(QAnalystBoard analystBoard) {
+        return new CaseBuilder()
+                .when(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum();
     }
 
     // 가장 신뢰도 높은 산업군 상위 3개를 반환하는 함수
@@ -205,20 +219,52 @@ public class AnalystCustomRepositoryImpl implements AnalystCustomRepository {
                 .select(Projections.constructor(
                         IndustryDTO.class,
                         stock.industryName,            // 종목 이름
-                        new CaseBuilder()
-                                .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
-                                .divide(analystBoard.analystBoardId.count()).multiply(100) // 신뢰성 있는 글 / 총 게시글 수 비율
+                        getStockReliabilityPercent(analystBoard) // 신뢰성 있는 글 / 총 게시글 수 비율
                 ))
                 .from(analystBoard)
                 .join(stock).on(analystBoard.stock.stockId.eq(stock.stockId)).fetchJoin()
                 .where(analystBoard.user.userId.eq(analystId))
                 .groupBy(stock.industryName)
-                .orderBy(new CaseBuilder()
-                        .when(analystBoard.goalReliability.eq(GoalCategory.SUCCESS)).then(1L).otherwise(0L).sum()
-                        .divide(analystBoard.analystBoardId.count()).multiply(100).desc())
+                .orderBy(getStockReliabilityPercent(analystBoard).desc())
                 .limit(3)
                 .fetch();
 
+    }
+
+    // 종목에 대해 정확하게 글 쓴 갯수
+    private JPAQuery<Long> getStockAccuracyCount(QAnalystBoard analystBoard) {
+        return queryFactory
+                .select(analystBoard.analystBoardId.countDistinct())
+                .from(analystBoard)
+                .where(analystBoard.goalAccuracy.eq(GoalCategory.SUCCESS));
+    }
+
+    // 종목에 대해 신뢰성있게 글 쓴 갯수
+    private JPAQuery<Long> getStockReliabilityCount(QAnalystBoard analystBoard) {
+        return queryFactory
+                .select(analystBoard.analystBoardId.countDistinct())
+                .from(analystBoard)
+                .where(analystBoard.goalReliability.eq(GoalCategory.SUCCESS));
+    }
+
+    // 종목에 대한 신뢰도 %
+    private NumberExpression<Integer> getReliability(Long userId) {
+        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
+        return analystInfo.reliability.divide(boardSize).multiply(100).floor();
+    }
+
+    // 종목에 대한 정확도 %
+    private NumberExpression<Integer> getAccuracy(Long userId) {
+        JPAQuery<Long> boardSize = getGoalBoardSize(userId);
+        return analystInfo.accuracy.divide(boardSize).multiply(100).floor();
+    }
+
+    // 종목에 대해 쓴 총 글 수
+    private JPAQuery<Long> getGoalBoardSize(Long userId) {
+        return queryFactory
+                .select(analystBoard.countDistinct())
+                .from(analystBoard)
+                .where(analystBoard.goalDate.loe(LocalDate.now()).and(user.userId.eq(userId)));
     }
 
 }
