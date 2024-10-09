@@ -1,5 +1,6 @@
 package com.example.stockolm.domain.analyst.dto.response;
 
+import com.example.stockolm.domain.analyst.dto.AccuracyDTO;
 import com.example.stockolm.domain.analyst.dto.IndustryDTO;
 import com.example.stockolm.domain.analyst.dto.StockInfoDTO;
 import lombok.Builder;
@@ -18,11 +19,11 @@ public class AnalystInfoResponse {
     private Double reliability;
     private List<StockInfoDTO> reliabilityStock;
     private Double accuracy;
-    private List<StockInfoDTO> accuracyStock;
+    private List<AccuracyDTO> accuracyStock;
     private List<IndustryDTO> industry;
 
     @Builder
-    public AnalystInfoResponse(List<IndustryDTO> industry, List<StockInfoDTO> accuracyStock,
+    public AnalystInfoResponse(List<IndustryDTO> industry, List<AccuracyDTO> accuracyStock,
                                Double accuracy, List<StockInfoDTO> reliabilityStock,
                                Double reliability, int totalAnalystRank, int follower,
                                int boardSize, String userNickName, String userName,
