@@ -183,10 +183,12 @@ const BoardDetailPage = () => {
             자유게시판
           </div>
           {/* 제목 */}
-          <div className="text-4xl">{boardData?.title}</div>
+          <div className="flex w-full text-4xl word-break break-all whitespace-normal">
+            {boardData?.title}
+          </div>
           {/* 제목 밑 파트 */}
           {/* 시간, 좋아요, 조회수 */}
-          <div className="w-full">
+          <div className="flex flex-col w-full">
             <div className="flex text-sm mt-3">
               <span className="mr-24">
                 #
@@ -251,14 +253,19 @@ const BoardDetailPage = () => {
                   />
                 </div>
               ) : (
-                <div
-                  onClick={handleLike}
-                  className="flex mb-1 text-2xl cursor-pointer justify-end w-full"
-                >
+                <div className="flex mb-1 text-2xl justify-end w-full">
                   {isLike ? (
-                    <FontAwesomeIcon icon={like} className="text-PrimaryRed" />
+                    <FontAwesomeIcon
+                      onClick={handleLike}
+                      icon={like}
+                      className="text-PrimaryRed cursor-pointer"
+                    />
                   ) : (
-                    <FontAwesomeIcon icon={unlike} className="text-2xl" />
+                    <FontAwesomeIcon
+                      onClick={handleLike}
+                      icon={unlike}
+                      className="text-2xl cursor-pointer"
+                    />
                   )}
                 </div>
               )}
@@ -270,7 +277,7 @@ const BoardDetailPage = () => {
               dangerouslySetInnerHTML={{
                 __html: sanitizer(`${boardData?.content}`),
               }}
-              className="text-lg p-4 min-h-64"
+              className="flex w-full text-lg p-4 min-h-64 whitespace-pre-wrap word-break break-all"
             ></div>
             <hr />
             <div className="flex flex-col p-4 w-full justify-center mb-10">
@@ -283,12 +290,12 @@ const BoardDetailPage = () => {
                     onKeyDown={handleKeyDown} // Enter 키 감지하는 핸들러 추가
                     placeholder="댓글을 입력하세요 (Shift + Enter : 줄 바꿈)"
                     rows={1}
-                    className="flex border pl-5 border-black rounded-3xl w-[80%] mr-2 p-2 resize-none overflow-hidden"
+                    className="flex w-[50rem] border content-center pl-5 pt-7 min-h-[5rem] max-h-[5rem] border-black rounded-3xl mr-2 p-2 resize-none overflow-auto scrollbar-hide"
                   />
                   <Button
                     onClick={registComment}
                     children="등록"
-                    className="w-[10%] h-[2.5rem]"
+                    className="min-h-[5rem] max-h-[5rem]"
                   />
                 </div>
               ) : (
