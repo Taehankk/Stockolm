@@ -106,7 +106,7 @@ const BarChart = ({
             <ReactApexChart options={optionsDark} series={seriesDark} type="bar" height={60} />
         </div>
         {value !== 0 ? <span className="absolute top-[28px] left-[140px] text-[14px]">{value}%</span>
-        : <span></span>}
+        : <span className="absolute top-[28px] left-[150px] text-[14px]">{value}%</span>}
         
       </div>
     </div>

@@ -82,7 +82,7 @@ const FavoriteCard = ({
             
             <div className="flex flex-col w-[6rem] h-[6rem] text-[0.84rem]">
                 <span className="w-full text-center mb-[1rem]">순위</span>
-                <span className="w-full text-center">{totalAnalystRanking + 1}등</span>
+                <span className="w-full text-center">{totalAnalystRanking}등</span>
             </div>
         </div>
         <div className="absolute flex left-[11.5rem] cursor-pointer" >
