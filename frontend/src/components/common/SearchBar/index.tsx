@@ -78,6 +78,7 @@ const SearchBar = () => {
           onChange={handleInputChange}
           className="flex-grow outline-none"
           onFocus={() => setIsFocused(true)}
+          maxLength={15}
         />
         <button
           onClick={onSearch}
