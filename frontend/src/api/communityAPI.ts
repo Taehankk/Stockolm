@@ -249,7 +249,6 @@ export const getReportAPI = async (reportID: string, nickname: string) => {
 
 export const writeReportAPI = async (report: Report) => {
   try {
-    console.log(report);
     const res = await axiosTokenInstance.post("/analyst-board", {
       title: report.title,
       stockName: report.stockName,
