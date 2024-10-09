@@ -151,11 +151,18 @@ const BoardDetailPage = () => {
   };
 
   // onKeyDown 핸들러에서 Enter 키 감지
-  // const handleKeyUp = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-  //   if (e.key === "Enter") {
-  //     registComment(); // Enter 키 입력 시 searchList 함수 호출
-  //   }
-  // };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      if (e.shiftKey) {
+        // Shift + Enter인 경우 줄 바꿈 허용
+        return;
+      } else {
+        // Enter만 누르면 댓글 등록
+        e.preventDefault(); // Enter 입력에 따른 기본 동작(줄 바꿈)을 막음
+        registComment(); // 댓글 등록 함수 호출
+      }
+    }
+  };
 
   useEffect(() => {
     getBoard();
@@ -273,8 +280,8 @@ const BoardDetailPage = () => {
                     ref={textareaRef}
                     value={commentValue}
                     onChange={handleCommentValue}
-                    // onKeyUp={handleKeyUp} // Enter 키 감지하는 핸들러 추가
-                    placeholder="댓글을 입력하세요"
+                    onKeyDown={handleKeyDown} // Enter 키 감지하는 핸들러 추가
+                    placeholder="댓글을 입력하세요 (Shift + Enter : 줄 바꿈)"
                     rows={1}
                     className="flex border border-black rounded-3xl w-[80%] mr-2 p-2 resize-none overflow-hidden"
                   />

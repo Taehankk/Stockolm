@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
 
+import dompurify from "dompurify";
+
 import {
   getCommentListAPI,
   updateCommentAPI,
@@ -27,12 +29,17 @@ interface Props {
 const CommentList = ({ handleCommentCount }: Props) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // 스크립트를 활용하여 javascript와 HTML로 악성 코드를 웹 브라우저에 심어,
+  // 사용자 접속시 그 악성코드가 실행되는 것을 XSS, 보안을 위해 sanitize 추가
+  const sanitizer = dompurify.sanitize;
+
   const token = sessionStorage.getItem("access_token");
   const { id: boardID } = useParams();
   const nickName = useSelector((state: RootState) => state.user.userNickName);
 
   const [commentData, setCommentData] = useState<Comment[]>([]);
 
+  const [expandedComments, setExpandedComments] = useState<number[]>([]);
   const [newCommentValue, setNewCommentValue] = useState("");
 
   const getCommentList = async () => {
@@ -42,6 +49,14 @@ const CommentList = ({ handleCommentCount }: Props) => {
       setCommentData(res);
     } catch {
       alert("댓글 조회 실패");
+    }
+  };
+
+  const toggleExpand = (commentID: number) => {
+    if (expandedComments.includes(commentID)) {
+      setExpandedComments(expandedComments.filter((id) => id !== commentID)); // 더보기 상태 해제
+    } else {
+      setExpandedComments([...expandedComments, commentID]); // 더보기 상태 추가
     }
   };
 
@@ -88,7 +103,7 @@ const CommentList = ({ handleCommentCount }: Props) => {
     }
   };
 
-  // onKeyDown 핸들러에서 Enter 키 감지
+  // 핸들러에서 Enter 키 감지
   // const handleKeyUp = (
   //   commentID: number,
   //   e: React.KeyboardEvent<HTMLTextAreaElement>
@@ -121,6 +136,7 @@ const CommentList = ({ handleCommentCount }: Props) => {
 
   useEffect(() => {
     getCommentList();
+    console.log(CommentList);
   }, []);
 
   useEffect(() => {
@@ -130,30 +146,52 @@ const CommentList = ({ handleCommentCount }: Props) => {
   return (
     <div className="flex flex-col mt-4 items-center">
       {commentData[0] ? (
-        commentData.map((comment, index) => (
-          <div key={index} className="flex border-t-2 w-full p-4">
-            <div className="flex w-[20%] mr-4 items-center">
-              <img
-                className="h-[6rem] w-[6rem] object-cover rounded-full border border-black"
-                src={comment.userImagePath}
-              />
-            </div>
-            <div className="flex w-[80%] flex-col mt-2">
-              <div className="flex items-center w-full">
-                {!comment.isCommentInputOpen ? (
-                  <div className="flex-col w-full">
-                    <div className="flex w-full items-center mb-5 justify-between">
-                      <span className="text-2xl">{comment.userNickname}</span>
-                      <span className="flex text-sm opacity-50">
-                        {comment.createAt?.slice(0, 16).replace("T", " ")}
+        commentData.map((comment, index) => {
+          const isExpanded = expandedComments.includes(comment.commentId);
+          return (
+            <div key={index} className="flex-col border-t-2 w-full p-4">
+              <div className="flex items-center">
+                <div className="mr-4">
+                  <img
+                    className="h-[4rem] w-[4rem] object-cover rounded-full border border-black"
+                    src={comment.userImagePath}
+                  />
+                </div>
+                <div className="flex-col items-center justify-between">
+                  <span className="flex text-2xl mb-2">
+                    {comment.userNickname}
+                  </span>
+                  <span className="flex text-sm opacity-50">
+                    {comment.createAt?.slice(0, 16).replace("T", " ")}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col mt-4">
+                <div className="flex items-center w-full">
+                  {!comment.isCommentInputOpen ? (
+                    <div className="flex items-center w-full">
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizer(
+                            comment?.content.replace(/\n/g, "<br>")
+                          ), // \n을 <br>로 변환
+                        }}
+                        className={`text-lg min-h-[2rem] w-[70%] mr-20 ${
+                          !isExpanded ? "line-clamp-3 overflow-hidden" : ""
+                        }`}
+                      >
+                        {/* {comment.content} */}
                       </span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-lg min-h-[2rem] w-[70%] mr-20">
-                        {comment.content}
-                      </span>
+                      {comment.content.split("\n").length > 3 && ( // 3줄 이상인 경우에만 더보기/간략히 버튼 보여줌
+                        <div
+                          className="cursor-pointer text-blue-500 mt-2"
+                          onClick={() => toggleExpand(comment.commentId)}
+                        >
+                          {isExpanded ? "간략히" : "더보기"}
+                        </div>
+                      )}
                       {comment.userNickname === nickName && (
-                        <div className="flex opacity-50 w-[20%]">
+                        <div className="flex opacity-50">
                           <span
                             onClick={() =>
                               openCommentInput(
@@ -174,23 +212,21 @@ const CommentList = ({ handleCommentCount }: Props) => {
                         </div>
                       )}
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex-col w-full min-h-[6rem] items-center border border-black border-opacity-50 rounded-md p-1">
-                    <span className="flex text-2xl mb-5">
-                      {comment.userNickname}
-                    </span>
-                    <div className="flex items-center">
-                      <textarea
-                        ref={textareaRef}
-                        value={newCommentValue}
-                        onChange={handleNewCommentValue}
-                        // onKeyUp={(e) => handleKeyUp(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
-                        rows={1}
-                        className="flex w-[70%] max-w-[70%] focus:outline-none focus:border-none text-lg rounded-md h-full mr-20 p-1 resize-none overflow-hidden"
-                      />
-
-                      <div className="flex gap-x-2 w-[20%] items-center justify-center">
+                  ) : (
+                    <div className="w-full">
+                      <div className="flex-col w-full min-h-[6rem] max-h-[6rem] items-center border border-black border-opacity-50 rounded-md p-1">
+                        <div className="flex w-full h-full items-center">
+                          <textarea
+                            ref={textareaRef}
+                            value={newCommentValue}
+                            onChange={handleNewCommentValue}
+                            // onKeyUp={(e) => handleKeyUp(comment.commentId, e)} // Enter 키 감지하는 핸들러 추가
+                            rows={3}
+                            className="flex w-full h-full min-h-[5rem] max-h-[5rem] focus:outline-none focus:border-none text-lg rounded-md p-1 resize-none overflow-hidden"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-x-2 mt-2 justify-end">
                         <span
                           onClick={() => updateComment(comment.commentId)}
                           className="flex cursor-pointer text-sm bg-red-400 rounded-md justify-center text-center items-center w-10 h-8"
@@ -210,12 +246,12 @@ const CommentList = ({ handleCommentCount }: Props) => {
                         </span>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))
+          );
+        })
       ) : (
         <div className="text-2xl mt-10">등록된 댓글이 없습니다.</div>
       )}
