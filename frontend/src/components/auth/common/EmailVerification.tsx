@@ -18,6 +18,7 @@ const EmailVerification = ({ location }: Props) => {
     emailInput,
     setEmailInput,
     emailAuthId,
+    setEmailValid,
     setEmailAuthId,
     setValidateNumValid,
   } = useContext(AuthContext);
@@ -66,6 +67,7 @@ const EmailVerification = ({ location }: Props) => {
           onChange={handleEmailInputChange}
           value={emailInput}
           validate={validateEmail}
+          setValidateState={setEmailValid}
         />
       </div>
       <div className="flex justify-end">
