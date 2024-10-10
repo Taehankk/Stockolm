@@ -2,7 +2,7 @@ import BasicLayout from "../../layouts/BasicLayout";
 
 import { useState, useEffect } from "react";
 
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 
 import Button from "../../components/elements/Button";
@@ -24,49 +24,59 @@ interface Analyst {
 }
 
 interface AnalystInfo {
-  userName: string,
-  boardSize: number,
-  follower: number,
-  totalAnalystRank: number,
-  reliability: number,
-  userImagePath: string,
+  userName: string;
+  boardSize: number;
+  follower: number;
+  totalAnalystRank: number;
+  reliability: number;
+  userImagePath: string;
   reliabilityStock: [
     {
-      stockName: string,
-      stockSize: number,
-      stockReliabilitySize: number
-      stockReliabilityValue: number
+      stockName: string;
+      stockSize: number;
+      stockReliabilitySize: number;
+      stockReliabilityValue: number;
     },
-  ],
-  accuracy: number
+  ];
+  accuracy: number;
   accuracyStock: [
     {
-      stockName: string,
-      stockSize: number,
-      stockAccuracySize: number
-      stockAccuracyValue: number 
+      stockName: string;
+      stockSize: number;
+      stockAccuracySize: number;
+      stockAccuracyValue: number;
     },
-  ],	
+  ];
   industry: [
     {
-      industryName: string,
-      industryValue: number
+      industryName: string;
+      industryValue: number;
     },
-  ]
+  ];
 }
 
 const Analyst: React.FC = () => {
+  const navigate = useNavigate();
+
   const { nickname } = useParams<{ nickname: string }>();
   const [isFollow, setIsFollow] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // 추가: 로딩 상태 관리
   const queryClient = useQueryClient();
 
-  const { data: analystInfo, error: analystInfoError, isLoading: analystInfoIsLoading } = useQuery<AnalystInfo, Error>({
+  const {
+    data: analystInfo,
+    error: analystInfoError,
+    isLoading: analystInfoIsLoading,
+  } = useQuery<AnalystInfo, Error>({
     queryKey: ["analystInfo", nickname],
     queryFn: ({ queryKey }) => fetchAnalystInfo(queryKey[1] as string),
   });
 
-  const { data: favoriteAnalysts, error: analystError, isLoading: analystIsLoading } = useQuery<Analyst[], Error>({
+  const {
+    data: favoriteAnalysts,
+    error: analystError,
+    isLoading: analystIsLoading,
+  } = useQuery<Analyst[], Error>({
     queryKey: ["favoriteAnalysts"],
     queryFn: fetchFavoriteAnalysts,
   });
@@ -107,6 +117,16 @@ const Analyst: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const token = sessionStorage.getItem("access_token");
+    if (!token) {
+      alert("로그인 후 이용해주세요.");
+      navigate("/auth", {
+        state: { imgLocation: 0 },
+      });
+    }
+  }, []);
+
   if (analystInfoIsLoading || analystIsLoading) {
     return <p>Loading...</p>;
   }
@@ -121,9 +141,14 @@ const Analyst: React.FC = () => {
         <div className="w-[23rem] mr-[2rem] pr-[3rem] border-b-black border-r">
           <div className="flex justify-center items-center pb-[0.3rem] border-b-black border-b-[0.0625rem]">
             <div>
-              <img className="w-[6rem] h-[6rem] rounded-full" src={analystInfo?.userImagePath} />
+              <img
+                className="w-[6rem] h-[6rem] rounded-full"
+                src={analystInfo?.userImagePath}
+              />
             </div>
-            <span className="self-end ml-[4rem] text-[1.625rem]">{analystInfo?.userName}</span>
+            <span className="self-end ml-[4rem] text-[1.625rem]">
+              {analystInfo?.userName}
+            </span>
           </div>
           <div className="flex justify-center gap-[2.2rem] my-[1.3rem] text-[1.25rem]">
             <div className="flex flex-col items-center">
