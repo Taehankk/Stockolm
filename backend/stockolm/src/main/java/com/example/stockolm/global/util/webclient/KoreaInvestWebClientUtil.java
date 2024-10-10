@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -151,7 +152,7 @@ public class KoreaInvestWebClientUtil {
                             LocalTime stckCntgHour = LocalTime.parse(stckCntgHourStr, DateTimeFormatter.ofPattern("HHmmss"));
 
                             // stck_cntg_hour가 3시 30분보다 크면 중단
-                            if (stckCntgHour.isAfter(LocalTime.of(15, 30))) {
+                            if (stckCntgHour.isAfter(LocalTime.of(15, 30)) || stckCntgHour.isAfter(LocalTime.now())) {
                                 continue;
                             }
 
