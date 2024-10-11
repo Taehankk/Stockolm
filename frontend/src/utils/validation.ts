@@ -7,6 +7,13 @@ export const validateNickname = (value: string): string | undefined => {
   return undefined;
 };
 
+export const validateName = (value: string): string | undefined => {
+  const nameRegex = /^[가-힣]{2,8}$/;
+  if (nameRegex.test(value)) {
+    return "한글 이름만 입력 가능합니다.";
+  }
+};
+
 // 비밀번호 검증: 6~20글자 이내의 문자
 export const validatePassword = (value: string): string | undefined => {
   if (value.length < 6 || value.length > 20) {
@@ -22,4 +29,50 @@ export const validateEmail = (value: string): string | undefined => {
     return "유효한 이메일 주소를 입력하세요.";
   }
   return undefined;
+};
+
+export const validateMatchPassword = (
+  value: string,
+  password: string
+): string | undefined => {
+  if (value.length < 6) {
+    return "비밀번호는 최소 6자 이상이어야 합니다.";
+  }
+  
+  if (value !== password) {
+    return "비밀번호가 일치하지 않습니다.";
+  }
+  return undefined;
+};
+
+export const validateSearchInputLength = (value: string) => {
+  if (value.length > 20) {
+    alert("최대 20자 입력만 가능합니다.");
+    return value.slice(0, 21);
+  }
+  return value;
+};
+
+export const validateCommentInputLength = (value: string) => {
+  if (value.length > 100) {
+    alert("최대 100자 입력만 가능합니다.");
+    return value.slice(0, 101);
+  }
+  return value;
+};
+
+export const validateEditorInputLength = (value: string) => {
+  if (value.length > 1000) {
+    alert("최대 1000자 입력만 가능합니다.");
+    return value.slice(0, 1000);
+  }
+  return value;
+};
+
+export const validateTitleInputLength = (value: string) => {
+  if (value.length > 50) {
+    alert("최대 50자 입력만 가능합니다.");
+    return value.slice(0, 51);
+  }
+  return value;
 };

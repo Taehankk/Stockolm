@@ -1,0 +1,71 @@
+/* 기본 스타일 */
+.landing-page {
+  width: 100%;
+  overflow: hidden;
+  scrollbar-width: none;
+}
+
+.main-content {
+  width: 100%;
+}
+
+.section {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(50);
+  transition:
+    opacity 1s ease-in-out,
+    transform 1s ease-in-out;
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.image {
+  width: 50%;
+  height: auto;
+}
+
+.footer {
+  background-color: white;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.top-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.top-button:hover {
+  background-color: #555;
+}
+
+.landing-image-box {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.landing-image {
+  width: 500px;
+  height: 400px;
+  background-position: 50% 50%;
+  background-size: 100% 100%;
+}

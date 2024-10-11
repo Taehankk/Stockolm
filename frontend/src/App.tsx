@@ -1,12 +1,19 @@
 import { RouterProvider } from "react-router-dom";
 import "./App.css";
+import { Provider } from "react-redux";
+import { store } from "./store";
 import root from "./router/root";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="w-[90vw] mx-auto my-0">
-      <RouterProvider router={root} />;
-    </div>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={root} />
+      </QueryClientProvider>
+    </Provider>
   );
 }
 

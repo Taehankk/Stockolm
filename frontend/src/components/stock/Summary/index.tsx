@@ -1,115 +1,141 @@
-import "./index.css";
 import { useState, useEffect } from "react";
-import { getStockData } from "../../../api/stockAPI";
-
+import {
+  getStockData,
+  getFollowStatus,
+  toggleFollowAPI,
+} from "../../../api/stockAPI";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretUp, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import StockLikeON from "../../../assets/StockLikeON.svg";
+import StockLikeOFF from "../../../assets/StockLikeOFF.svg";
 
-const MockCode: string = "005380";
+interface SummaryProps {
+  searchCode: string;
+  searchTerm: string;
+}
 
-const Summary = () => {
-  const [stockData, setStockData] = useState<any>(null);
+interface StockData {
+  stckPrpr: number;
+  prdyVrss: number;
+  prdyCtrt: number;
+  stckHgpr: number;
+  stckLwpr: number;
+  acmlVol: number;
+  acmlTrPbmn: number;
+}
+
+const Summary = ({ searchCode, searchTerm }: SummaryProps) => {
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [stockData, setStockData] = useState<StockData | null>(null);
+  const getToken = () => sessionStorage.getItem("access_token");
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
     try {
-      const data = await getStockData(MockCode);
-      setStockData(data.output);
-      console.log(data.output);
+      const data = await getStockData(searchCode);
+      setStockData(data[0]);
     } catch (error) {
-      console.error("Error fetching stock data:", error);
+      console.error("주식 요약 정보를 불러오지 못함", error);
+    }
+  };
+
+  const fetchFollowStatus = async () => {
+    try {
+      const followStatus = await getFollowStatus(searchTerm);
+      setIsFollowed(followStatus);
+    } catch (error) {
+      console.error("관심 종목 상태를 가져오지 못했습니다.", error);
     }
   };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5000);
-
+    fetchFollowStatus();
+    const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [searchCode, searchTerm]);
+
+  const toggleFollow = async () => {
+    if (isLoading) return; // 이미 로딩 중이면 함수 종료
+    setIsLoading(true);
+    try {
+      await toggleFollowAPI(searchTerm);
+      setIsFollowed(!isFollowed); // 상태 업데이트
+    } catch (error) {
+      console.error("관심 종목 상태를 변경하지 못했습니다.", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!stockData) return <div>Loading...</div>;
 
   return (
-    <div className="summary">
-      <div className="top-title">
-        <div className="title-info">
-          <div className="text-large">삼성전자</div>
-          <div className="text-small">{MockCode}</div>
-          <div>{Math.abs(stockData.stck_prpr).toLocaleString()}</div>
+    <div className="flex flex-col">
+      <div className="flex items-center h-12 border-b pt-3 pb-2 mb-2">
+        <div className="flex items-baseline gap-5 w-4/5">
+          <div className="text-2xl">{searchTerm}</div>
+          <div className="text-sm">{searchCode}</div>
+          <div>{Math.abs(stockData.stckPrpr).toLocaleString()}</div>
           <div className="flex">
-            {stockData.prdy_vrss > 0 ? (
+            {stockData.prdyVrss > 0 ? (
               <>
-                <FontAwesomeIcon
-                  icon={faCaretUp}
-                  className="text-red-500" // 양수일 때 빨간색
-                />
+                <FontAwesomeIcon icon={faCaretUp} className="text-red-500" />
                 <span className="ml-1 text-red-500">
-                  {Math.abs(stockData.prdy_vrss).toLocaleString()}
+                  {Math.abs(stockData.prdyVrss).toLocaleString()}
                 </span>
               </>
             ) : (
               <>
-                <FontAwesomeIcon
-                  icon={faCaretDown}
-                  className="text-blue-500" // 음수일 때 파란색
-                />
+                <FontAwesomeIcon icon={faCaretDown} className="text-blue-500" />
                 <span className="ml-1 text-blue-500">
-                  {Math.abs(stockData.prdy_vrss).toLocaleString()}
+                  {Math.abs(stockData.prdyVrss).toLocaleString()}
                 </span>
               </>
             )}
           </div>
           <div>
-            {stockData.prdy_vrss > 0 ? (
+            {stockData.prdyVrss > 0 ? (
               <span className="ml-1 text-red-500">
-                {Math.abs(stockData.prdy_ctrt) + "%"}
+                {Math.abs(stockData.prdyCtrt).toFixed(2) + "%"}
               </span>
             ) : (
               <span className="ml-1 text-blue-500">
-                {Math.abs(stockData.prdy_ctrt) + "%"}
+                {Math.abs(stockData.prdyCtrt).toFixed(2) + "%"}
               </span>
             )}
           </div>
-          {/* <div>{stockData.prdy_ctrt}</div> */}
         </div>
-        <div>좋아요버튼</div>
+        {getToken() && (
+          <img
+            src={isFollowed ? StockLikeON : StockLikeOFF}
+            alt={isFollowed ? "관심 종목 설정됨" : "관심 종목 아님"}
+            onClick={toggleFollow}
+            className={`cursor-pointer ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+          />
+        )}
       </div>
-      <div className="summary-detail">
-        <div className="infomation">
+      <div className="flex w-4/5 flex-row gap-8 justify-between pt-3">
+        <div className="flex flex-col">
+          <div>전일</div>
           <div>
-            <div>전일</div>
-            <div>
-              {Math.abs(
-                stockData.stck_prpr - stockData.prdy_vrss
-              ).toLocaleString()}
-            </div>
+            {Math.abs(stockData.stckPrpr - stockData.prdyVrss).toLocaleString()}
           </div>
-          <div>
-            <div>시가</div>
-            <div>{Math.abs(stockData.stck_prpr).toLocaleString()}</div>
-          </div>
+          <div>시가</div>
+          <div>{Math.abs(stockData.stckPrpr).toLocaleString()}</div>
         </div>
-        <div className="infomation">
-          <div>
-            <div>고가</div>
-            <div>{Math.abs(stockData.stck_hgpr).toLocaleString()}</div>
-          </div>
-          <div>
-            <div>저가</div>
-            <div>{Math.abs(stockData.stck_lwpr).toLocaleString()}</div>
-          </div>
+        <div className="flex flex-col">
+          <div>고가</div>
+          <div>{Math.abs(stockData.stckHgpr).toLocaleString()}</div>
+          <div>저가</div>
+          <div>{Math.abs(stockData.stckLwpr).toLocaleString()}</div>
         </div>
-        <div className="infomation">
+        <div className="flex flex-col">
+          <div>거래량</div>
+          <div>{Math.abs(stockData.acmlVol).toLocaleString()}</div>
+          <div>거래대금</div>
           <div>
-            <div>거래량</div>
-            <div>{Math.abs(stockData.acml_vol).toLocaleString()}</div>
-          </div>
-          <div>
-            <div>거래대금</div>
-            <div>
-              {Math.round(stockData.acml_tr_pbmn / 1_000_000).toLocaleString()}{" "}
-              백만
-            </div>
+            {Math.round(stockData.acmlTrPbmn / 1_000_000).toLocaleString()} 백만
           </div>
         </div>
       </div>
