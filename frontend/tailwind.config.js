@@ -2,7 +2,7 @@
 
 const widthSize = {
   small: "6rem",
-  medium: "11rem",
+  medium: "8.4375rem",
   large: "15rem",
 };
 
@@ -50,6 +50,16 @@ export default {
       colors: colors,
       border: border,
       borderRadius: borderRadius,
+      opacity: {
+        0: "0",
+        100: "1",
+      },
+      translate: {
+        12: "3rem",
+      },
+      transitionDuration: {
+        1000: "1000ms",
+      },
     },
   },
   safelist: [
@@ -76,5 +86,5 @@ export default {
       pattern: new RegExp(`^rounded-(${Object.keys(borderRadius).join("|")})$`),
     },
   ],
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };

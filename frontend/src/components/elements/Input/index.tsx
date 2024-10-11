@@ -12,7 +12,10 @@ interface InputProps {
   onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   type?: string;
   disabled?: boolean;
-  validate?: (value: string) => string | undefined;
+  validate?: (
+    value: string
+  ) => Promise<string | undefined> | string | undefined;
+  setValidateState?: (value: boolean) => void | undefined;
 }
 
 const Input = ({
@@ -28,15 +31,24 @@ const Input = ({
   type = "text",
   disabled = false,
   validate,
+  setValidateState,
 }: InputProps) => {
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) onChange(e);
 
     if (validate) {
-      const validationResult = validate(e.target.value);
+      const validationResult = await validate(e.target.value);
       setError(validationResult);
+
+      if (setValidateState) {
+        setValidateState(!validationResult);
+      }
+    } else {
+      if (setValidateState) {
+        setValidateState(true);
+      }
     }
   };
 
@@ -54,8 +66,10 @@ const Input = ({
         }`}
       />
       {error
-        ? value && <p className="text-red-500 text-[12px] mt-1">{error}</p>
-        : value && (
+        ? validate &&
+          value && <p className="text-red-500 text-[12px] mt-1">{error}</p>
+        : validate &&
+          value && (
             <p className="text-green-500 text-[12px] mt-1">
               사용 가능한 {label} 입니다
             </p>

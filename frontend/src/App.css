@@ -11,3 +11,77 @@ html {
   margin-left: 2rem;
   margin-right: 2rem;
 } */
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* .hide-scrollbar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+} */
+
+/* .hide-scrollbar::-webkit-scrollbar {
+  display: none;
+} */
+
+/* Webkit 기반 브라우저에서 스크롤바 화살표 버튼 숨기기 */
+.custom-scrollbar::-webkit-scrollbar-button {
+  display: none !important; /* 스크롤바 위아래 화살표 버튼 숨김 */
+}
+
+/* Webkit 기반 브라우저에서 스크롤바 스타일링 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px !important; /* 스크롤바 너비 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1 !important; /* 스크롤바 트랙 배경 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888 !important; /* 스크롤바 핸들 색상 */
+  border-radius: 10px !important; /* 스크롤바 핸들 둥근 모서리 */
+  border: 2px solid #f1f1f1 !important; /* 스크롤바 핸들 테두리 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555 !important; /* 스크롤바 핸들 호버 시 색상 */
+}
+
+/* Firefox에서 스크롤바 스타일링 */
+.custom-scrollbar {
+  scrollbar-width: thin !important; /* 스크롤바 너비 */
+  scrollbar-color: #888 #f1f1f1 !important; /* 스크롤바 핸들 및 트랙 색상 */
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0.4rem;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+img:hover + .tooltip {
+  opacity: 1;
+}
